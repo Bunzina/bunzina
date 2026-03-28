@@ -1,5 +1,5 @@
 export class LicensePlate {
-  private readonly value: string;
+  value: string;
 
   constructor(value: string) {
     if (!this.validateLicensePlate(value)) {

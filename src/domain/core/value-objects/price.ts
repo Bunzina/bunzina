@@ -1,5 +1,5 @@
 export class Price {
-  private readonly value: number;
+  value: number;
 
   constructor(value: number) {
     if (value < 0) {

@@ -1,3 +1,4 @@
+import { StockMovementType } from "../types/stock-movement-type";
 import { StockMovement } from "./stock-movement";
 
 describe("stock movement child entity", () => {
@@ -5,7 +6,7 @@ describe("stock movement child entity", () => {
     const stockMovement = new StockMovement({
       autoPartId: "123",
       quantity: 10,
-      type: "IN",
+      type: StockMovementType.IN,
       serviceOrderId: "service-order-id",
     });
 

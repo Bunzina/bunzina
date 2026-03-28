@@ -1,5 +1,5 @@
 export class Phone {
-  private readonly value: string;
+  value: string;
 
   constructor(value: string) {
     if (!this.validatePhone(value)) {
