@@ -2,15 +2,15 @@ import { DocumentType } from "../types/document-type";
 
 export class Document {
   value: string;
-  type: DocumentType;
+  kind: DocumentType;
 
   constructor(value: string) {
     const cleanedValue = value.replace(/\D/g, "");
 
     if (cleanedValue.length === 11) {
-      this.type = DocumentType.CPF;
+      this.kind = DocumentType.CPF;
     } else if (cleanedValue.length === 14) {
-      this.type = DocumentType.CNPJ;
+      this.kind = DocumentType.CNPJ;
     } else {
       throw new Error("Invalid document number");
     }

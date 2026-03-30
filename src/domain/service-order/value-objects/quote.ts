@@ -3,7 +3,13 @@ export class Quote {
   autoPartsTotal: number;
   total: number;
 
-  constructor(input: { servicesTotal: number; autoPartsTotal: number }) {
+  constructor({
+    id,
+    ...input
+  }: {
+    servicesTotal: number;
+    autoPartsTotal: number;
+  }) {
     if (input.servicesTotal < 0) {
       throw new Error("Services total cannot be negative");
     }

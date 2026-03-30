@@ -14,10 +14,10 @@ export class StockMovement extends Entity {
   quantity!: number;
   type!: StockMovementType;
   serviceOrderId?: string;
-  createdAt?: Date;
+  createdAt!: Date;
 
-  constructor(input: StockMovementProps) {
-    super(input.id);
+  constructor({ id, ...input }: StockMovementProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
 

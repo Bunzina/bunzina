@@ -15,11 +15,11 @@ export class AutoPart extends Entity {
   description!: string;
   price!: Price;
   stock!: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
-  constructor(input: AutoPartProps) {
-    super(input.id);
+  constructor({ id, ...input }: AutoPartProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
     input.updatedAt = input.updatedAt ?? new Date();

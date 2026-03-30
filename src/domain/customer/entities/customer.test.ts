@@ -27,7 +27,7 @@ describe("customer entity", () => {
       },
       createdAt: expect.any(Date),
       document: {
-        type: "CPF",
+        kind: "CPF",
         value: "12345678900",
       },
       email: {

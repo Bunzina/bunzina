@@ -18,11 +18,11 @@ export class User extends Entity {
   passwordHash!: string;
   role!: UserRole;
   isActive!: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
-  constructor(input: UserProps) {
-    super(input.id);
+  constructor({ id, ...input }: UserProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
     input.updatedAt = input.updatedAt ?? new Date();

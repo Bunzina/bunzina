@@ -12,8 +12,8 @@ export class ServiceItem extends Entity {
   price!: Price;
   description?: string;
 
-  constructor(input: ServiceItemProps) {
-    super(input.id);
+  constructor({ id, ...input }: ServiceItemProps) {
+    super(id);
 
     Object.assign(this, input);
   }

@@ -16,11 +16,11 @@ export class AutoPartItem extends Entity {
   totalPrice?: Price;
   description?: string;
 
-  constructor(input: AutoPartItemProps) {
-    super(input.id);
+  constructor({ id, ...input }: AutoPartItemProps) {
+    super(id);
 
-    if (input.quantity < 0) {
-      throw new Error("Quantity cannot be negative");
+    if (input.quantity < 1) {
+      throw new Error("Quantity cannot be zero or negative");
     }
 
     input.totalPrice = input.totalPrice ?? input.unitPrice;

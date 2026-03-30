@@ -20,11 +20,11 @@ export class Customer extends Entity {
   email!: Email;
   phone!: Phone;
   address!: Address;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
-  constructor(input: CustomerProps) {
-    super(input.id);
+  constructor({ id, ...input }: CustomerProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
     input.updatedAt = input.updatedAt ?? new Date();

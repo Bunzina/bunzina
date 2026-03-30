@@ -5,7 +5,7 @@ export interface ServiceProps extends EntityProps {
   name: string;
   description: string;
   price: Price;
-  duration: number; // Duration in minutes
+  durationInMinutes: number;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
@@ -15,13 +15,13 @@ export class Service extends Entity {
   name!: string;
   description!: string;
   price!: Price;
-  duration!: number;
+  durationInMinutes!: number;
   isActive!: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
-  constructor(input: ServiceProps) {
-    super(input.id);
+  constructor({ id, ...input }: ServiceProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
     input.updatedAt = input.updatedAt ?? new Date();

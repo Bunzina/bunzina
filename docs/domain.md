@@ -369,57 +369,28 @@ Todas as listagens utilizam paginação offset-based: `page` (default 1) e `limi
 
 ```
 src/
-├── modules/
-│   ├── cliente/
-│   │   ├── domain/           # Entidades, VOs, interfaces de repositório
-│   │   ├── application/      # Use cases / Services
-│   │   ├── infrastructure/   # Repositório Prisma, mappers
-│   │   └── presentation/     # Controllers, DTOs, validação de entrada
-│   │
-│   ├── veiculo/
-│   │   ├── domain/
-│   │   ├── application/
-│   │   ├── infrastructure/
-│   │   └── presentation/
-│   │
-│   ├── servico/
-│   │   ├── domain/
-│   │   ├── application/
-│   │   ├── infrastructure/
-│   │   └── presentation/
-│   │
-│   ├── estoque/              # (Peça + Movimentação)
-│   │   ├── domain/
-│   │   ├── application/
-│   │   ├── infrastructure/
-│   │   └── presentation/
-│   │
-│   ├── ordem-de-servico/     # (OS + Itens + Orçamento)
-│   │   ├── domain/
-│   │   ├── application/
-│   │   ├── infrastructure/
-│   │   └── presentation/
-│   │
-│   └── autenticacao/
-│       ├── domain/
-│       ├── application/
-│       ├── infrastructure/
-│       └── presentation/
+├─ adapters/
+│  ├─ controllers/        # respectivo ao adapter de input
+│  └─ presenters/         # camada de apresentação tipo toHttp
 │
-├── shared/
-│   ├── domain/
-│   │   ├── entity.base.ts        # Classe base com id, criadoEm, atualizadoEm
-│   │   ├── value-object.base.ts  # Classe base para VOs (igualdade por valor)
-│   │   ├── dinheiro.vo.ts        # VO compartilhado
-│   │   └── domain-event.ts       # Interface base de eventos
-│   ├── infrastructure/
-│   │   ├── prisma/               # PrismaService, migrations
-│   │   └── event-emitter/        # NestJS EventEmitter para domain events
-│   └── presentation/
-│       └── filters/              # Exception filters, guards JWT
+├─ api/
+│  └─ handlers/           # ponto de entrada do endpoint
 │
-├── app.module.ts
-└── main.ts
+├─ application/
+│  └─ use-cases/          # casos de uso
+│
+├─ domain/                # entidades e interfaces de repositorio
+│
+├─ infrastructure/
+│  ├─ database/           # respectivo aos repositories
+│  ├─ services/           # respectivo aos services
+│  └─ configs/            # configurações externas ao codigo
+│     ├─ env/             # variáveis de ambiente
+│     └─ postgres/        # banco de dados
+│
+├─ test/                  # helpers testes
+│
+└─ types/                 # tipos para config
 ```
 
 ### Fluxo de dependência

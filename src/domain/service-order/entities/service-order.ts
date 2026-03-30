@@ -11,12 +11,12 @@ export interface ServiceOrderProps extends EntityProps {
   serviceItems: ServiceItem[];
   autoPartItems: AutoPartItem[];
   quote: Quote;
+  createdAt?: Date;
+  updatedAt?: Date;
   approvedAt?: Date;
   startedAt?: Date;
   completedAt?: Date;
   deliveredAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export class ServiceOrder extends Entity {
@@ -26,15 +26,15 @@ export class ServiceOrder extends Entity {
   serviceItems!: ServiceItem[];
   autoPartItems!: AutoPartItem[];
   quote!: Quote;
+  createdAt!: Date;
+  updatedAt!: Date;
   approvedAt?: Date;
   startedAt?: Date;
   completedAt?: Date;
   deliveredAt?: Date;
-  createdAt?: Date;
-  updatedAt?: Date;
 
-  constructor(input: ServiceOrderProps) {
-    super(input.id);
+  constructor({ id, ...input }: ServiceOrderProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
     input.updatedAt = input.updatedAt ?? new Date();

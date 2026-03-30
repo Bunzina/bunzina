@@ -6,7 +6,7 @@ export const makeService = (override?: Partial<Service>): Service => {
     name: "Oil Change",
     description: "Complete oil change service",
     price: makePrice(),
-    duration: 60,
+    durationInMinutes: 60,
     isActive: true,
     ...override,
   });

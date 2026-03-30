@@ -33,7 +33,7 @@ describe("auto part item child entity", () => {
           quantity: -2,
           unitPrice: makePrice(100),
         }),
-    ).toThrow("Quantity cannot be negative");
+    ).toThrow("Quantity cannot be zero or negative");
   });
 
   test("should throw an error when creating an auto part item with a negative price", () => {

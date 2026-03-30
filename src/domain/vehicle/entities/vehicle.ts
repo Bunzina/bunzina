@@ -17,11 +17,11 @@ export class Vehicle extends Entity {
   model!: string;
   brand!: string;
   year!: number;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt!: Date;
+  updatedAt!: Date;
 
-  constructor(input: VehicleProps) {
-    super(input.id);
+  constructor({ id, ...input }: VehicleProps) {
+    super(id);
 
     input.createdAt = input.createdAt ?? new Date();
     input.updatedAt = input.updatedAt ?? new Date();

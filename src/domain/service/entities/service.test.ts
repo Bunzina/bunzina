@@ -7,7 +7,7 @@ describe("service entity", () => {
       name: "Oil Change",
       description: "Complete oil change service",
       price: makePrice(),
-      duration: 60,
+      durationInMinutes: 60,
       isActive: true,
     });
 
@@ -15,7 +15,7 @@ describe("service entity", () => {
     expect(service).toEqual({
       createdAt: expect.any(Date),
       description: "Complete oil change service",
-      duration: 60,
+      durationInMinutes: 60,
       id: expect.any(String),
       isActive: true,
       name: "Oil Change",

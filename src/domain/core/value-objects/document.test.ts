@@ -6,7 +6,7 @@ describe("document value object", () => {
 
     expect(document).toBeInstanceOf(Document);
     expect(document).toEqual({
-      type: "CPF",
+      kind: "CPF",
       value: "12345678909",
     } as unknown as Document);
   });
