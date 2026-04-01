@@ -1,5 +1,5 @@
-import { Entity, type EntityProps } from "@/domain/core/entities/entity";
-import type { Price } from "@/domain/core/value-objects/price";
+import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { Price } from '@/domain/core/value-objects/price';
 
 export interface ServiceProps extends EntityProps {
   name: string;

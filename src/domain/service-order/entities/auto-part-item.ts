@@ -1,5 +1,5 @@
-import { Entity, type EntityProps } from "@/domain/core/entities/entity";
-import type { Price } from "@/domain/core/value-objects/price";
+import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { Price } from '@/domain/core/value-objects/price';
 
 export interface AutoPartItemProps extends EntityProps {
   autoPartId: string;
@@ -20,7 +20,7 @@ export class AutoPartItem extends Entity {
     super(id);
 
     if (input.quantity < 1) {
-      throw new Error("Quantity cannot be zero or negative");
+      throw new Error('Quantity cannot be zero or negative');
     }
 
     input.totalPrice = input.totalPrice ?? input.unitPrice;

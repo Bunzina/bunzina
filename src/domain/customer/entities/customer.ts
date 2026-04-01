@@ -1,8 +1,8 @@
-import { Entity, type EntityProps } from "@/domain/core/entities/entity";
-import type { Address } from "@/domain/core/value-objects/address";
-import type { Document } from "@/domain/core/value-objects/document";
-import type { Email } from "@/domain/core/value-objects/email";
-import type { Phone } from "@/domain/core/value-objects/phone";
+import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { Address } from '@/domain/core/value-objects/address';
+import type { Document } from '@/domain/core/value-objects/document';
+import type { Email } from '@/domain/core/value-objects/email';
+import type { Phone } from '@/domain/core/value-objects/phone';
 
 export interface CustomerProps extends EntityProps {
   name: string;

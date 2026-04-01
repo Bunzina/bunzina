@@ -11,11 +11,11 @@ export class Quote {
     autoPartsTotal: number;
   }) {
     if (input.servicesTotal < 0) {
-      throw new Error("Services total cannot be negative");
+      throw new Error('Services total cannot be negative');
     }
 
     if (input.autoPartsTotal < 0) {
-      throw new Error("Auto parts total cannot be negative");
+      throw new Error('Auto parts total cannot be negative');
     }
 
     this.servicesTotal = input.servicesTotal;

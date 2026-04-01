@@ -1,18 +1,18 @@
-import { DocumentType } from "../types/document-type";
+import { DocumentKind } from '../types/document-kind';
 
 export class Document {
   value: string;
-  kind: DocumentType;
+  kind: DocumentKind;
 
   constructor(value: string) {
-    const cleanedValue = value.replace(/\D/g, "");
+    const cleanedValue = value.replace(/\D/g, '');
 
     if (cleanedValue.length === 11) {
-      this.kind = DocumentType.CPF;
+      this.kind = DocumentKind.CPF;
     } else if (cleanedValue.length === 14) {
-      this.kind = DocumentType.CNPJ;
+      this.kind = DocumentKind.CNPJ;
     } else {
-      throw new Error("Invalid document number");
+      throw new Error('Invalid document number');
     }
 
     this.value = cleanedValue;
