@@ -7,7 +7,7 @@ export class Address {
   neighborhood!: string;
   complement?: string;
 
-  constructor({ ...input }: Address) {
+  constructor(input: Address) {
     Object.assign(this, input);
   }
 }

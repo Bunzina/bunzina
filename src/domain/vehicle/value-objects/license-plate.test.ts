@@ -20,8 +20,6 @@ describe('license plate value object', () => {
   });
 
   test('should throw an error when creating a license plate with an invalid format', () => {
-    expect(() => new LicensePlate('invalid-plate')).toThrow(
-      'Invalid license plate format',
-    );
+    expect(() => new LicensePlate('invalid-plate')).toThrow('Invalid license plate format');
   });
 });

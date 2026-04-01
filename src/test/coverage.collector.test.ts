@@ -10,14 +10,8 @@ function collectFiles(dir: string): string[] {
       if (name === 'node_modules') continue;
       out.push(...collectFiles(p));
     } else {
-      if (
-        p.endsWith('.test.ts') ||
-        p.endsWith('.test.tsx') ||
-        p.endsWith('.d.ts')
-      )
-        continue;
-      if (p.endsWith('.ts') || p.endsWith('.tsx') || p.endsWith('.js'))
-        out.push(p);
+      if (p.endsWith('.test.ts') || p.endsWith('.test.tsx') || p.endsWith('.d.ts')) continue;
+      if (p.endsWith('.ts') || p.endsWith('.tsx') || p.endsWith('.js')) out.push(p);
     }
   }
   return out;

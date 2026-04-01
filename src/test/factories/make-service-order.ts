@@ -4,9 +4,7 @@ import { makeAutoPartItem } from './make-auto-part-item';
 import { makeQuote } from './make-quote';
 import { makeServiceItem } from './make-service-item';
 
-export const makeServiceOrder = (
-  override?: Partial<ServiceOrder>,
-): ServiceOrder => {
+export const makeServiceOrder = (override?: Partial<ServiceOrder>): ServiceOrder => {
   return new ServiceOrder({
     customerId: 'customer-123',
     vehicleId: 'vehicle-123',
