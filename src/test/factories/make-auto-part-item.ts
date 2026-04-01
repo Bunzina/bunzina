@@ -1,10 +1,8 @@
-import { AutoPartItem } from "@/domain/service-order/entities/auto-part-item";
+import { AutoPartItem } from '@/domain/service-order/entities/auto-part-item';
 
-export const makeAutoPartItem = (
-  override?: Partial<AutoPartItem>,
-): AutoPartItem => {
+export const makeAutoPartItem = (override?: Partial<AutoPartItem>): AutoPartItem => {
   return new AutoPartItem({
-    autoPartId: "auto-part-id",
+    autoPartId: 'auto-part-id',
     quantity: 2,
     price: 100,
     ...override,

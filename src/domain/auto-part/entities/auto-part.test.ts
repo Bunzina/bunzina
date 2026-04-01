@@ -1,11 +1,11 @@
-import { makePrice } from "@/test/factories/make-price";
-import { AutoPart } from "./auto-part";
+import { makePrice } from '@/test/factories/make-price';
+import { AutoPart } from './auto-part';
 
-describe("auto part entity", () => {
-  test("should create an auto part with valid properties", () => {
+describe('auto part entity', () => {
+  test('should create an auto part with valid properties', () => {
     const autoPart = new AutoPart({
-      name: "Brake Pad",
-      description: "High-quality brake pad for improved stopping power.",
+      name: 'Brake Pad',
+      description: 'High-quality brake pad for improved stopping power.',
       price: makePrice(),
       stock: 100,
     });
@@ -13,9 +13,9 @@ describe("auto part entity", () => {
     expect(autoPart).toBeInstanceOf(AutoPart);
     expect(autoPart).toEqual({
       createdAt: expect.any(Date),
-      description: "High-quality brake pad for improved stopping power.",
+      description: 'High-quality brake pad for improved stopping power.',
       id: expect.any(String),
-      name: "Brake Pad",
+      name: 'Brake Pad',
       price: {
         value: 100,
       },

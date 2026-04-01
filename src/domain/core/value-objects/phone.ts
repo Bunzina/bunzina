@@ -3,7 +3,7 @@ export class Phone {
 
   constructor(value: string) {
     if (!this.validatePhone(value)) {
-      throw new Error("Invalid phone number");
+      throw new Error('Invalid phone number');
     }
 
     this.value = value;

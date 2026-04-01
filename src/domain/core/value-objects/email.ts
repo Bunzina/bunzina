@@ -3,7 +3,7 @@ export class Email {
 
   constructor(value: string) {
     if (!this.validateEmail(value)) {
-      throw new Error("Invalid email address");
+      throw new Error('Invalid email address');
     }
 
     this.value = value;
