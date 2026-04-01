@@ -370,8 +370,8 @@ Todas as listagens utilizam paginação offset-based: `page` (default 1) e `limi
 ```
 src/
 ├─ adapters/
-│  ├─ controllers/        # respectivo ao adapter de input
-│  └─ presenters/         # camada de apresentação tipo toHttp
+│  ├─ input/        # respectivo ao adapter de input
+│  └─ output/         # camada de apresentação tipo toHttp
 │
 ├─ api/
 │  └─ handlers/           # ponto de entrada do endpoint
@@ -382,7 +382,7 @@ src/
 ├─ domain/                # entidades e interfaces de repositorio
 │
 ├─ infrastructure/
-│  ├─ database/           # respectivo aos repositories
+│  ├─ repositories/           # respectivo aos repositories
 │  ├─ services/           # respectivo aos services
 │  └─ configs/            # configurações externas ao codigo
 │     ├─ env/             # variáveis de ambiente

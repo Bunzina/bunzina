@@ -1,6 +1,6 @@
-import { Entity, type EntityProps } from "@/domain/core/entities/entity";
-import type { Email } from "@/domain/core/value-objects/email";
-import type { UserRole } from "../types/user-role";
+import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { Email } from '@/domain/core/value-objects/email';
+import type { UserRole } from '../types/user-role';
 
 export interface UserProps extends EntityProps {
   name: string;

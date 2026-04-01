@@ -1,5 +1,5 @@
-import { Entity, type EntityProps } from "@/domain/core/entities/entity";
-import type { StockMovementType } from "../types/stock-movement-type";
+import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { StockMovementType } from '../types/stock-movement-type';
 
 export interface StockMovementProps extends EntityProps {
   autoPartId: string;

@@ -1,4 +1,4 @@
-import { Quote } from "@/domain/service-order/value-objects/quote";
+import { Quote } from '@/domain/service-order/value-objects/quote';
 
 export const makeQuote = (override?: Partial<Quote>): Quote => {
   return new Quote({

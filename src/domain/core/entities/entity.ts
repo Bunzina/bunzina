@@ -1,4 +1,4 @@
-import { randomUUIDv7 } from "bun";
+import { randomUUIDv7 } from 'bun';
 
 export interface EntityProps {
   id?: string;

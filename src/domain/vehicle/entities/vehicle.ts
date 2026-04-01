@@ -1,5 +1,5 @@
-import { Entity, type EntityProps } from "@/domain/core/entities/entity";
-import type { LicensePlate } from "../value-objects/license-plate";
+import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { LicensePlate } from '../value-objects/license-plate';
 
 export interface VehicleProps extends EntityProps {
   customerId: string;

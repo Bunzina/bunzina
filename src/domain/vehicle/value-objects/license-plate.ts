@@ -3,7 +3,7 @@ export class LicensePlate {
 
   constructor(value: string) {
     if (!this.validateLicensePlate(value)) {
-      throw new Error("Invalid license plate format");
+      throw new Error('Invalid license plate format');
     }
 
     this.value = value;
