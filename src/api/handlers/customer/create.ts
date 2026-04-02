@@ -6,10 +6,10 @@ import { CreateCustomerInput } from "@/adapters/input/customer/create";
 let createCustomerUseCase: CreateCustomerUseCase;
 let customerRepository: CustomerRepository;
 let createCustomerInput: CreateCustomerInput;
-let dbClient: any; //TO DO: ENTENDER A IMPLEMENTAÇÃO
+let dbClient: any; //TODO: ENTENDER A IMPLEMENTAÇÃO
 
 const setDependencies = (dbInstance: any) => {
-  customerRepository = new CustomerRepository(dbInstance); //TO DO: ENTENDER A IMPLEMENTAÇÃO
+  customerRepository = new CustomerRepository(dbInstance); //TODO: ENTENDER A IMPLEMENTAÇÃO
   createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
   createCustomerInput = new CreateCustomerInput(createCustomerUseCase);
 };
@@ -17,11 +17,11 @@ const setDependencies = (dbInstance: any) => {
 export const createCustomerHandler = async (
   context: Context,
 ): Promise<Response> => {
-  setDependencies(dbClient);
   try {
+    setDependencies(dbClient);
     return await createCustomerInput.execute(context);
   } catch (error) {
-    /* dbClient.disconnect(); */ //TO DO: ENTENDER A IMPLEMENTAÇÃO
+    /* dbClient.disconnect(); */ //TODO: ENTENDER A IMPLEMENTAÇÃO
     return new Response(
       JSON.stringify({ error: "Failed to create customer" }),
       {
