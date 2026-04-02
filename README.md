@@ -4,6 +4,19 @@ API REST para gerenciamento de uma oficina mecânica, desenvolvida com **Bun**, 
 
 ---
 
+## Objetivo do sistema
+
+O Bunzina tem como objetivo digitalizar e centralizar os processos operacionais de uma oficina mecânica, permitindo:
+
+- Cadastro e gerenciamento de **clientes** e seus **veículos**
+- Criação e acompanhamento de **ordens de serviço**, do diagnóstico à entrega
+- Controle de **serviços** prestados e **peças** utilizadas
+- Gestão de **estoque de autopeças** com rastreamento de movimentações
+- Geração de **orçamentos** automatizados a partir dos serviços e peças da OS
+- Gerenciamento de **usuários** internos com controle de acesso por papel (admin, mecânico)
+
+---
+
 ## Tecnologias
 
 - [Bun](https://bun.sh) — runtime, test runner e gerenciador de pacotes
@@ -12,6 +25,18 @@ API REST para gerenciamento de uma oficina mecânica, desenvolvida com **Bun**, 
 - [Zod](https://zod.dev) — validação de dados
 - [Day.js](https://day.js.org) — formatação de datas
 - [oxlint](https://oxc.rs/docs/guide/usage/linter) + [oxfmt](https://github.com/nicolo-ribaudo/oxfmt) — lint e formatação
+
+---
+
+## Justificativa do banco de dados
+
+O **PostgreSQL** foi escolhido pelos seguintes motivos:
+
+- **Relacional e consistente** — o domínio da oficina possui relacionamentos bem definidos (cliente → veículo → ordem de serviço → itens), que se beneficiam de chaves estrangeiras e transações ACID
+- **Tipos nativos** — suporte a `UUID`, `ENUM`, `NUMERIC` e `TIMESTAMPTZ`, que mapeiam diretamente para os value objects do domínio
+- **Schemas** — permite isolar as tabelas do projeto no schema `bunzina`, facilitando a organização em ambiente compartilhado
+- **Maturidade e ecossistema** — solução amplamente adotada, com excelente suporte no Bun via `bun:sql`
+- **Escalabilidade** — suporta índices avançados, particionamento e extensões (como `uuid-ossp`) para crescimento futuro do sistema
 
 ---
 
