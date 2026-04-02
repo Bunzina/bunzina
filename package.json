@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@elysiajs/swagger": "^1.3.1",
-    "elysia": "^1.4.28"
+    "@lucas-pmelo/logger": "^0.0.6",
+    "elysia": "^1.4.28",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@lucas-pmelo/logger": "^0.0.6",
@@ -23,11 +25,5 @@
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "@elysiajs/swagger": "^1.3.1",
-    "@lucas-pmelo/logger": "^0.0.6",
-    "elysia": "^1.4.28",
-    "zod": "^4.3.6"
   }
 }
