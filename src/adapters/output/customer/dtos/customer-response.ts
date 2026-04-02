@@ -1,5 +1,5 @@
-import type { DocumentKind } from "@/domain/core/types/document-kind";
-import type { AddressResponse } from "./address-response";
+import type { DocumentKind } from '@/domain/core/types/document-kind';
+import type { AddressResponse } from './address-response';
 
 export interface CustomerResponse {
   id: string;
@@ -9,6 +9,6 @@ export interface CustomerResponse {
   email: string;
   phone: string;
   address: AddressResponse;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -8,9 +8,7 @@ describe('create customer use case', () => {
       create: mock(() => Promise.resolve()),
     } as unknown as CustomerRepository;
 
-    const createCustomerUseCase = new CreateCustomerUseCase(
-      mockCustomerRepository,
-    );
+    const createCustomerUseCase = new CreateCustomerUseCase(mockCustomerRepository);
 
     const input = {
       name: 'John Doe',
@@ -64,9 +62,7 @@ describe('create customer use case', () => {
       create: mock(() => Promise.resolve()),
     } as unknown as CustomerRepository;
 
-    const createCustomerUseCase = new CreateCustomerUseCase(
-      mockCustomerRepository,
-    );
+    const createCustomerUseCase = new CreateCustomerUseCase(mockCustomerRepository);
 
     const input = {
       name: 'John Doe',

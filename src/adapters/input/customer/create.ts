@@ -1,13 +1,13 @@
 import { CustomerPresenter } from '@/adapters/output/customer/customer-presenter';
-import { createCustomerSchema } from './validations/create-customer-schema';
 import type { CreateCustomerUseCase } from '@/application/use-cases/customer/create';
 import type { Context } from 'elysia';
 import { ZodError } from 'zod';
+import { createCustomerSchema } from './validations/create-customer-schema';
 
 export class CreateCustomerInput {
   constructor(private createCustomerUseCase: CreateCustomerUseCase) {}
 
-  execute = async (context: Context): Promise<Response> => {
+  async execute(context: Context): Promise<Response> {
     try {
       const validatedBody = createCustomerSchema.parse(context.body);
       const customer = await this.createCustomerUseCase.execute(validatedBody);
@@ -43,5 +43,5 @@ export class CreateCustomerInput {
         },
       );
     }
-  };
+  }
 }

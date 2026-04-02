@@ -1,19 +1,18 @@
-import { describe, expect, test, mock } from "bun:test";
-import { makeCustomer } from "@/test/factories/make-customer";
-import { CustomerRepository } from "./customer-repository";
+import { makeCustomer } from '@/test/factories/make-customer';
+import { SQL } from 'bun';
+import { describe, expect, mock, test } from 'bun:test';
+import { CustomerRepository } from './customer-repository';
 
-describe("customer repository", () => {
-  test("should create a customer and return it", async () => {
-    const mockClient = {
-      query: mock(() => Promise.resolve()),
-    };
+describe('customer repository', () => {
+  test('should create a customer and return it', async () => {
+    const mockClient = mock((..._args: unknown[]) => Promise.resolve([]));
 
-    const repository = new CustomerRepository(mockClient as any); //TODO: MODIFICAR DEPOIS
+    const repository = new CustomerRepository(mockClient as unknown as SQL);
     const customer = makeCustomer();
 
     const result = await repository.create(customer);
 
     expect(result).toEqual(customer);
-    expect(mockClient.query).toHaveBeenCalled();
+    expect(mockClient).toHaveBeenCalled();
   });
 });

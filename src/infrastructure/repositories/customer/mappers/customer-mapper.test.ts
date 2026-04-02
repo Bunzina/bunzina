@@ -1,5 +1,5 @@
-import { describe, expect, test, mock } from 'bun:test';
 import { makeCustomer } from '@/test/factories/make-customer';
+import { describe, expect, test } from 'bun:test';
 import { CustomerMapper } from './customer-mapper';
 
 describe('customer mapper', () => {

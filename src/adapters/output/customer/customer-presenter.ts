@@ -1,4 +1,5 @@
 import type { Customer } from '@/domain/customer/entities/customer';
+import dayjs from 'dayjs';
 import type { CustomerResponse } from './dtos/customer-response';
 
 export class CustomerPresenter {
@@ -19,8 +20,8 @@ export class CustomerPresenter {
         neighborhood: customer.address.neighborhood,
         complement: customer.address.complement,
       },
-      createdAt: customer.createdAt,
-      updatedAt: customer.updatedAt,
+      createdAt: dayjs(customer.createdAt).format('DD-MM-YYYY'),
+      updatedAt: dayjs(customer.updatedAt).format('DD-MM-YYYY'),
     };
   }
 }
