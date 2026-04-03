@@ -6,7 +6,6 @@ coverageReporter = ["text", "lcov"]
 coverageDir = "./coverage"
 coverageThreshold = { lines = 1, functions = 1, statements = 1, branches = 1 }
 coverageSkipTestFiles = true
-coverageIgnoreSourcemaps = false
 pathIgnorePatterns = [
   "**/node_modules/**",
   "**/dist/**",
