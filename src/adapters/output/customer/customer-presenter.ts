@@ -2,8 +2,8 @@ import type { Customer } from '@/domain/customer/entities/customer';
 import dayjs from 'dayjs';
 import type { CustomerResponse } from './dtos/customer-response';
 
-export class CustomerPresenter {
-  static toHttp(customer: Customer): CustomerResponse {
+export const CustomerPresenter = {
+  toHttp(customer: Customer): CustomerResponse {
     return {
       id: customer.id!,
       name: customer.name,
@@ -20,8 +20,8 @@ export class CustomerPresenter {
         neighborhood: customer.address.neighborhood,
         complement: customer.address.complement,
       },
-      createdAt: dayjs(customer.createdAt).format('DD-MM-YYYY'),
-      updatedAt: dayjs(customer.updatedAt).format('DD-MM-YYYY'),
+      createdAt: dayjs(customer.createdAt).format('YYYY-MM-DD'),
+      updatedAt: dayjs(customer.updatedAt).format('YYYY-MM-DD'),
     };
-  }
-}
+  },
+};

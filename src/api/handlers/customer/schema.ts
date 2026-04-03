@@ -79,3 +79,22 @@ export const createCustomerSchema = {
     address: addressSchema,
   }),
 };
+
+export const findCustomerSchema = {
+  detail: {
+    tags: ['Customers'],
+    summary: 'Buscar cliente',
+    description: 'Busca um cliente pelo número do documento (CPF ou CNPJ).',
+    responses: {
+      '200': { description: 'Cliente encontrado' },
+      '404': { description: 'Cliente não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    documentNumber: t.String({
+      description: 'CPF ou CNPJ sem formatação',
+      examples: ['12345678909'],
+    }),
+  }),
+};

@@ -1,17 +1,12 @@
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import type { Context } from 'elysia';
 
-// Only mock modules that no other test imports directly
-mock.module('@lucas-pmelo/logger', () => ({
-  default: { setEvent: mock(), debug: mock() },
-}));
-
 const mockDb = mock((..._args: unknown[]) => Promise.resolve([]));
 mock.module('@/infrastructure/configs/database', () => ({ db: mockDb }));
 
 import { createCustomerHandler } from './create';
 
-describe('createCustomerHandler', () => {
+describe('create customer handler', () => {
   beforeEach(() => {
     mockDb.mockImplementation((..._args: unknown[]) => Promise.resolve([]));
   });
@@ -67,6 +62,6 @@ describe('createCustomerHandler', () => {
     const result = await createCustomerHandler(ctx);
 
     expect(result.status).toBe(500);
-    expect(await result.json()).toEqual({ error: 'db error' });
+    expect(await result.json()).toEqual({ error: 'Failed to create customer' });
   });
 });

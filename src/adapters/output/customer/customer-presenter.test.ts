@@ -1,7 +1,7 @@
-import { describe, test, expect } from 'bun:test';
-import { CustomerPresenter } from './customer-presenter';
-import { makeCustomer } from '@/test/factories/make-customer';
 import { DocumentKind } from '@/domain/core/types/document-kind';
+import { makeCustomer } from '@/test/factories/make-customer';
+import { describe, expect, test } from 'bun:test';
+import { CustomerPresenter } from './customer-presenter';
 
 describe('customer presenter', () => {
   test('should convert a customer entity to http response', () => {
@@ -12,7 +12,7 @@ describe('customer presenter', () => {
     expect(response).toEqual({
       id: 'customer-id',
       name: 'John Doe',
-      document: '12345678900',
+      document: '12345678909',
       documentKind: DocumentKind.CPF,
       email: 'lucas.coda.fofo@gmail.com',
       phone: '+1234567890',
@@ -25,8 +25,8 @@ describe('customer presenter', () => {
         neighborhood: 'Downtown',
         complement: 'Apt 789',
       },
-      createdAt: expect.any(Date),
-      updatedAt: expect.any(Date),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
     });
   });
 
@@ -51,7 +51,7 @@ describe('customer presenter', () => {
     expect(response).toEqual({
       id: 'customer-id',
       name: 'Jane Smith',
-      document: '12345678900',
+      document: '12345678909',
       documentKind: DocumentKind.CPF,
       email: 'lucas.coda.fofo@gmail.com',
       phone: '+1234567890',
@@ -64,8 +64,8 @@ describe('customer presenter', () => {
         neighborhood: 'Downtown',
         complement: undefined,
       },
-      createdAt: customDate,
-      updatedAt: customDate,
+      createdAt: '2024-01-01',
+      updatedAt: '2024-01-01',
     });
   });
 });
