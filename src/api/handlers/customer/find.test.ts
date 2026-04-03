@@ -1,14 +1,18 @@
-import { beforeEach, describe, expect, mock, test } from 'bun:test';
+import { mockFn } from 'bun-mock-extended';
+import { beforeEach, describe, expect, mock, test, type Mock } from 'bun:test';
 import type { Context } from 'elysia';
 
-const mockDb = mock((..._args: unknown[]) => Promise.resolve([]));
+const mockDb = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+  (..._args: unknown[]) => Promise<unknown[]>
+>;
+mockDb.mockImplementation(() => Promise.resolve([]));
 mock.module('@/infrastructure/configs/database', () => ({ db: mockDb }));
 
 import { findCustomerHandler } from './find';
 
 describe('findCustomerHandler', () => {
   beforeEach(() => {
-    mockDb.mockImplementation((..._args: unknown[]) => Promise.resolve([]));
+    mockDb.mockImplementation(() => Promise.resolve([]));
   });
 
   test('should return 200 when finding a customer', async () => {

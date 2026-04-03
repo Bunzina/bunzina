@@ -40,9 +40,9 @@ describe('create customer input', () => {
 
     const result = await createCustomerInput.execute(request);
 
-    expect(result.status).toBe(201);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
-    expect(await result.json()).toEqual(
+    expect(result?.status).toBe(201);
+    expect(result?.headers.get('Content-Type')).toBe('application/json');
+    expect(await result?.json()).toEqual(
       JSON.parse(JSON.stringify(CustomerPresenter.toHttp(customer))),
     );
 
@@ -84,9 +84,9 @@ describe('create customer input', () => {
 
     const result = await createCustomerInput.execute(request);
 
-    expect(result.status).toBe(500);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
-    expect(await result.json()).toEqual({ error: 'Failed to create customer' });
+    expect(result?.status).toBe(500);
+    expect(result?.headers.get('Content-Type')).toBe('application/json');
+    expect(await result?.json()).toEqual({ error: 'Failed to create customer' });
     expect(createCustomerUseCase.execute).toHaveBeenCalledWith({
       name: 'John Doe',
       document: '12345678909',
@@ -124,8 +124,8 @@ describe('create customer input', () => {
     } as Context;
 
     const result = await createCustomerInput.execute(request);
-    expect(result.status).toBe(400);
-    expect(await result.json()).toMatchObject({ reason: 'Invalid data in request' });
+    expect(result?.status).toBe(400);
+    expect(await result?.json()).toMatchObject({ reason: 'Invalid data in request' });
     expect(createCustomerUseCase.execute).not.toHaveBeenCalled();
   });
 
@@ -159,10 +159,10 @@ describe('create customer input', () => {
 
     const result = await createCustomerInput.execute(request);
 
-    expect(result.status).toBe(201);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
+    expect(result?.status).toBe(201);
+    expect(result?.headers.get('Content-Type')).toBe('application/json');
 
-    expect(await result.json()).toEqual(
+    expect(await result?.json()).toEqual(
       JSON.parse(JSON.stringify(CustomerPresenter.toHttp(customer))),
     );
 
