@@ -17,7 +17,8 @@ if (appEnv === 'prod') {
     connectionString = `postgres://${user}:${pass}@${host}:${port}/${name}`;
   }
 } else {
-  connectionString = 'postgres://bun:bun@localhost:5432/bunzina';
+  connectionString =
+    process.env.DATABASE_URL || 'postgres://bun:bun@db:5432/bunzina';
 }
 
 export const db = new SQL(connectionString);
