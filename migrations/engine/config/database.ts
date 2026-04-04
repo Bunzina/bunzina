@@ -20,5 +20,4 @@ if (appEnv === 'prod') {
   connectionString = 'postgres://bun:bun@localhost:5432/bunzina';
 }
 
-console.log(connectionString);
 export const db = new SQL(connectionString);
