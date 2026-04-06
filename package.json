@@ -13,13 +13,16 @@
   },
   "dependencies": {
     "@elysiajs/swagger": "^1.3.1",
+    "@lucas-pmelo/handlers": "^0.0.4",
     "@lucas-pmelo/logger": "^0.0.6",
+    "@lucas-pmelo/validator": "^0.0.3",
+    "dayjs": "^1.11.20",
     "elysia": "^1.4.28",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@lucas-pmelo/logger": "^0.0.6",
     "@types/bun": "latest",
+    "bun-mock-extended": "^3.0.5",
     "oxfmt": "^0.42.0",
     "oxlint": "^1.57.0"
   },

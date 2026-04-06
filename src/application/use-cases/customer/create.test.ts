@@ -1,17 +1,18 @@
-import { describe, test, expect, mock } from 'bun:test';
-import { CreateCustomerUseCase } from './create';
 import type { CustomerRepository } from '@/domain/customer/repositories/customer-repository';
+import type { MockProxy } from 'bun-mock-extended';
+import { mock } from 'bun-mock-extended';
+import { CreateCustomerUseCase } from './create';
 
 describe('create customer use case', () => {
+  let customerRepository: MockProxy<CustomerRepository>;
+  let createCustomerUseCase: CreateCustomerUseCase;
+
+  beforeEach(() => {
+    customerRepository = mock();
+    createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
+  });
+
   test('should create a customer with all fields', async () => {
-    const mockCustomerRepository = {
-      create: mock(() => Promise.resolve()),
-    } as unknown as CustomerRepository;
-
-    const createCustomerUseCase = new CreateCustomerUseCase(
-      mockCustomerRepository,
-    );
-
     const input = {
       name: 'John Doe',
       document: '123.456.789-09',
@@ -56,18 +57,10 @@ describe('create customer use case', () => {
       updatedAt: expect.any(Date),
     });
 
-    expect(mockCustomerRepository.create).toHaveBeenCalledWith(result);
+    expect(customerRepository.create).toHaveBeenCalledWith(result);
   });
 
   test('should create a customer without optional fields', async () => {
-    const mockCustomerRepository = {
-      create: mock(() => Promise.resolve()),
-    } as unknown as CustomerRepository;
-
-    const createCustomerUseCase = new CreateCustomerUseCase(
-      mockCustomerRepository,
-    );
-
     const input = {
       name: 'John Doe',
       document: '123.456.789-09',
@@ -110,6 +103,6 @@ describe('create customer use case', () => {
       updatedAt: expect.any(Date),
     });
 
-    expect(mockCustomerRepository.create).toHaveBeenCalledWith(result);
+    expect(customerRepository.create).toHaveBeenCalledWith(result);
   });
 });
