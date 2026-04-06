@@ -32,14 +32,16 @@ export class CreateCustomerUseCase {
     const persistedCustomer = await this.customerRepository.findByDocumentNumber(input.document);
 
     if (persistedCustomer) {
+      const message = 'Customer already exists';
+
       logger.warn({
-        message: 'Customer already exists',
+        message,
         data: {
           documentNumber: input.document,
         },
       });
 
-      throw new ConflictError('Customer already exists');
+      throw new ConflictError(message);
     }
 
     const document = new Document(input.document);

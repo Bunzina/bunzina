@@ -1,6 +1,6 @@
 import { CreateCustomerInput } from '@/adapters/input/customer/create';
 import { CreateCustomerUseCase } from '@/application/use-cases/customer/create';
-import { db } from '@/infrastructure/configs/database';
+import { db as dbInstance } from '@/infrastructure/configs/database';
 import { CustomerRepository } from '@/infrastructure/repositories/customer/customer-repository';
 import logger from '@lucas-pmelo/logger';
 import type { Context } from 'elysia';
@@ -9,7 +9,7 @@ let createCustomerUseCase: CreateCustomerUseCase;
 let customerRepository: CustomerRepository;
 let createCustomerInput: CreateCustomerInput;
 
-const setDependencies = (dbInstance = db) => {
+const setDependencies = () => {
   customerRepository = new CustomerRepository(dbInstance);
   createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
   createCustomerInput = new CreateCustomerInput(createCustomerUseCase);

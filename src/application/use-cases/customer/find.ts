@@ -14,14 +14,16 @@ export class FindCustomerUseCase {
     const customer = await this.customerRepository.findByDocumentNumber(documentNumber);
 
     if (!customer) {
+      const message = 'Customer not found';
+
       logger.warn({
-        message: 'Customer not found',
+        message,
         data: {
           documentNumber: documentNumber,
         },
       });
 
-      throw new NotFoundError('Customer not found');
+      throw new NotFoundError(message);
     }
 
     logger.debug({

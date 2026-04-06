@@ -28,7 +28,7 @@ export class CustomerRepository implements ICustomerRepository {
       message: 'Customer found with document number',
       data: {
         documentNumber,
-        customerId: customer.id,
+        customer,
       },
     });
 
