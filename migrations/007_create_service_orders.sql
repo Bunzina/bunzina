@@ -1,0 +1,19 @@
+CREATE TABLE bunzina.service_orders (
+  id                   UUID                       PRIMARY KEY,
+  customer_id          UUID                       NOT NULL REFERENCES bunzina.customers(id),
+  vehicle_id           UUID                       NOT NULL REFERENCES bunzina.vehicles(id),
+  status               bunzina.service_order_status NOT NULL DEFAULT 'RECEIVED',
+  quote_services_total NUMERIC(10, 2)             NOT NULL DEFAULT 0 CHECK (quote_services_total >= 0),
+  quote_auto_parts_total NUMERIC(10, 2)           NOT NULL DEFAULT 0 CHECK (quote_auto_parts_total >= 0),
+  quote_total          NUMERIC(10, 2)             NOT NULL DEFAULT 0 CHECK (quote_total >= 0),
+  created_at           TIMESTAMPTZ                NOT NULL DEFAULT NOW(),
+  updated_at           TIMESTAMPTZ                NOT NULL DEFAULT NOW(),
+  approved_at          TIMESTAMPTZ,
+  started_at           TIMESTAMPTZ,
+  completed_at         TIMESTAMPTZ,
+  delivered_at         TIMESTAMPTZ
+);
+
+CREATE INDEX idx_service_orders_customer_id ON bunzina.service_orders(customer_id);
+CREATE INDEX idx_service_orders_vehicle_id  ON bunzina.service_orders(vehicle_id);
+CREATE INDEX idx_service_orders_status      ON bunzina.service_orders(status);

@@ -1,33 +1,28 @@
-import type { Context } from "elysia";
-import { CreateCustomerUseCase } from "@/application/use-cases/customer/create";
-import { CustomerRepository } from "@/infrastructure/repositories/customer/customer-repository";
-import { CreateCustomerInput } from "@/adapters/input/customer/create";
+import { CreateCustomerInput } from '@/adapters/input/customer/create';
+import { CreateCustomerUseCase } from '@/application/use-cases/customer/create';
+import { db as dbInstance } from '@/infrastructure/configs/database';
+import { CustomerRepository } from '@/infrastructure/repositories/customer/customer-repository';
+import logger from '@lucas-pmelo/logger';
+import type { Context } from 'elysia';
 
 let createCustomerUseCase: CreateCustomerUseCase;
 let customerRepository: CustomerRepository;
 let createCustomerInput: CreateCustomerInput;
-let dbClient: any; //TODO: ENTENDER A IMPLEMENTAÇÃO
 
-const setDependencies = (dbInstance: any) => {
-  customerRepository = new CustomerRepository(dbInstance); //TODO: ENTENDER A IMPLEMENTAÇÃO
+const setDependencies = () => {
+  customerRepository = new CustomerRepository(dbInstance);
   createCustomerUseCase = new CreateCustomerUseCase(customerRepository);
   createCustomerInput = new CreateCustomerInput(createCustomerUseCase);
 };
 
-export const createCustomerHandler = async (
-  context: Context,
-): Promise<Response> => {
-  try {
-    setDependencies(dbClient);
-    return await createCustomerInput.execute(context);
-  } catch (error) {
-    /* dbClient.disconnect(); */ //TODO: ENTENDER A IMPLEMENTAÇÃO
-    return new Response(
-      JSON.stringify({ error: "Failed to create customer" }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
-  }
+export const createCustomerHandler = async (context: Context): Promise<Response | undefined> => {
+  logger.setEvent('bunzina', context.request);
+  logger.debug({
+    message: 'Event received',
+    data: context.request,
+  });
+
+  setDependencies();
+
+  return await createCustomerInput.execute(context);
 };

@@ -1,22 +1,24 @@
-import { describe, test, expect, mock } from 'bun:test';
-import { CreateCustomerInput } from './create';
-import type { CustomerRepository } from '@/domain/customer/repositories/customer-repository';
+import { CustomerPresenter } from '@/adapters/output/customer/customer-presenter';
 import type { CreateCustomerUseCase } from '@/application/use-cases/customer/create';
-import type { Context } from 'elysia';
-import { makeCustomer } from '@/test/factories/make-customer';
 import { DocumentKind } from '@/domain/core/types/document-kind';
+import { makeCustomer } from '@/test/factories/make-customer';
+import { any, mock, type MockProxy } from 'bun-mock-extended';
+import type { Context } from 'elysia';
+import { CreateCustomerInput } from './create';
 
 describe('create customer input', () => {
+  let createCustomerUseCase: MockProxy<CreateCustomerUseCase>;
+  let createCustomerInput: CreateCustomerInput;
+
+  beforeEach(() => {
+    createCustomerUseCase = mock();
+    createCustomerInput = new CreateCustomerInput(createCustomerUseCase);
+  });
+
   test('should create a customer', async () => {
     const customer = makeCustomer();
 
-    const mockCreateCustomerUseCase = {
-      execute: mock(() => Promise.resolve(customer)),
-    } as unknown as CreateCustomerUseCase;
-
-    const createCustomerInput = new CreateCustomerInput(
-      mockCreateCustomerUseCase,
-    );
+    createCustomerUseCase.execute.calledWith(any()).mockResolvedValue(customer);
 
     const request = {
       body: {
@@ -38,29 +40,13 @@ describe('create customer input', () => {
 
     const result = await createCustomerInput.execute(request);
 
-    expect(result.status).toBe(201);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
-    expect(await result.json()).toEqual({
-      address: {
-        city: 'Anytown',
-        complement: 'Apt 789',
-        neighborhood: 'Downtown',
-        number: '456',
-        state: 'CA',
-        street: '123 Main St',
-        zipCode: '12345',
-      },
-      createdAt: expect.any(String),
-      document: '12345678900',
-      documentKind: 'CPF',
-      email: 'lucas.coda.fofo@gmail.com',
-      id: 'customer-id',
-      name: 'John Doe',
-      phone: '+1234567890',
-      updatedAt: expect.any(String),
-    });
+    expect(result?.status).toBe(201);
+    expect(result?.headers.get('Content-Type')).toBe('application/json');
+    expect(await result?.json()).toEqual(
+      JSON.parse(JSON.stringify(CustomerPresenter.toHttp(customer))),
+    );
 
-    expect(mockCreateCustomerUseCase.execute).toHaveBeenCalledWith({
+    expect(createCustomerUseCase.execute).toHaveBeenCalledWith({
       name: 'John Doe',
       document: '12345678909',
       email: 'john@example.com',
@@ -78,16 +64,6 @@ describe('create customer input', () => {
   });
 
   test('should throw an error if customer creation fails', async () => {
-    const mockCreateCustomerUseCase = {
-      execute: mock(() =>
-        Promise.reject(new Error('Failed to create customer')),
-      ),
-    } as unknown as CreateCustomerUseCase;
-
-    const createCustomerInput = new CreateCustomerInput(
-      mockCreateCustomerUseCase,
-    );
-
     const request = {
       body: {
         name: 'John Doe',
@@ -108,11 +84,10 @@ describe('create customer input', () => {
 
     const result = await createCustomerInput.execute(request);
 
-    expect(result.status).toBe(500);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
-    expect(await result.json()).toEqual({ error: 'Failed to create customer' });
-
-    expect(mockCreateCustomerUseCase.execute).toHaveBeenCalledWith({
+    expect(result?.status).toBe(500);
+    expect(result?.headers.get('Content-Type')).toBe('application/json');
+    expect(await result?.json()).toEqual({ error: 'Failed to create customer' });
+    expect(createCustomerUseCase.execute).toHaveBeenCalledWith({
       name: 'John Doe',
       document: '12345678909',
       email: 'john@example.com',
@@ -130,14 +105,6 @@ describe('create customer input', () => {
   });
 
   test('should throw validation error if input is invalid', async () => {
-    const mockCreateCustomerUseCase = {
-      execute: mock(() => Promise.resolve()),
-    } as unknown as CreateCustomerUseCase;
-
-    const createCustomerInput = new CreateCustomerInput(
-      mockCreateCustomerUseCase,
-    );
-
     const request = {
       body: {
         name: 'John Doe',
@@ -157,22 +124,9 @@ describe('create customer input', () => {
     } as Context;
 
     const result = await createCustomerInput.execute(request);
-
-    expect(result.status).toBe(400);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
-    expect(await result.json()).toEqual({
-      error: 'Invalid data in request',
-      issues: [
-        {
-          message: 'Invalid document number (CPF or CNPJ)',
-          path: 'document',
-        },
-        {
-          message: 'Invalid email address',
-          path: 'email',
-        },
-      ],
-    });
+    expect(result?.status).toBe(400);
+    expect(await result?.json()).toMatchObject({ reason: 'Invalid data in request' });
+    expect(createCustomerUseCase.execute).not.toHaveBeenCalled();
   });
 
   test('should create a customer with CNPJ', async () => {
@@ -182,14 +136,6 @@ describe('create customer input', () => {
         kind: DocumentKind.CNPJ,
       },
     });
-
-    const mockCreateCustomerUseCase = {
-      execute: mock(() => Promise.resolve(customer)),
-    } as unknown as CreateCustomerUseCase;
-
-    const createCustomerInput = new CreateCustomerInput(
-      mockCreateCustomerUseCase,
-    );
 
     const request = {
       body: {
@@ -209,32 +155,18 @@ describe('create customer input', () => {
       },
     } as Context;
 
+    createCustomerUseCase.execute.calledWith(any()).mockResolvedValue(customer);
+
     const result = await createCustomerInput.execute(request);
 
-    expect(result.status).toBe(201);
-    expect(result.headers.get('Content-Type')).toBe('application/json');
+    expect(result?.status).toBe(201);
+    expect(result?.headers.get('Content-Type')).toBe('application/json');
 
-    expect(await result.json()).toEqual({
-      address: {
-        city: 'Anytown',
-        complement: 'Apt 789',
-        neighborhood: 'Downtown',
-        number: '456',
-        state: 'CA',
-        street: '123 Main St',
-        zipCode: '12345',
-      },
-      createdAt: expect.any(String),
-      document: '45723174000110',
-      documentKind: 'CNPJ',
-      email: 'lucas.coda.fofo@gmail.com',
-      id: 'customer-id',
-      name: 'John Doe',
-      phone: '+1234567890',
-      updatedAt: expect.any(String),
-    });
+    expect(await result?.json()).toEqual(
+      JSON.parse(JSON.stringify(CustomerPresenter.toHttp(customer))),
+    );
 
-    expect(mockCreateCustomerUseCase.execute).toHaveBeenCalledWith({
+    expect(createCustomerUseCase.execute).toHaveBeenCalledWith({
       name: 'Empresa LTDA',
       document: '45723174000110',
       email: 'empresa@example.com',

@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    command: bun --hot run src/api/server.ts
     ports:
       - '3000:3000'
     volumes:
