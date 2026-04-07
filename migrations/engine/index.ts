@@ -1,9 +1,9 @@
-import { createMigrationTable } from './createMigrationTable';
-import { existsMigrationTable } from './existsMigrationTable';
-import { readDatabaseMigrations, readLocalMigrations } from './readMigrations';
-import { runPendingMigrations } from './runPendingMigrations';
+import { createMigrationTable } from './create-migration-table';
+import { existsMigrationTable } from './exists-migration-table';
+import { readDatabaseMigrations, readLocalMigrations } from './read-migrations';
+import { runPendingMigrations } from './run-pending';
 
-const execute = async () => {
+(async () => {
   const migrationTableExists = await existsMigrationTable();
 
   if (!migrationTableExists) await createMigrationTable();
@@ -33,6 +33,4 @@ const execute = async () => {
   }
 
   console.log('Migrations runned successfuly');
-};
-
-execute();
+})();

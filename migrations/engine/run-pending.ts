@@ -7,7 +7,7 @@ export const runPendingMigrations = async (
     const migrationsInOrder = migrations.sort(
       (migrationA, migrationB) => +migrationA.version - +migrationB.version,
     );
-    
+
     for (const migration of migrationsInOrder) {
       const fileNameWithoutExtension = `${migration.version}_${migration.name}`;
       await sql.file(`./migrations/${fileNameWithoutExtension}.sql`);
