@@ -5,7 +5,7 @@
   "module": "index.ts",
   "scripts": {
     "dev": "docker compose up",
-    "start": "bun run src/api/server.ts",
+    "start": "bun --hot run src/api/server.ts",
     "start:with-migrations": "bun run migration && bun run start",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
