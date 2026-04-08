@@ -3,16 +3,26 @@ import { existsMigrationTable } from './exists-migration-table';
 import { readDatabaseMigrations, readLocalMigrations } from './read-migrations';
 import { runPendingMigrations } from './run-pending';
 
-(async () => {
+type Migration = { version: string; name: string };
+
+const migrationKey = (migration: Migration) =>
+  `${migration.version}_${migration.name}`;
+
+export const runMigrations = async () => {
   const migrationTableExists = await existsMigrationTable();
 
   if (!migrationTableExists) await createMigrationTable();
 
-  const localMigrations = await readLocalMigrations();
-  const dbMigrations = await readDatabaseMigrations();
+  const [localMigrations, dbMigrations] = await Promise.all([
+    readLocalMigrations(),
+    readDatabaseMigrations(),
+  ]);
+
+  const localMigrationKeys = new Set(localMigrations.map(migrationKey));
+  const dbMigrationKeys = new Set(dbMigrations.map(migrationKey));
 
   const localMigrationsMissing = dbMigrations.filter(
-    (dbMigration) => !localMigrations.includes(dbMigration),
+    (dbMigration) => !localMigrationKeys.has(migrationKey(dbMigration)),
   );
 
   if (localMigrationsMissing.length !== 0)
@@ -21,7 +31,7 @@ import { runPendingMigrations } from './run-pending';
     );
 
   const dbMigrationsMissing = localMigrations.filter(
-    (localMigration) => !dbMigrations.includes(localMigration),
+    (localMigration) => !dbMigrationKeys.has(migrationKey(localMigration)),
   );
 
   if (dbMigrationsMissing.length !== 0) {
@@ -33,4 +43,8 @@ import { runPendingMigrations } from './run-pending';
   }
 
   console.log('Migrations runned successfuly');
-})();
+};
+
+if (import.meta.main) {
+  await runMigrations();
+}
