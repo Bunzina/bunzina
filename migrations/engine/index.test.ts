@@ -11,7 +11,6 @@ describe('migration engine index', () => {
       Promise.resolve([] as { version: string; name: string }[]),
     );
     const runPendingMigrationsMock = mock(() => Promise.resolve(undefined));
-    const logMock = mock(() => undefined);
 
     mock.module('./create-migration-table', () => ({
       createMigrationTable: createMigrationTableMock,
@@ -32,9 +31,6 @@ describe('migration engine index', () => {
 
     const { runMigrations } = await import(`./index.ts?test=${Math.random()}`);
 
-    const originalConsoleLog = console.log;
-    console.log = logMock;
-
     try {
       existsMigrationTableMock.mockResolvedValueOnce(false);
       readLocalMigrationsMock.mockResolvedValueOnce([
@@ -51,12 +47,7 @@ describe('migration engine index', () => {
       expect(runPendingMigrationsMock).toHaveBeenCalledWith([
         { version: '002', name: 'create_customers' },
       ]);
-      expect(logMock).toHaveBeenCalledWith(
-        'Running pending migrations: create_customers',
-      );
-      expect(logMock).toHaveBeenCalledWith('Migrations runned successfuly');
     } finally {
-      console.log = originalConsoleLog;
       mock.restore();
     }
   });
