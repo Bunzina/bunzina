@@ -42,7 +42,7 @@ export const runMigrations = async () => {
     await runPendingMigrations(dbMigrationsMissing);
   }
 
-  console.log('Migrations runned successfuly');
+  console.log('Migrations ran successfully');
 };
 
 if (import.meta.main) {
