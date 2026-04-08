@@ -3,7 +3,7 @@ import { Email } from '@/domain/core/value-objects/email';
 import { Phone } from '@/domain/core/value-objects/phone';
 import type { Customer } from '@/domain/customer/entities/customer';
 import type { CustomerRepository } from '@/domain/customer/repositories/customer-repository';
-import { NotFoundError } from '@lucas-pmelo/lambda-handlers';
+import { NotFoundError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 interface AddressInput {
@@ -28,7 +28,9 @@ export class UpdateCustomerUseCase {
   constructor(private customerRepository: CustomerRepository) {}
 
   async execute(input: Input): Promise<Customer> {
-    const customer = await this.customerRepository.findByDocumentNumber(input.documentNumber);
+    const customer = await this.customerRepository.findByDocumentNumber(
+      input.documentNumber,
+    );
 
     if (!customer) {
       const message = 'Customer not found';

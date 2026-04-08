@@ -4,7 +4,7 @@ import { Email } from '@/domain/core/value-objects/email';
 import { Phone } from '@/domain/core/value-objects/phone';
 import { Customer } from '@/domain/customer/entities/customer';
 import type { CustomerRepository } from '@/domain/customer/repositories/customer-repository';
-import { ConflictError } from '@lucas-pmelo/lambda-handlers';
+import { ConflictError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 interface AddressInput {
@@ -29,7 +29,8 @@ export class CreateCustomerUseCase {
   constructor(private customerRepository: CustomerRepository) {}
 
   async execute(input: Input): Promise<Customer> {
-    const persistedCustomer = await this.customerRepository.findByDocumentNumber(input.document);
+    const persistedCustomer =
+      await this.customerRepository.findByDocumentNumber(input.document);
 
     if (persistedCustomer) {
       const message = 'Customer already exists';
