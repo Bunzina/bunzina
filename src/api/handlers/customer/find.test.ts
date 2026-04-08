@@ -35,7 +35,7 @@ describe('findCustomerHandler', () => {
           created_at: new Date(),
           updated_at: new Date(),
         },
-      ] as any),
+      ] as unknown[]),
     );
 
     const ctx = {
