@@ -21,13 +21,13 @@ export const runMigrations = async () => {
   const localMigrationKeys = new Set(localMigrations.map(migrationKey));
   const dbMigrationKeys = new Set(dbMigrations.map(migrationKey));
 
-  const localMigrationsMissing = dbMigrations.filter(
+  const dbMigrationsMissingLocally = dbMigrations.filter(
     (dbMigration) => !localMigrationKeys.has(migrationKey(dbMigration)),
   );
 
-  if (localMigrationsMissing.length !== 0)
+  if (dbMigrationsMissingLocally.length !== 0)
     throw new Error(
-      `Local Migration missing. Consider creating or deleting on database migrations system:\nMigrations Missing: ${localMigrationsMissing.map((localMigrationMissing) => localMigrationMissing.name)}`,
+      `Database migrations missing locally. Consider creating or deleting on database migrations system:\nMigrations Missing: ${dbMigrationsMissingLocally.map((dbMigrationMissingLocally) => dbMigrationMissingLocally.name)}`,
     );
 
   const dbMigrationsMissing = localMigrations.filter(
