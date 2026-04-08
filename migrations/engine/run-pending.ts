@@ -4,7 +4,7 @@ export const runPendingMigrations = async (
   migrations: { name: string; version: string }[],
 ) => {
   await db.transaction(async (sql) => {
-    const migrationsInOrder = migrations.sort(
+    const migrationsInOrder = [...migrations].sort(
       (migrationA, migrationB) => +migrationA.version - +migrationB.version,
     );
 
