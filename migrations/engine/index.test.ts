@@ -1,6 +1,10 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { describe, expect, mock, test, afterEach } from 'bun:test';
 
 describe('migration engine index', () => {
+  afterEach(() => {
+    mock.restore();
+  });
+
   test('should create migration table and run pending migrations', async () => {
     const createMigrationTableMock = mock(() => Promise.resolve(undefined));
     const existsMigrationTableMock = mock(() => Promise.resolve(true));
@@ -31,25 +35,21 @@ describe('migration engine index', () => {
 
     const { runMigrations } = await import(`./index.ts?test=${Math.random()}`);
 
-    try {
-      existsMigrationTableMock.mockResolvedValueOnce(false);
-      readLocalMigrationsMock.mockResolvedValueOnce([
-        { version: '001', name: 'create_schema_and_enums' },
-        { version: '002', name: 'create_customers' },
-      ]);
-      readDatabaseMigrationsMock.mockResolvedValueOnce([
-        { version: '001', name: 'create_schema_and_enums' },
-      ]);
+    existsMigrationTableMock.mockResolvedValueOnce(false);
+    readLocalMigrationsMock.mockResolvedValueOnce([
+      { version: '001', name: 'create_schema_and_enums' },
+      { version: '002', name: 'create_customers' },
+    ]);
+    readDatabaseMigrationsMock.mockResolvedValueOnce([
+      { version: '001', name: 'create_schema_and_enums' },
+    ]);
 
-      await runMigrations();
+    await runMigrations();
 
-      expect(createMigrationTableMock).toHaveBeenCalledTimes(1);
-      expect(runPendingMigrationsMock).toHaveBeenCalledWith([
-        { version: '002', name: 'create_customers' },
-      ]);
-    } finally {
-      mock.restore();
-    }
+    expect(createMigrationTableMock).toHaveBeenCalledTimes(1);
+    expect(runPendingMigrationsMock).toHaveBeenCalledWith([
+      { version: '002', name: 'create_customers' },
+    ]);
   });
 
   test('should throw error when local migrations is missing', async () => {
@@ -82,21 +82,17 @@ describe('migration engine index', () => {
 
     const { runMigrations } = await import(`./index.ts?test=${Math.random()}`);
 
-    try {
-      existsMigrationTableMock.mockResolvedValueOnce(false);
-      readLocalMigrationsMock.mockResolvedValueOnce([
-        { version: '002', name: 'create_customers' },
-      ]);
-      readDatabaseMigrationsMock.mockResolvedValueOnce([
-        { version: '001', name: 'create_schema_and_enums' },
-      ]);
+    existsMigrationTableMock.mockResolvedValueOnce(false);
+    readLocalMigrationsMock.mockResolvedValueOnce([
+      { version: '002', name: 'create_customers' },
+    ]);
+    readDatabaseMigrationsMock.mockResolvedValueOnce([
+      { version: '001', name: 'create_schema_and_enums' },
+    ]);
 
-      await expect(runMigrations()).rejects.toThrow();
+    await expect(runMigrations()).rejects.toThrow();
 
-      expect(createMigrationTableMock).toHaveBeenCalledTimes(1);
-      expect(runPendingMigrationsMock).not.toHaveBeenCalled();
-    } finally {
-      mock.restore();
-    }
+    expect(createMigrationTableMock).toHaveBeenCalledTimes(1);
+    expect(runPendingMigrationsMock).not.toHaveBeenCalled();
   });
 });

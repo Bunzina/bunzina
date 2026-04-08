@@ -1,6 +1,10 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { describe, expect, mock, test, afterEach } from 'bun:test';
 
 describe('existsMigrationTable', () => {
+  afterEach(() => {
+    mock.restore();
+  });
+
   test('should return true when migrations table exists', async () => {
     const dbMock = mock(() => Promise.resolve([] as { to_regclass: string }[]));
     mock.module('./config/database', () => ({
@@ -17,8 +21,6 @@ describe('existsMigrationTable', () => {
 
     expect(result).toBe(true);
     expect(dbMock).toHaveBeenCalledTimes(1);
-
-    mock.restore();
   });
 
   test('should return false when migrations table does not exist', async () => {
@@ -37,7 +39,5 @@ describe('existsMigrationTable', () => {
 
     expect(result).toBe(false);
     expect(dbMock).toHaveBeenCalledTimes(1);
-
-    mock.restore();
   });
 });

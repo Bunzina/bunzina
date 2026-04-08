@@ -1,12 +1,15 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { describe, expect, mock, test, afterEach } from 'bun:test';
 
 describe('runPendingMigrations', () => {
+  afterEach(() => {
+    mock.restore();
+  });
+
   test('should run pending migrations in ascending version order', async () => {
     const sqlFileMock = mock(() => Promise.resolve(undefined));
     const sqlInsertMock = mock(() => Promise.resolve(undefined));
 
-    const sqlMock = ((..._args: unknown[]) =>
-      sqlInsertMock()) as unknown as {
+    const sqlMock = ((..._args: unknown[]) => sqlInsertMock()) as unknown as {
       (..._args: unknown[]): Promise<unknown>;
       file: (..._args: unknown[]) => Promise<unknown>;
     };
@@ -49,7 +52,5 @@ describe('runPendingMigrations', () => {
       './migrations/003_create_vehicles.sql',
     );
     expect(sqlInsertMock).toHaveBeenCalledTimes(3);
-
-    mock.restore();
   });
 });

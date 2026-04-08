@@ -1,6 +1,9 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { describe, expect, mock, test, afterEach } from 'bun:test';
 
 describe('createMigrationTable', () => {
+  afterEach(() => {
+    mock.restore();
+  });
   test('should create migrations table using init script', async () => {
     const dbFile = mock(() => Promise.resolve(undefined));
 
@@ -19,7 +22,5 @@ describe('createMigrationTable', () => {
     expect(dbFile).toHaveBeenCalledWith(
       './migrations/engine/queries/init_system_migration.sql',
     );
-
-    mock.restore();
   });
 });

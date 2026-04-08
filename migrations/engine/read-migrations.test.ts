@@ -1,6 +1,10 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { describe, expect, mock, test, afterEach } from 'bun:test';
 
 describe('readLocalMigrations', () => {
+  afterEach(() => {
+    mock.restore();
+  });
+
   test('should read and normalize local migration files', async () => {
     const readdirMock = mock(() => Promise.resolve([] as string[]));
 
@@ -24,8 +28,6 @@ describe('readLocalMigrations', () => {
       { version: '001', name: 'create_schema_and_enums' },
       { version: '002', name: 'create_customers' },
     ]);
-
-    mock.restore();
   });
 
   test('should throw error when file name misses pattern', async () => {
@@ -46,12 +48,14 @@ describe('readLocalMigrations', () => {
     ]);
 
     await expect(readLocalMigrations()).rejects.toThrow();
-
-    mock.restore();
   });
 });
 
 describe('readDatabaseMigrations', () => {
+  afterEach(() => {
+    mock.restore();
+  });
+
   test('should map migration names from database records', async () => {
     const dbMock = mock(() => Promise.resolve([] as { name: string }[]));
 
@@ -75,7 +79,5 @@ describe('readDatabaseMigrations', () => {
       { version: '002', name: 'create_customers' },
     ]);
     expect(dbMock).toHaveBeenCalledTimes(1);
-
-    mock.restore();
   });
 });
