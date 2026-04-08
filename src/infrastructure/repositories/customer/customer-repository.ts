@@ -49,4 +49,32 @@ export class CustomerRepository implements ICustomerRepository {
 
     return customer;
   }
+
+  async update(customer: Customer): Promise<Customer> {
+    const recordToSave = CustomerMapper.toDatabase(customer);
+
+    logger.debug({
+      message: 'Updating customer in database',
+      data: recordToSave,
+    });
+
+    const { id: _id, document, created_at: _created_at, ...fieldsToUpdate } = recordToSave;
+
+    await this.client`
+      UPDATE bunzina.customers SET ${this.client(fieldsToUpdate)} WHERE document = ${document}
+    `;
+
+    return customer;
+  }
+
+  async delete(documentNumber: string): Promise<void> {
+    logger.debug({
+      message: 'Deleting customer from database',
+      data: { documentNumber },
+    });
+
+    await this.client`
+      DELETE FROM bunzina.customers WHERE document = ${documentNumber}
+    `;
+  }
 }

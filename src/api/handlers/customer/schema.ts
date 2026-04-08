@@ -98,3 +98,51 @@ export const findCustomerSchema = {
     }),
   }),
 };
+
+export const updateCustomerSchema = {
+  detail: {
+    tags: ['Customers'],
+    summary: 'Atualizar cliente',
+    description: 'Atualiza os dados de um cliente existente pelo número do documento.',
+    responses: {
+      '200': { description: 'Cliente atualizado com sucesso' },
+      '400': { description: 'Dados inválidos' },
+      '404': { description: 'Cliente não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    documentNumber: t.String({
+      description: 'CPF ou CNPJ sem formatação',
+      examples: ['12345678909'],
+    }),
+  }),
+  body: t.Object({
+    name: t.String({ examples: ['João Silva'] }),
+    email: t.String({ format: 'email', examples: ['joao@email.com'] }),
+    phone: t.String({
+      description: 'Telefone com código do país',
+      examples: ['+5511999999999'],
+    }),
+    address: addressSchema,
+  }),
+};
+
+export const deleteCustomerSchema = {
+  detail: {
+    tags: ['Customers'],
+    summary: 'Excluir cliente',
+    description: 'Exclui um cliente pelo número do documento (CPF ou CNPJ).',
+    responses: {
+      '204': { description: 'Cliente excluído com sucesso' },
+      '404': { description: 'Cliente não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    documentNumber: t.String({
+      description: 'CPF ou CNPJ sem formatação',
+      examples: ['12345678909'],
+    }),
+  }),
+};

@@ -1,8 +1,15 @@
 import swagger from '@elysiajs/swagger';
 import Elysia from 'elysia';
 import { createCustomerHandler } from './handlers/customer/create';
+import { deleteCustomerHandler } from './handlers/customer/delete';
 import { findCustomerHandler } from './handlers/customer/find';
-import { createCustomerSchema, findCustomerSchema } from './handlers/customer/schema';
+import {
+  createCustomerSchema,
+  deleteCustomerSchema,
+  findCustomerSchema,
+  updateCustomerSchema,
+} from './handlers/customer/schema';
+import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
 
 const app = new Elysia();
@@ -32,8 +39,18 @@ app.get(
   async (context) => findCustomerHandler(context),
   findCustomerSchema,
 );
+app.put(
+  '/customers/:documentNumber',
+  async (context) => updateCustomerHandler(context),
+  updateCustomerSchema,
+);
+app.delete(
+  '/customers/:documentNumber',
+  async (context) => deleteCustomerHandler(context),
+  deleteCustomerSchema,
+);
 
-app.get('/', ({ redirect }) => redirect('/swagger'));
+app.get('/', ({ redirect }) => redirect('/swagger'), { detail: { hide: true } });
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000/swagger');
