@@ -27,7 +27,9 @@ export const runMigrations = async () => {
 
   if (localMigrationsMissing.length !== 0)
     throw new Error(
-      `Local Migration missing. Consider creating or deleting on database migrations system:\nMigrations Missing: ${localMigrationsMissing.map((localMigrationMissing) => localMigrationMissing.name)}`,
+      `The database contains migrations whose corresponding local .sql files are missing (they may have been deleted or renamed):\n${localMigrationsMissing
+        .map(migrationKey)
+        .join('\n')}`,
     );
 
   const dbMigrationsMissing = localMigrations.filter(
