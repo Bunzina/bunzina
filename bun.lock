@@ -6,7 +6,7 @@
       "name": "bunzina",
       "dependencies": {
         "@elysiajs/swagger": "^1.3.1",
-        "@lucas-pmelo/handlers": "^0.0.4",
+        "@lucas-pmelo/handlers": "^0.0.5",
         "@lucas-pmelo/logger": "^0.0.6",
         "@lucas-pmelo/validator": "^0.0.3",
         "dayjs": "^1.11.20",
@@ -34,7 +34,7 @@
 
     "@hapi/topo": ["@hapi/topo@5.1.0", "", { "dependencies": { "@hapi/hoek": "^9.0.0" } }, "sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg=="],
 
-    "@lucas-pmelo/handlers": ["@lucas-pmelo/handlers@0.0.4", "", { "dependencies": { "@lucas-pmelo/logger": "0.0.6", "express": "^4.21.0" } }, "sha512-aTQHuGuQLJpkrNL0GfDmgsHo9wAG6L53OfzzTnTsi1C3ylOA5cIegCAFZnqbLV83dWD1qLfSfsHEuwpoCAkABg=="],
+    "@lucas-pmelo/handlers": ["@lucas-pmelo/handlers@0.0.5", "", { "dependencies": { "@lucas-pmelo/logger": "0.0.6", "express": "^4.21.0" } }, "sha512-dkUPtm0RNoTAq8rtXCAlIKEJlSmCcOQq4ia5LrJQ90vfCN3emUSRsInLrEpMUjqj2MeHpGyH72vOd/vVLnxw8Q=="],
 
     "@lucas-pmelo/logger": ["@lucas-pmelo/logger@0.0.6", "", { "dependencies": { "pino": "^9.3.2" } }, "sha512-9rite3x3+Dq8y08CmRLR26HSzAIZ/Q3w6E8utupAWOXSCrjqtqgI3Ef+dop0hFJqq+fLA4xIdofbO/Up9QMrEg=="],
 

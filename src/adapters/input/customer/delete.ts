@@ -1,9 +1,9 @@
 import type { DeleteCustomerUseCase } from '@/application/use-cases/customer/delete';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/lambda-handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
 import { deleteCustomerSchema } from './validations/delete-customer-schema';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class DeleteCustomerInput {
   constructor(private deleteCustomerUseCase: DeleteCustomerUseCase) {}
@@ -16,7 +16,9 @@ export class DeleteCustomerInput {
       data: { documentNumber },
     });
 
-    const { errors } = validateSchemaZod(deleteCustomerSchema, { documentNumber });
+    const { errors } = validateSchemaZod(deleteCustomerSchema, {
+      documentNumber,
+    });
 
     if (errors?.length) {
       logger.warn({

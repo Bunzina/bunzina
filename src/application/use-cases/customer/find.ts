@@ -1,6 +1,6 @@
 import type { Customer } from '@/domain/customer/entities/customer';
 import type { CustomerRepository } from '@/domain/customer/repositories/customer-repository';
-import { NotFoundError } from '@lucas-pmelo/lambda-handlers';
+import { NotFoundError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 interface Input {
@@ -11,7 +11,8 @@ export class FindCustomerUseCase {
   constructor(private customerRepository: CustomerRepository) {}
 
   async execute({ documentNumber }: Input): Promise<Customer> {
-    const customer = await this.customerRepository.findByDocumentNumber(documentNumber);
+    const customer =
+      await this.customerRepository.findByDocumentNumber(documentNumber);
 
     if (!customer) {
       const message = 'Customer not found';

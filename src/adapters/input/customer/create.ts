@@ -1,10 +1,10 @@
 import { CustomerPresenter } from '@/adapters/output/customer/customer-presenter';
 import type { CreateCustomerUseCase } from '@/application/use-cases/customer/create';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/lambda-handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
 import { createCustomerSchema } from './validations/create-customer-schema';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class CreateCustomerInput {
   constructor(private createCustomerUseCase: CreateCustomerUseCase) {}
