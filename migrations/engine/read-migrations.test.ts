@@ -27,6 +27,28 @@ describe('readLocalMigrations', () => {
 
     mock.restore();
   });
+
+  test('should throw error when file name misses pattern', async () => {
+    const readdirMock = mock(() => Promise.resolve([] as string[]));
+
+    mock.module('node:fs/promises', () => ({
+      readdir: readdirMock,
+    }));
+
+    const { readLocalMigrations } = await import(
+      `./read-migrations.ts?test=${Math.random()}`
+    );
+
+    readdirMock.mockResolvedValueOnce([
+      '001-create_schema_and_enums.sql',
+      'README.md',
+      '002_create_customers.sql',
+    ]);
+
+    await expect(readLocalMigrations()).rejects.toThrow();
+
+    mock.restore();
+  });
 });
 
 describe('readDatabaseMigrations', () => {

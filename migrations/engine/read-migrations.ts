@@ -1,19 +1,25 @@
 import { readdir } from 'node:fs/promises';
 import { db } from './config/database';
 
+const MIGRATIONS_FILE_PATTERN = /^(\d{3})_(.+)\.sql$/;
+
 export const readLocalMigrations = async () => {
   const files = await readdir('./migrations');
 
   const localMigrations = files
     .filter((file) => file.endsWith('.sql'))
     .map((file) => {
-      const fileNameWithoutExtension = file.split('.')[0];
+      const match = file.match(MIGRATIONS_FILE_PATTERN);
 
-      if (!fileNameWithoutExtension) return null;
+      if (!match) {
+        throw new Error(
+          `Invalid migration filename "${file}". Expected format: NNN_name.sql`,
+        );
+      }
 
       return {
-        version: fileNameWithoutExtension.slice(0, 3),
-        name: fileNameWithoutExtension.slice(4),
+        version: match[1]!,
+        name: match[2]!,
       };
     });
 
