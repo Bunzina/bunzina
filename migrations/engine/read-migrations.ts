@@ -29,7 +29,7 @@ export const readLocalMigrations = async () => {
 export const readDatabaseMigrations = async () => {
   const migrations = await db<{ name: string }[]>`
     SELECT m.name FROM public.migrations m
-    ORDER BY m.runned_at
+    ORDER BY m.run_at
   `;
 
   return removeNullValues(
