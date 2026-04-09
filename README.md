@@ -171,6 +171,56 @@ bun fmt:check
 
 ---
 
+## Qualidade e segurança de codigo (Semgrep OSS)
+
+O projeto usa **Semgrep OSS** no CI para analise estatica de seguranca e qualidade em codigo TypeScript e migrations SQL.
+
+- Objetivo: identificar riscos cedo em PRs com feedback acionavel
+- Escopo atual: apenas Semgrep OSS (sem Trivy nesta fase)
+- Politica atual: **advisory** (alerta, sem bloquear merge)
+- Execucao no CI: workflow dedicado de PR em `.github/workflows/security-pr-scan.yml`
+- Implementacao no CI: padrao oficial Semgrep com container no nivel do job (`container.image: semgrep/semgrep`)
+- Qualidade basica em PR: workflow dedicado em `.github/workflows/lint-format-pr.yml`
+
+### Como interpretar os alertas
+
+Cada achado do Semgrep deve ser lido pelos campos principais:
+
+- Severidade: impacto potencial (foco inicial em HIGH/CRITICAL)
+- Regra: qual padrao inseguro/ruim foi detectado
+- Arquivo e linha: local exato para correcao
+- Mensagem de remediacao: sugestao inicial de ajuste
+
+### Fluxo de triagem
+
+1. Verifique os achados no resultado do workflow e na aba Security do GitHub (quando SARIF for publicado).
+2. Classifique cada achado em: corrigir agora, falso-positivo, ou risco aceito temporariamente.
+3. Para falso-positivo, registre justificativa tecnica no PR e ajuste de regra quando necessario.
+4. Para risco real, priorize correcoes de alta/critica e abra tarefa para os demais.
+
+### Execucao local (opcional)
+
+Se o Semgrep estiver instalado localmente:
+
+```bash
+# install through pip
+python3 -m pip install semgrep
+
+# if you get the following error "error: externally-managed-environment",
+# see semgrep.dev/docs/kb/semgrep-appsec-platform/error-externally-managed-environment
+
+# confirm installation succeeded by printing the currently installed version
+semgrep --version
+
+semgrep scan \
+  --config auto \
+  src migrations
+```
+
+Para o planejamento e as decisoes adotadas, consulte o documento [docs/code-quality-and-security-plan.md](docs/code-quality-and-security-plan.md).
+
+---
+
 ## Endpoints
 
 | Método | Rota         | Descrição          |
