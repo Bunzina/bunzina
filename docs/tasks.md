@@ -90,7 +90,7 @@ Estrutura sugerida:
 
 ## Clientes
 
-- [ ] CRUD de clientes
+- [x] CRUD de clientes
 
 ## Veículos
 
