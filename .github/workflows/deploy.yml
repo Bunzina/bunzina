@@ -190,14 +190,27 @@ jobs:
         env:
           IMAGE_URI: ${{ steps.build-image.outputs.image }}
         run: |
-          aws lambda update-function-code \
-            --function-name $LAMBDA_FUNCTION_NAME \
-            --image-uri $IMAGE_URI \
-            --region $AWS_REGION
+          if aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME --region $AWS_REGION > /dev/null 2>&1; then
+            aws lambda update-function-code \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --image-uri $IMAGE_URI \
+              --region $AWS_REGION
 
-          aws lambda wait function-updated \
-            --function-name $LAMBDA_FUNCTION_NAME \
-            --region $AWS_REGION
+            aws lambda wait function-updated \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --region $AWS_REGION
+          else
+            aws lambda create-function \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --package-type Image \
+              --code ImageUri=$IMAGE_URI \
+              --role ${{ secrets.LAMBDA_EXECUTION_ROLE_ARN }} \
+              --region $AWS_REGION
+
+            aws lambda wait function-active \
+              --function-name $LAMBDA_FUNCTION_NAME \
+              --region $AWS_REGION
+          fi
 
       - name: Update Lambda environment variables
         run: |
