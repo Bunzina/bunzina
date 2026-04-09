@@ -1,3 +1,4 @@
+import { DocumentKind } from '@/domain/core/types/document-kind';
 import { makeCustomer } from '@/test/factories/make-customer';
 import { describe, expect, test } from 'bun:test';
 import { CustomerMapper } from './customer-mapper';
@@ -41,7 +42,7 @@ describe('customer mapper', () => {
       address_zip_code: '12345',
       created_at: new Date('2026-03-10'),
       document: '12345678900',
-      document_kind: 'CPF',
+      document_kind: DocumentKind.CPF,
       email: 'email@email.com',
       id: 'customer-id',
       name: 'John Doe',
@@ -49,7 +50,7 @@ describe('customer mapper', () => {
       updated_at: new Date('2026-03-10'),
     };
 
-    const result = CustomerMapper.toDomain(record as any);
+    const result = CustomerMapper.toDomain(record);
 
     expect(result).toMatchObject({
       address: {
