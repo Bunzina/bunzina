@@ -20,10 +20,13 @@ function isValidCPF(cpf: string): boolean {
     return rest === 10 ? 0 : rest;
   };
 
-  const digit1 = calcDigit(cpf.slice(0, 9), 10);
-  const digit2 = calcDigit(cpf.slice(0, 10), 11);
+  const firstDigit = calcDigit(cpf.slice(0, 9), 10);
+  const secondDigit = calcDigit(cpf.slice(0, 10), 11);
 
-  return digit1 === Number(cpf.charAt(9)) && digit2 === Number(cpf.charAt(10));
+  return (
+    firstDigit === Number(cpf.charAt(9)) &&
+    secondDigit === Number(cpf.charAt(10))
+  );
 }
 
 function isValidCNPJ(cnpj: string): boolean {
@@ -50,10 +53,13 @@ function isValidCNPJ(cnpj: string): boolean {
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const weights2 = [6, ...weights1];
 
-  const digit1 = calcDigit(cnpj.slice(0, 12), weights1);
-  const digit2 = calcDigit(cnpj.slice(0, 13), weights2);
+  const firstDigit = calcDigit(cnpj.slice(0, 12), weights1);
+  const secondDigit = calcDigit(cnpj.slice(0, 13), weights2);
 
-  return digit1 === Number(cnpj.charAt(12)) && digit2 === Number(cnpj.charAt(13));
+  return (
+    firstDigit === Number(cnpj.charAt(12)) &&
+    secondDigit === Number(cnpj.charAt(13))
+  );
 }
 
 export const documentValidation = z
