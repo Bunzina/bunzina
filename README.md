@@ -171,53 +171,34 @@ bun fmt:check
 
 ---
 
-## Qualidade e segurança de codigo (Semgrep OSS)
+## Segurança de código (CodeQL)
 
-O projeto usa **Semgrep OSS** no CI para analise estatica de seguranca e qualidade em codigo TypeScript e migrations SQL.
+As análises de segurança são feitas com **GitHub CodeQL** (Code scanning), usando a integração nativa do GitHub para detectar vulnerabilidades e padrões inseguros no código.
 
-- Objetivo: identificar riscos cedo em PRs com feedback acionavel
-- Escopo atual: apenas Semgrep OSS (sem Trivy nesta fase)
-- Politica atual: **advisory** (alerta, sem bloquear merge)
-- Execucao no CI: workflow dedicado de PR em `.github/workflows/security-pr-scan.yml`
-- Implementacao no CI: padrao oficial Semgrep com container no nivel do job (`container.image: semgrep/semgrep`)
-- Qualidade basica em PR: workflow dedicado em `.github/workflows/lint-format-pr.yml`
+- Objetivo: identificar riscos de segurança cedo no ciclo de desenvolvimento
+- Escopo: análise estática de segurança no código versionado no repositório
+- Fluxo de qualidade em PR: validações de lint e formatação no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml)
 
-### Como interpretar os alertas
+### Onde consultar os alertas
 
-Cada achado do Semgrep deve ser lido pelos campos principais:
+1. Abra a aba Security do repositório no GitHub.
+2. Entre em Code scanning alerts.
+3. Filtre por severidade, branch e estado para priorizar correções.
 
-- Severidade: impacto potencial (foco inicial em HIGH/CRITICAL)
-- Regra: qual padrao inseguro/ruim foi detectado
-- Arquivo e linha: local exato para correcao
-- Mensagem de remediacao: sugestao inicial de ajuste
+### Como interpretar um alerta do CodeQL
 
-### Fluxo de triagem
+- Regra: qual padrão inseguro foi detectado
+- Severidade: impacto potencial do problema
+- Localização: arquivo e linha afetados
+- Data flow: caminho de origem até o ponto vulnerável (quando disponível)
+- Recomendação: orientação sugerida para correção
 
-1. Verifique os achados no resultado do workflow e na aba Security do GitHub (quando SARIF for publicado).
-2. Classifique cada achado em: corrigir agora, falso-positivo, ou risco aceito temporariamente.
-3. Para falso-positivo, registre justificativa tecnica no PR e ajuste de regra quando necessario.
-4. Para risco real, priorize correcoes de alta/critica e abra tarefa para os demais.
+### Fluxo de triagem recomendado
 
-### Execucao local (opcional)
-
-Se o Semgrep estiver instalado localmente:
-
-```bash
-# install through pip
-python3 -m pip install semgrep
-
-# if you get the following error "error: externally-managed-environment",
-# see semgrep.dev/docs/kb/semgrep-appsec-platform/error-externally-managed-environment
-
-# confirm installation succeeded by printing the currently installed version
-semgrep --version
-
-semgrep scan \
-  --config auto \
-  src migrations
-```
-
-Para o planejamento e as decisoes adotadas, consulte o documento [docs/code-quality-and-security-plan.md](docs/code-quality-and-security-plan.md).
+1. Validar se o alerta é vulnerabilidade real ou falso-positivo.
+2. Corrigir imediatamente alertas de maior severidade.
+3. Quando necessário, registrar justificativa técnica no PR para risco aceito temporariamente.
+4. Reavaliar alertas abertos periodicamente para reduzir backlog de segurança.
 
 ---
 
