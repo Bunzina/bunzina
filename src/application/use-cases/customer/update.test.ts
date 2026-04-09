@@ -61,8 +61,12 @@ describe('update customer use case', () => {
       },
     };
 
-    await expect(updateCustomerUseCase.execute(input)).rejects.toThrow('Customer not found');
-    expect(customerRepository.findByDocumentNumber).toHaveBeenCalledWith('99999999999');
+    await expect(updateCustomerUseCase.execute(input)).rejects.toThrow(
+      'Customer not found',
+    );
+    expect(customerRepository.findByDocumentNumber).toHaveBeenCalledWith(
+      '99999999999',
+    );
     expect(customerRepository.update).not.toHaveBeenCalled();
   });
 });

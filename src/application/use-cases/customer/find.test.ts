@@ -27,7 +27,9 @@ describe('find customer use case', () => {
     const result = await findCustomerUseCase.execute(input);
 
     expect(result).toEqual(mockCustomer);
-    expect(customerRepository.findByDocumentNumber).toHaveBeenCalledWith(input.documentNumber);
+    expect(customerRepository.findByDocumentNumber).toHaveBeenCalledWith(
+      input.documentNumber,
+    );
   });
 
   test('should throw NotFoundError if customer is not found', async () => {
@@ -35,7 +37,11 @@ describe('find customer use case', () => {
       documentNumber: 'non-existent-document',
     };
 
-    await expect(findCustomerUseCase.execute(input)).rejects.toThrow('Customer not found');
-    expect(customerRepository.findByDocumentNumber).toHaveBeenCalledWith(input.documentNumber);
+    await expect(findCustomerUseCase.execute(input)).rejects.toThrow(
+      'Customer not found',
+    );
+    expect(customerRepository.findByDocumentNumber).toHaveBeenCalledWith(
+      input.documentNumber,
+    );
   });
 });

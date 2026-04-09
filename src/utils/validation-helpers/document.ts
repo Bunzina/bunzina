@@ -53,7 +53,9 @@ function isValidCNPJ(cnpj: string): boolean {
   const digit1 = calcDigit(cnpj.slice(0, 12), weights1);
   const digit2 = calcDigit(cnpj.slice(0, 13), weights2);
 
-  return digit1 === Number(cnpj.charAt(12)) && digit2 === Number(cnpj.charAt(13));
+  return (
+    digit1 === Number(cnpj.charAt(12)) && digit2 === Number(cnpj.charAt(13))
+  );
 }
 
 export const documentValidation = z

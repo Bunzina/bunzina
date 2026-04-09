@@ -33,7 +33,11 @@ app.get(
 );
 
 // Customer routes
-app.post('/customers', async (context) => createCustomerHandler(context), createCustomerSchema);
+app.post(
+  '/customers',
+  async (context) => createCustomerHandler(context),
+  createCustomerSchema,
+);
 app.get(
   '/customers/:documentNumber',
   async (context) => findCustomerHandler(context),
@@ -50,7 +54,9 @@ app.delete(
   deleteCustomerSchema,
 );
 
-app.get('/', ({ redirect }) => redirect('/swagger'), { detail: { hide: true } });
+app.get('/', ({ redirect }) => redirect('/swagger'), {
+  detail: { hide: true },
+});
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000/swagger');

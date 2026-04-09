@@ -32,7 +32,9 @@ export const determineNextStatus = (
     currentStatus as unknown as string
   ];
 
-  const candidate = fromMap ? fromMap[receivedStatus as unknown as string] : undefined;
+  const candidate = fromMap
+    ? fromMap[receivedStatus as unknown as string]
+    : undefined;
 
   return (candidate as unknown as ServiceOrderStatus) ?? currentStatus;
 };
