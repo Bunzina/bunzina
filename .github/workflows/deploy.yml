@@ -95,9 +95,11 @@ jobs:
               --region $AWS_REGION
           fi
 
-      - name: Update Lambda environment variables
+      - name: Update Lambda configuration
         run: |
           aws lambda update-function-configuration \
             --function-name $LAMBDA_FUNCTION_NAME \
+            --timeout 30 \
+            --memory-size 512 \
             --environment "Variables={APP_ENV=prod,PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}}" \
             --region $AWS_REGION
