@@ -15,7 +15,9 @@ const setDependencies = () => {
   createCustomerInput = new CreateCustomerInput(createCustomerUseCase);
 };
 
-export const createCustomerHandler = async (context: Context): Promise<Response | undefined> => {
+export const createCustomerHandler = async (
+  context: Context,
+): Promise<Response | undefined> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',

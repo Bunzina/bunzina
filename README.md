@@ -171,6 +171,37 @@ bun fmt:check
 
 ---
 
+## Segurança de código (CodeQL)
+
+As análises de segurança são feitas com **GitHub CodeQL** (Code scanning), usando a integração nativa do GitHub para detectar vulnerabilidades e padrões inseguros no código.
+
+- Objetivo: identificar riscos de segurança cedo no ciclo de desenvolvimento
+- Escopo: análise estática de segurança no código versionado no repositório
+- Fluxo de qualidade em PR: validações de lint e formatação no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml)
+
+### Onde consultar os alertas
+
+1. Abra a aba Security do repositório no GitHub.
+2. Entre em Code scanning alerts.
+3. Filtre por severidade, branch e estado para priorizar correções.
+
+### Como interpretar um alerta do CodeQL
+
+- Regra: qual padrão inseguro foi detectado
+- Severidade: impacto potencial do problema
+- Localização: arquivo e linha afetados
+- Data flow: caminho de origem até o ponto vulnerável (quando disponível)
+- Recomendação: orientação sugerida para correção
+
+### Fluxo de triagem recomendado
+
+1. Validar se o alerta é vulnerabilidade real ou falso-positivo.
+2. Corrigir imediatamente alertas de maior severidade.
+3. Quando necessário, registrar justificativa técnica no PR para risco aceito temporariamente.
+4. Reavaliar alertas abertos periodicamente para reduzir backlog de segurança.
+
+---
+
 ## Endpoints
 
 | Método | Rota         | Descrição          |

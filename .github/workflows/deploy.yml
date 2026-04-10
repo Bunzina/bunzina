@@ -14,6 +14,9 @@ env:
   ECR_REPOSITORY: bunzina
   LAMBDA_FUNCTION_NAME: bunzina
 
+permissions:
+  contents: read
+
 jobs:
   detect-migration-changes:
     name: Detect Migration Changes

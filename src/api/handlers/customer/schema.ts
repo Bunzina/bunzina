@@ -103,7 +103,8 @@ export const updateCustomerSchema = {
   detail: {
     tags: ['Customers'],
     summary: 'Atualizar cliente',
-    description: 'Atualiza os dados de um cliente existente pelo número do documento.',
+    description:
+      'Atualiza os dados de um cliente existente pelo número do documento.',
     responses: {
       '200': { description: 'Cliente atualizado com sucesso' },
       '400': { description: 'Dados inválidos' },

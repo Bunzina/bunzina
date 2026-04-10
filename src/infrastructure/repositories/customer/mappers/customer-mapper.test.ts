@@ -1,6 +1,7 @@
 import { makeCustomer } from '@/test/factories/make-customer';
 import { describe, expect, test } from 'bun:test';
 import { CustomerMapper } from './customer-mapper';
+import type { CustomerDbSchema } from '../dtos/customer-db-schema';
 
 describe('customer mapper', () => {
   test('should map customer domain to database schema', async () => {
@@ -49,7 +50,7 @@ describe('customer mapper', () => {
       updated_at: new Date('2026-03-10'),
     };
 
-    const result = CustomerMapper.toDomain(record as any);
+    const result = CustomerMapper.toDomain(record as CustomerDbSchema);
 
     expect(result).toMatchObject({
       address: {

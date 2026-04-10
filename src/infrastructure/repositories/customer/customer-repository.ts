@@ -58,7 +58,12 @@ export class CustomerRepository implements ICustomerRepository {
       data: recordToSave,
     });
 
-    const { id: _id, document, created_at: _created_at, ...fieldsToUpdate } = recordToSave;
+    const {
+      id: _id,
+      document,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToSave;
 
     await this.client`
       UPDATE bunzina.customers SET ${this.client(fieldsToUpdate)} WHERE document = ${document}
