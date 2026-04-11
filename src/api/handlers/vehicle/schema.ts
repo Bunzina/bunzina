@@ -32,8 +32,8 @@ export const createVehicleSchema = {
     }),
     licensePlate: t.String({
       description:
-        'Placa do veículo (formato Mercosul: ABC1D23 ou antigo: ABC-1234)',
-      examples: ['ABC1D23'],
+        'Placa do veículo (formato Mercosul: ABC1D23 ou antigo sem hífen: ABC1234)',
+      examples: ['ABC1D23', 'ABC1234'],
     }),
     model: t.String({
       description: 'Modelo do veículo',
