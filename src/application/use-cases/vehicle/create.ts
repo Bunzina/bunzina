@@ -22,6 +22,8 @@ export class CreateVehicleUseCase {
   async execute(input: Input): Promise<Vehicle> {
     const { licensePlate: licensePlateInput, customerId } = input;
 
+    const licensePlate = new LicensePlate(licensePlateInput);
+
     const customer = await this.customerRepository.findById(customerId);
 
     if (!customer) {
@@ -38,7 +40,7 @@ export class CreateVehicleUseCase {
     }
 
     const persistedVehicle =
-      await this.vehicleRepository.findByLicensePlate(licensePlateInput);
+      await this.vehicleRepository.findByLicensePlate(licensePlate.value);
 
     if (persistedVehicle) {
       const message = 'Vehicle already exists';
@@ -46,14 +48,12 @@ export class CreateVehicleUseCase {
       logger.warn({
         message,
         data: {
-          licensePlate: licensePlateInput,
+          licensePlate: licensePlate.value,
         },
       });
 
       throw new ConflictError(message);
     }
-
-    const licensePlate = new LicensePlate(licensePlateInput);
 
     const vehicle = new Vehicle({
       ...input,

@@ -47,6 +47,10 @@ describe('create vehicle input', () => {
   });
 
   test('should throw an error if vehicle creation fails', async () => {
+    createVehicleUseCase.execute
+      .calledWith(any())
+      .mockRejectedValue(new Error('Unexpected error'));
+
     const request = {
       body: {
         customerId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
