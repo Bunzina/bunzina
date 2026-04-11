@@ -3,7 +3,10 @@ import type { CreateVehicleUseCase } from '@/application/use-cases/vehicle/creat
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { createVehicleSchema, type CreateVehicleInput as CreateVehicleInputType } from './validations/create-vehicle-schema';
+import {
+  createVehicleSchema,
+  type CreateVehicleInput as CreateVehicleInputType,
+} from './validations/create-vehicle-schema';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class CreateVehicleInput {
@@ -32,7 +35,9 @@ export class CreateVehicleInput {
     }
 
     return withErrorHandler(async () => {
-      const vehicle = await this.createVehicleUseCase.execute(data as CreateVehicleInputType);
+      const vehicle = await this.createVehicleUseCase.execute(
+        data as CreateVehicleInputType,
+      );
 
       logger.info({
         message: 'Vehicle created successfully',

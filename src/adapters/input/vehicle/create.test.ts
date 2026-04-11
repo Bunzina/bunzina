@@ -78,7 +78,9 @@ describe('create vehicle input', () => {
     const result = await createVehicleInput.execute(request);
 
     expect(result?.status).toBe(400);
-    expect(await result?.json()).toMatchObject({ reason: 'Invalid data in request' });
+    expect(await result?.json()).toMatchObject({
+      reason: 'Invalid data in request',
+    });
     expect(createVehicleUseCase.execute).not.toHaveBeenCalled();
   });
 });

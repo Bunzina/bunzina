@@ -49,9 +49,9 @@ describe('customer repository', () => {
   });
 
   test('should find a customer by id', async () => {
-    const mockClient = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+    const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
-    >;
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
 
     const customerRecord = {
       id: 'customer-123',
@@ -84,9 +84,9 @@ describe('customer repository', () => {
   });
 
   test('should return null if customer not found by id', async () => {
-    const mockClient = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+    const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
-    >;
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
     const repository = new CustomerRepository(mockClient as unknown as SQL);

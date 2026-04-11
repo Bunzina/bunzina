@@ -14,7 +14,10 @@ let createVehicleInput: CreateVehicleInput;
 const setDependencies = () => {
   vehicleRepository = new VehicleRepository(dbInstance);
   customerRepository = new CustomerRepository(dbInstance);
-  createVehicleUseCase = new CreateVehicleUseCase(vehicleRepository, customerRepository);
+  createVehicleUseCase = new CreateVehicleUseCase(
+    vehicleRepository,
+    customerRepository,
+  );
   createVehicleInput = new CreateVehicleInput(createVehicleUseCase);
 };
 
