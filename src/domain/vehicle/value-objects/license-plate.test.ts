@@ -20,10 +20,14 @@ describe('license plate value object', () => {
   });
 
   test('should throw an error when creating a license plate with dash', () => {
-    expect(() => new LicensePlate('ABC-1234')).toThrow('Invalid license plate format');
+    expect(() => new LicensePlate('ABC-1234')).toThrow(
+      'Invalid license plate format',
+    );
   });
 
   test('should throw an error when creating a license plate with invalid format', () => {
-    expect(() => new LicensePlate('invalid-plate')).toThrow('Invalid license plate format');
+    expect(() => new LicensePlate('invalid-plate')).toThrow(
+      'Invalid license plate format',
+    );
   });
 });
