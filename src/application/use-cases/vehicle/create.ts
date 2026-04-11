@@ -39,8 +39,9 @@ export class CreateVehicleUseCase {
       throw new NotFoundError(message);
     }
 
-    const persistedVehicle =
-      await this.vehicleRepository.findByLicensePlate(licensePlate.value);
+    const persistedVehicle = await this.vehicleRepository.findByLicensePlate(
+      licensePlate.value,
+    );
 
     if (persistedVehicle) {
       const message = 'Vehicle already exists';
