@@ -62,6 +62,7 @@ export const createCustomerSchema = {
     responses: {
       '201': { description: 'Cliente criado com sucesso' },
       '400': { description: 'Dados inválidos (CPF/CNPJ ou e-mail inválido)' },
+      '409': { description: 'Cliente já existe' },
       '500': { description: 'Erro interno do servidor' },
     },
   },
@@ -103,7 +104,8 @@ export const updateCustomerSchema = {
   detail: {
     tags: ['Customers'],
     summary: 'Atualizar cliente',
-    description: 'Atualiza os dados de um cliente existente pelo número do documento.',
+    description:
+      'Atualiza os dados de um cliente existente pelo número do documento.',
     responses: {
       '200': { description: 'Cliente atualizado com sucesso' },
       '400': { description: 'Dados inválidos' },

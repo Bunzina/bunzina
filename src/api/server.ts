@@ -10,6 +10,8 @@ import {
   updateCustomerSchema,
 } from './handlers/customer/schema';
 import { updateCustomerHandler } from './handlers/customer/update';
+import { createVehicleHandler } from './handlers/vehicle/create';
+import { createVehicleSchema } from './handlers/vehicle/schema';
 import { healthSchema } from './handlers/health/schema';
 
 const app = new Elysia();
@@ -33,7 +35,11 @@ app.get(
 );
 
 // Customer routes
-app.post('/customers', async (context) => createCustomerHandler(context), createCustomerSchema);
+app.post(
+  '/customers',
+  async (context) => createCustomerHandler(context),
+  createCustomerSchema,
+);
 app.get(
   '/customers/:documentNumber',
   async (context) => findCustomerHandler(context),
@@ -50,7 +56,16 @@ app.delete(
   deleteCustomerSchema,
 );
 
-app.get('/', ({ redirect }) => redirect('/swagger'), { detail: { hide: true } });
+// Vehicle routes
+app.post(
+  '/vehicles',
+  async (context) => createVehicleHandler(context),
+  createVehicleSchema,
+);
+
+app.get('/', ({ redirect }) => redirect('/swagger'), {
+  detail: { hide: true },
+});
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000/swagger');
