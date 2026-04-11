@@ -6,9 +6,9 @@ import { CustomerRepository } from './customer-repository';
 
 describe('customer repository', () => {
   test('should create a customer and return it', async () => {
-    const mockClient = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+    const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
-    >;
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
     const repository = new CustomerRepository(mockClient as unknown as SQL);
@@ -21,9 +21,9 @@ describe('customer repository', () => {
   });
 
   test('should update a customer and return it', async () => {
-    const mockClient = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+    const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
-    >;
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
     const repository = new CustomerRepository(mockClient as unknown as SQL);
@@ -36,9 +36,9 @@ describe('customer repository', () => {
   });
 
   test('should delete a customer by document number', async () => {
-    const mockClient = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+    const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
-    >;
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
     const repository = new CustomerRepository(mockClient as unknown as SQL);

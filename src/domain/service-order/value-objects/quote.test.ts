@@ -13,14 +13,14 @@ describe('quote value object', () => {
   });
 
   test('should throw an error if services total is negative', () => {
-    expect(() => new Quote({ servicesTotal: -100, autoPartsTotal: 50 })).toThrow(
-      'Services total cannot be negative',
-    );
+    expect(
+      () => new Quote({ servicesTotal: -100, autoPartsTotal: 50 }),
+    ).toThrow('Services total cannot be negative');
   });
 
   test('should throw an error if auto parts total is negative', () => {
-    expect(() => new Quote({ servicesTotal: 100, autoPartsTotal: -50 })).toThrow(
-      'Auto parts total cannot be negative',
-    );
+    expect(
+      () => new Quote({ servicesTotal: 100, autoPartsTotal: -50 }),
+    ).toThrow('Auto parts total cannot be negative');
   });
 });

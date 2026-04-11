@@ -9,7 +9,11 @@ describe('email value object', () => {
 
   test('should throw an error for an invalid email address', () => {
     expect(() => new Email('invalid-email')).toThrow('Invalid email address');
-    expect(() => new Email('another-invalid-email@')).toThrow('Invalid email address');
-    expect(() => new Email('@no-local-part.com')).toThrow('Invalid email address');
+    expect(() => new Email('another-invalid-email@')).toThrow(
+      'Invalid email address',
+    );
+    expect(() => new Email('@no-local-part.com')).toThrow(
+      'Invalid email address',
+    );
   });
 });

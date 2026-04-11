@@ -16,7 +16,9 @@ describe('delete customer input', () => {
   test('should delete a customer', async () => {
     const customer = makeCustomer();
 
-    deleteCustomerUseCase.execute.calledWith(any()).mockResolvedValue(undefined);
+    deleteCustomerUseCase.execute
+      .calledWith(any())
+      .mockResolvedValue(undefined);
 
     const request = {
       params: { documentNumber: customer.document.value },
@@ -54,7 +56,9 @@ describe('delete customer input', () => {
     const result = await deleteCustomerInput.execute(request);
 
     expect(result.status).toBe(400);
-    expect(await result.json()).toMatchObject({ reason: 'Invalid data in request' });
+    expect(await result.json()).toMatchObject({
+      reason: 'Invalid data in request',
+    });
     expect(deleteCustomerUseCase.execute).not.toHaveBeenCalled();
   });
 });
