@@ -62,6 +62,7 @@ export const createCustomerSchema = {
     responses: {
       '201': { description: 'Cliente criado com sucesso' },
       '400': { description: 'Dados inválidos (CPF/CNPJ ou e-mail inválido)' },
+      '409': { description: 'Cliente já existe' },
       '500': { description: 'Erro interno do servidor' },
     },
   },

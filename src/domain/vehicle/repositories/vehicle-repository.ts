@@ -1,0 +1,6 @@
+import type { Vehicle } from '../entities/vehicle';
+
+export interface VehicleRepository {
+  create(vehicle: Vehicle): Promise<Vehicle>;
+  findByLicensePlate(licensePlate: string): Promise<Vehicle | null>;
+}

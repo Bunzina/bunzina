@@ -10,6 +10,8 @@ import {
   updateCustomerSchema,
 } from './handlers/customer/schema';
 import { updateCustomerHandler } from './handlers/customer/update';
+import { createVehicleHandler } from './handlers/vehicle/create';
+import { createVehicleSchema } from './handlers/vehicle/schema';
 import { healthSchema } from './handlers/health/schema';
 
 const app = new Elysia();
@@ -52,6 +54,13 @@ app.delete(
   '/customers/:documentNumber',
   async (context) => deleteCustomerHandler(context),
   deleteCustomerSchema,
+);
+
+// Vehicle routes
+app.post(
+  '/vehicles',
+  async (context) => createVehicleHandler(context),
+  createVehicleSchema,
 );
 
 app.get('/', ({ redirect }) => redirect('/swagger'), {
