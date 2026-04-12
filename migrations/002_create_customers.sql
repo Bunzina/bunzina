@@ -1,4 +1,4 @@
-CREATE TABLE bunzina.customers (
+CREATE TABLE IF NOT EXISTS bunzina.customers (
   id                   UUID        PRIMARY KEY,
   name                 VARCHAR(255) NOT NULL,
   document             VARCHAR(14)  NOT NULL UNIQUE,
