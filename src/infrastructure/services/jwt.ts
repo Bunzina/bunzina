@@ -25,6 +25,40 @@ async function getKey(secret: string): Promise<CryptoKey> {
   );
 }
 
+function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+function isFiniteInteger(value: unknown): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    Number.isInteger(value)
+  );
+}
+
+function parseJwtPayload(payload: unknown): JwtPayload {
+  if (typeof payload !== 'object' || payload === null) {
+    throw new Error('Invalid token payload');
+  }
+
+  const { sub, email, role, iat, exp } = payload as Record<string, unknown>;
+
+  if (
+    !isString(sub) ||
+    !isString(email) ||
+    !isString(role) ||
+    !isFiniteInteger(iat) ||
+    !isFiniteInteger(exp) ||
+    exp < 0 ||
+    iat < 0
+  ) {
+    throw new Error('Invalid token payload');
+  }
+
+  return { sub, email, role, iat, exp };
+}
+
 export interface JwtPayload {
   sub: string;
   email: string;
@@ -81,7 +115,7 @@ export async function verifyJwt(token: string): Promise<JwtPayload> {
 
   if (!valid) throw new Error('Invalid token signature');
 
-  const payload: JwtPayload = JSON.parse(base64urlDecode(payloadB64));
+  const payload = parseJwtPayload(JSON.parse(base64urlDecode(payloadB64)));
 
   if (payload.exp < Math.floor(Date.now() / 1000)) {
     throw new Error('Token expired');

@@ -36,6 +36,158 @@ describe('jwt service', () => {
     await expect(verifyJwt(tampered)).rejects.toThrow();
   });
 
+  test('should reject a token with invalid payload values', async () => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const payload = btoa(
+      JSON.stringify({
+        sub: '123',
+        email: 'test@test.com',
+        role: 'ADMIN',
+        iat: 1000,
+        exp: 'not-a-number',
+      }),
+    )
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const encoder = new TextEncoder();
+    const data = `${header}.${payload}`;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode('bunzina-jwt-secret'),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+    const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const invalidPayloadToken = `${data}.${sigB64}`;
+
+    await expect(verifyJwt(invalidPayloadToken)).rejects.toThrow(
+      'Invalid token payload',
+    );
+  });
+
+  test('should reject a token with null payload', async () => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const payload = btoa('null')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const encoder = new TextEncoder();
+    const data = `${header}.${payload}`;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode('bunzina-jwt-secret'),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+    const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const nullPayloadToken = `${data}.${sigB64}`;
+
+    await expect(verifyJwt(nullPayloadToken)).rejects.toThrow(
+      'Invalid token payload',
+    );
+  });
+
+  test('should reject a token with non-integer timestamps', async () => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const payload = btoa(
+      JSON.stringify({
+        sub: '123',
+        email: 'test@test.com',
+        role: 'ADMIN',
+        iat: 1000.5,
+        exp: 2000,
+      }),
+    )
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const encoder = new TextEncoder();
+    const data = `${header}.${payload}`;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode('bunzina-jwt-secret'),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+    const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const nonIntegerToken = `${data}.${sigB64}`;
+
+    await expect(verifyJwt(nonIntegerToken)).rejects.toThrow(
+      'Invalid token payload',
+    );
+  });
+
+  test('should reject a token with negative exp', async () => {
+    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+    const payload = btoa(
+      JSON.stringify({
+        sub: '123',
+        email: 'test@test.com',
+        role: 'ADMIN',
+        iat: 1000,
+        exp: -1,
+      }),
+    )
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const encoder = new TextEncoder();
+    const data = `${header}.${payload}`;
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode('bunzina-jwt-secret'),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign'],
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+    const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig)))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const negativeExpToken = `${data}.${sigB64}`;
+
+    await expect(verifyJwt(negativeExpToken)).rejects.toThrow(
+      'Invalid token payload',
+    );
+  });
+
   test('should reject an expired token', async () => {
     const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))
       .replace(/\+/g, '-')
