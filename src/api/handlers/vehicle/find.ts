@@ -15,7 +15,9 @@ const setDependencies = () => {
   findVehicleByIdInput = new FindVehicleByIdInput(findVehicleByIdUseCase);
 };
 
-export const findVehicleHandler = async (context: Context): Promise<Response> => {
+export const findVehicleHandler = async (
+  context: Context,
+): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',
