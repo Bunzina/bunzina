@@ -26,13 +26,6 @@ export class FindVehicleByIdUseCase {
       throw new NotFoundError(message);
     }
 
-    logger.debug({
-      message: 'Vehicle found',
-      data: {
-        vehicle,
-      },
-    });
-
     return vehicle;
   }
 }
