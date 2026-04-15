@@ -82,7 +82,9 @@ describe('vehicle repository', () => {
 
     const repository = new VehicleRepository(mockClient as unknown as SQL);
 
-    const result = await repository.findById('550e8400-e29b-41d4-a716-446655440001');
+    const result = await repository.findById(
+      '550e8400-e29b-41d4-a716-446655440001',
+    );
 
     expect(result).not.toBeNull();
     expect(result?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
@@ -98,7 +100,9 @@ describe('vehicle repository', () => {
 
     const repository = new VehicleRepository(mockClient as unknown as SQL);
 
-    const result = await repository.findById('550e8400-e29b-41d4-a716-446655440099');
+    const result = await repository.findById(
+      '550e8400-e29b-41d4-a716-446655440099',
+    );
 
     expect(result).toBeNull();
     expect(mockClient).toHaveBeenCalled();
