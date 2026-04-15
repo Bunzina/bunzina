@@ -36,6 +36,10 @@ describe('find vehicle by id use case', () => {
       id: 'non-existent-id',
     };
 
+    vehicleRepository.findById
+      .calledWith(input.id)
+      .mockResolvedValue(null);
+
     await expect(findVehicleByIdUseCase.execute(input)).rejects.toThrow(
       'Vehicle not found',
     );

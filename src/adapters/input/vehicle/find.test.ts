@@ -42,6 +42,10 @@ describe('find vehicle by id input', () => {
       params: { id: vehicleId },
     } as unknown as Context;
 
+    findVehicleByIdUseCase.execute
+      .calledWith(any())
+      .mockRejectedValue(new Error('Use case error'));
+
     const result = await findVehicleByIdInput.execute(request);
 
     expect(result.status).toBe(500);
