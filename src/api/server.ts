@@ -28,7 +28,8 @@ import { createVehicleSchema } from './handlers/vehicle/schema';
 import { authMiddleware } from './middleware/auth';
 import { findVehicleHandler } from './handlers/vehicle/find';
 import { findVehicleSchema } from './handlers/vehicle/find-schema';
-import { healthSchema } from './handlers/health/schema';
+import { updateVehicleHandler } from './handlers/vehicle/update';
+import { updateVehicleSchema } from './handlers/vehicle/schema';
 
 const app = new Elysia();
 
@@ -175,6 +176,11 @@ app.get(
   '/vehicles/:id',
   async (context) => findVehicleHandler(context),
   findVehicleSchema,
+);
+app.put(
+  '/vehicles/:id',
+  async (context) => updateVehicleHandler(context),
+  updateVehicleSchema,
 );
 
 app.get('/', ({ redirect }) => redirect('/swagger'), {

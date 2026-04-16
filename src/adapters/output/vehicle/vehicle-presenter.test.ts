@@ -15,8 +15,8 @@ describe('vehicle presenter', () => {
       model: 'Model S',
       brand: 'Tesla',
       year: 2020,
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
     });
   });
 
@@ -39,8 +39,8 @@ describe('vehicle presenter', () => {
       model: 'Model 3',
       brand: 'Tesla',
       year: 2023,
-      createdAt: '2024-01-01',
-      updatedAt: '2024-01-01',
+      createdAt: customDate,
+      updatedAt: customDate,
     });
   });
 });
