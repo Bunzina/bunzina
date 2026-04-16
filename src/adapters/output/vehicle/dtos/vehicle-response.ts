@@ -5,6 +5,6 @@ export interface VehicleResponse {
   model: string;
   brand: string;
   year: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
