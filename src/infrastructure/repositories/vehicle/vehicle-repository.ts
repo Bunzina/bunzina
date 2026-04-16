@@ -76,4 +76,25 @@ export class VehicleRepository implements IVehicleRepository {
 
     return vehicle;
   }
+
+  async update(vehicle: Vehicle): Promise<Vehicle> {
+    const recordToSave = VehicleMapper.toDatabase(vehicle);
+
+    logger.debug({
+      message: 'Updating vehicle in database',
+      data: recordToSave,
+    });
+
+    const {
+      id: _id,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToSave;
+
+    await this.client`
+      UPDATE bunzina.vehicles SET ${this.client(fieldsToUpdate)} WHERE id = ${vehicle.id}
+    `;
+
+    return vehicle;
+  }
 }
