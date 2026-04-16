@@ -35,6 +35,33 @@ export class VehicleRepository implements IVehicleRepository {
     return vehicle;
   }
 
+  async findById(id: string): Promise<Vehicle | null> {
+    const [record] = await this.client<VehicleDbSchema[]>`
+      SELECT * FROM bunzina.vehicles WHERE id = ${id} LIMIT 1
+    `;
+
+    if (!record) {
+      logger.debug({
+        message: 'No vehicle found with id',
+        data: { id },
+      });
+
+      return null;
+    }
+
+    const vehicle = VehicleMapper.toDomain(record);
+
+    logger.debug({
+      message: 'Vehicle found with id',
+      data: {
+        id,
+        vehicle,
+      },
+    });
+
+    return vehicle;
+  }
+
   async create(vehicle: Vehicle): Promise<Vehicle> {
     const recordToSave = VehicleMapper.toDatabase(vehicle);
 
