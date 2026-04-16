@@ -35,6 +35,33 @@ export class CustomerRepository implements ICustomerRepository {
     return customer;
   }
 
+  async findById(id: string): Promise<Customer | null> {
+    const [record] = await this.client<CustomerDbSchema[]>`
+      SELECT * FROM bunzina.customers WHERE id = ${id} LIMIT 1
+    `;
+
+    if (!record) {
+      logger.debug({
+        message: 'No customer found with id',
+        data: { id },
+      });
+
+      return null;
+    }
+
+    const customer = CustomerMapper.toDomain(record);
+
+    logger.debug({
+      message: 'Customer found with id',
+      data: {
+        id,
+        customer,
+      },
+    });
+
+    return customer;
+  }
+
   async create(customer: Customer): Promise<Customer> {
     const recordToSave = CustomerMapper.toDatabase(customer);
 
@@ -58,7 +85,12 @@ export class CustomerRepository implements ICustomerRepository {
       data: recordToSave,
     });
 
-    const { id: _id, document, created_at: _created_at, ...fieldsToUpdate } = recordToSave;
+    const {
+      id: _id,
+      document,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToSave;
 
     await this.client`
       UPDATE bunzina.customers SET ${this.client(fieldsToUpdate)} WHERE document = ${document}

@@ -16,7 +16,7 @@ describe('vehicle entity', () => {
       id: expect.any(String),
       customerId: 'customer-123',
       licensePlate: {
-        value: 'ABC-1234',
+        value: 'ABC1D23',
       },
       model: 'Impreza',
       brand: 'Subaru',

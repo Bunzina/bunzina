@@ -106,7 +106,9 @@ describe('update customer input', () => {
     const result = await updateCustomerInput.execute(request);
 
     expect(result.status).toBe(400);
-    expect(await result.json()).toMatchObject({ reason: 'Invalid data in request' });
+    expect(await result.json()).toMatchObject({
+      reason: 'Invalid data in request',
+    });
     expect(updateCustomerUseCase.execute).not.toHaveBeenCalled();
   });
 });

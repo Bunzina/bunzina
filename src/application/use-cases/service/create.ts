@@ -19,9 +19,7 @@ export class CreateServiceUseCase {
 
     logger.debug({
       message: 'Creating service',
-      data: {
-        service,
-      },
+      data: service,
     });
 
     await this.serviceRepository.create(service);

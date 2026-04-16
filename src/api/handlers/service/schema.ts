@@ -1,25 +1,16 @@
-import { t } from 'elysia';
+import { createServiceSchema } from '@/adapters/input/service/validations/create-service-schema';
 
-export const createServiceSchema = {
+export const createServiceRouteSchema = {
   detail: {
     tags: ['Services'],
-    summary: 'Create a new service',
-    description: 'Creates a new service with the provided details.',
-    requestBody: {
-      'application/json': {
-        examples: {
-          name: 'string',
-          description: 'string',
-          price: 'number',
-          durationInMinutes: 'number',
-        },
-      },
+    summary: 'Criar serviço',
+    description: 'Cria um novo serviço com os dados fornecidos.',
+    responses: {
+      '201': { description: 'Serviço criado com sucesso' },
+      '400': { description: 'Dados inválidos' },
+      '401': { description: 'Token ausente ou inválido' },
+      '500': { description: 'Erro interno do servidor' },
     },
   },
-  body: t.Object({
-    name: t.String({ examples: ['Oil Change'] }),
-    description: t.String({ examples: ['Complete oil change service'] }),
-    price: t.Number({ examples: [50] }),
-    durationInMinutes: t.Number({ examples: [30] }),
-  }),
+  body: createServiceSchema,
 };

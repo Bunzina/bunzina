@@ -2,9 +2,9 @@ import { mockFn } from 'bun-mock-extended';
 import { beforeEach, describe, expect, mock, test, type Mock } from 'bun:test';
 import type { Context } from 'elysia';
 
-const mockDb = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<
+const mockDb = mockFn<
   (..._args: unknown[]) => Promise<unknown[]>
->;
+>() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
 mockDb.mockImplementation(() => Promise.resolve([]));
 mock.module('@/infrastructure/configs/database', () => ({ db: mockDb }));
 
@@ -66,6 +66,8 @@ describe('create customer handler', () => {
     const result = await createCustomerHandler(ctx);
 
     expect(result?.status).toBe(500);
-    expect(await result?.json()).toEqual({ error: 'Failed to create customer' });
+    expect(await result?.json()).toEqual({
+      error: 'Failed to create customer',
+    });
   });
 });

@@ -18,23 +18,23 @@
 
 ## Event Storming
 
-- [ ] Event Storming do fluxo **Criação da Ordem de Serviço**
-- [ ] Event Storming do fluxo **Acompanhamento da Ordem de Serviço**
-- [ ] Event Storming do fluxo **Gestão de peças e insumos**
+- [x] Event Storming do fluxo **Criação da Ordem de Serviço**
+- [x] Event Storming do fluxo **Acompanhamento da Ordem de Serviço**
+- [x] Event Storming do fluxo **Gestão de peças e insumos**
 
 ## Diagramas DDD
 
 - [ ] **Bounded Contexts**
 - [ ] **Context Map**
-- [ ] **Agregados**
-- [ ] **Entidades**
-- [ ] **Value Objects**
-- [ ] **Domain Events**
+- [x] **Agregados**
+- [x] **Entidades**
+- [x] **Value Objects**
+- [x] **Domain Events**
 - [ ] **Application Services**
 
 ## Linguagem Ubíqua
 
-- [ ] Definição da **Linguagem Ubíqua**
+- [x] Definição da **Linguagem Ubíqua**
 
 ---
 
@@ -118,8 +118,8 @@ Estrutura sugerida:
 
 # 🔐 6. Segurança
 
-- [ ] Implementação de **autenticação JWT**
-- [ ] Proteção das **APIs administrativas**
+- [x] Implementação de **autenticação JWT**
+- [x] Proteção das **APIs administrativas**
 - [x] Validação de **CPF/CNPJ**
 - [x] Validação de **placa de veículo**
 
@@ -164,8 +164,8 @@ Estrutura sugerida:
 
 # 🛡️ 11. Relatório de vulnerabilidades
 
-- [ ] Scan de segurança no código
-- [ ] Ferramenta utilizada documentada
+- [x] Scan de segurança no código
+- [x] Ferramenta utilizada documentada
 - [ ] Vulnerabilidades encontradas
 - [ ] Correções aplicadas ou justificativas
 
@@ -191,6 +191,6 @@ Deve conter:
 - [x] APIs funcionando
 - [x] Testes passando
 - [x] Cobertura ≥ **80%**
-- [ ] Documentação DDD pronta
+- [x] Documentação DDD pronta
 - [ ] Vídeo gravado
 - [ ] PDF final pronto

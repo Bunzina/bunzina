@@ -2,11 +2,13 @@ export class LicensePlate {
   value: string;
 
   constructor(value: string) {
-    if (!this.validateLicensePlate(value)) {
+    const formattedPlate = value.trim().toUpperCase();
+
+    if (!this.validateLicensePlate(formattedPlate)) {
       throw new Error('Invalid license plate format');
     }
 
-    this.value = value;
+    this.value = formattedPlate;
   }
 
   private validateLicensePlate(plate: string): boolean {
@@ -14,10 +16,12 @@ export class LicensePlate {
       return false;
     }
 
-    const formatedPlate = plate.trim().toUpperCase();
-    const oldRegex = /^[A-Z]{3}-\d{4}$/; // formato antigo: ABC-1234
+    const formattedPlate = plate.trim().toUpperCase();
+    const classicRegex = /^[A-Z]{3}\d{4}$/; // formato clássico sem traço: ABC1234
     const mercosulRegex = /^[A-Z]{3}\d[A-Z]\d{2}$/; // Mercosul: ABC1D23
 
-    return oldRegex.test(formatedPlate) || mercosulRegex.test(formatedPlate);
+    return (
+      classicRegex.test(formattedPlate) || mercosulRegex.test(formattedPlate)
+    );
   }
 }

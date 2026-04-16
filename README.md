@@ -84,7 +84,14 @@ Para desenvolvimento local o valor padrão já funciona com o Docker Compose:
 ```
 DATABASE_URL=postgres://bun:bun@localhost:5432/bunzina
 APP_ENV=dev
+JWT_SECRET=bunzina-jwt-secret
+JWT_EXPIRES_IN=3600
 ```
+
+| Variável | Descrição | Padrão |
+| --- | --- | --- |
+| `JWT_SECRET` | Chave secreta para assinar/verificar tokens JWT | `bunzina-jwt-secret` |
+| `JWT_EXPIRES_IN` | Tempo de expiração do token em segundos | `3600` (1 hora) |
 
 ---
 
@@ -171,9 +178,102 @@ bun fmt:check
 
 ---
 
+## Segurança de código (CodeQL)
+
+As análises de segurança são feitas com **GitHub CodeQL** (Code scanning), usando a integração nativa do GitHub para detectar vulnerabilidades e padrões inseguros no código.
+
+- Objetivo: identificar riscos de segurança cedo no ciclo de desenvolvimento
+- Escopo: análise estática de segurança no código versionado no repositório
+- Fluxo de qualidade em PR: validações de lint e formatação no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml)
+
+### Onde consultar os alertas
+
+1. Abra a aba Security do repositório no GitHub.
+2. Entre em Code scanning alerts.
+3. Filtre por severidade, branch e estado para priorizar correções.
+
+### Como interpretar um alerta do CodeQL
+
+- Regra: qual padrão inseguro foi detectado
+- Severidade: impacto potencial do problema
+- Localização: arquivo e linha afetados
+- Data flow: caminho de origem até o ponto vulnerável (quando disponível)
+- Recomendação: orientação sugerida para correção
+
+### Fluxo de triagem recomendado
+
+1. Validar se o alerta é vulnerabilidade real ou falso-positivo.
+2. Corrigir imediatamente alertas de maior severidade.
+3. Quando necessário, registrar justificativa técnica no PR para risco aceito temporariamente.
+4. Reavaliar alertas abertos periodicamente para reduzir backlog de segurança.
+
+---
+
 ## Endpoints
 
-| Método | Rota         | Descrição          |
-| ------ | ------------ | ------------------ |
-| GET    | `/health`    | Healthcheck da API |
-| POST   | `/customers` | Criar novo cliente |
+### Rotas públicas
+
+| Método | Rota           | Descrição          |
+| ------ | -------------- | ------------------ |
+| GET    | `/health`      | Healthcheck da API |
+| POST   | `/auth/login`  | Autenticação JWT   |
+
+### Rotas protegidas (requerem JWT)
+
+| Método | Rota                          | Descrição             |
+| ------ | ----------------------------- | --------------------- |
+| POST   | `/customers`                  | Criar novo cliente    |
+| GET    | `/customers/:documentNumber`  | Buscar cliente        |
+| PUT    | `/customers/:documentNumber`  | Atualizar cliente     |
+| DELETE | `/customers/:documentNumber`  | Excluir cliente       |
+| POST   | `/vehicles`                   | Criar novo veículo    |
+
+---
+
+## Autenticação JWT
+
+A API utiliza autenticação via **JSON Web Token (JWT)** com HMAC-SHA256 para proteger as rotas administrativas.
+
+### Como funciona
+
+1. O usuário faz login via `POST /auth/login` com email e senha
+2. A API valida as credenciais e retorna um token JWT
+3. O token deve ser enviado no header `Authorization` das requisições às rotas protegidas
+
+### Login
+
+```bash
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@bunzina.com", "password": "sua-senha"}'
+```
+
+Resposta:
+
+```json
+{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+```
+
+### Acessando rotas protegidas
+
+```bash
+curl http://localhost:3000/customers/12345678909 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Payload do token
+
+| Campo   | Descrição                          |
+| ------- | ---------------------------------- |
+| `sub`   | ID do usuário                      |
+| `email` | Email do usuário                   |
+| `role`  | Papel do usuário (ADMIN, MECHANIC) |
+| `iat`   | Timestamp de emissão               |
+| `exp`   | Timestamp de expiração             |
+
+### Respostas de erro
+
+| Status | Cenário                                      |
+| ------ | -------------------------------------------- |
+| 400    | Email ou senha com formato inválido          |
+| 401    | Credenciais inválidas ou token ausente/expirado |
