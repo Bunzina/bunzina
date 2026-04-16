@@ -102,7 +102,7 @@ describe('update vehicle use case', () => {
     expect(vehicleRepository.update).not.toHaveBeenCalled();
   });
 
-  test('should throw NotFoundError if license plate is already in use', async () => {
+  test('should throw ConflictError if license plate is already in use', async () => {
     const validUUId = '550e8400-e29b-41d4-a716-446655440000';
     const existingVehicle = makeVehicle({ id: validUUId });
     const otherVehicle = makeVehicle({

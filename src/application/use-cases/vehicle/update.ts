@@ -2,7 +2,7 @@ import { LicensePlate } from '@/domain/vehicle/value-objects/license-plate';
 import type { Vehicle } from '@/domain/vehicle/entities/vehicle';
 import type { VehicleRepository } from '@/domain/vehicle/repositories/vehicle-repository';
 import type { CustomerRepository } from '@/domain/customer/repositories/customer-repository';
-import { NotFoundError } from '@lucas-pmelo/handlers';
+import { NotFoundError, ConflictError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 interface Input {
@@ -68,7 +68,7 @@ export class UpdateVehicleUseCase {
           },
         });
 
-        throw new NotFoundError(message);
+        throw new ConflictError(message);
       }
     }
 

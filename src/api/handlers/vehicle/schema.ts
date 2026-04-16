@@ -72,6 +72,7 @@ export const updateVehicleSchema = {
       '200': { description: 'Veículo atualizado com sucesso' },
       '400': { description: 'Dados inválidos (placa ou UUID inválido)' },
       '404': { description: 'Veículo não encontrado' },
+      '409': { description: 'Veículo já existe' },
       '500': { description: 'Erro interno do servidor' },
     },
   },
