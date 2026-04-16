@@ -1,4 +1,4 @@
-CREATE TABLE bunzina.service_orders (
+CREATE TABLE IF NOT EXISTS bunzina.service_orders (
   id                   UUID                       PRIMARY KEY,
   customer_id          UUID                       NOT NULL REFERENCES bunzina.customers(id),
   vehicle_id           UUID                       NOT NULL REFERENCES bunzina.vehicles(id),
@@ -14,6 +14,6 @@ CREATE TABLE bunzina.service_orders (
   delivered_at         TIMESTAMPTZ
 );
 
-CREATE INDEX idx_service_orders_customer_id ON bunzina.service_orders(customer_id);
-CREATE INDEX idx_service_orders_vehicle_id  ON bunzina.service_orders(vehicle_id);
-CREATE INDEX idx_service_orders_status      ON bunzina.service_orders(status);
+CREATE INDEX IF NOT EXISTS idx_service_orders_customer_id ON bunzina.service_orders(customer_id);
+CREATE INDEX IF NOT EXISTS idx_service_orders_vehicle_id  ON bunzina.service_orders(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_service_orders_status      ON bunzina.service_orders(status);

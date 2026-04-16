@@ -118,8 +118,8 @@ Estrutura sugerida:
 
 # 🔐 6. Segurança
 
-- [ ] Implementação de **autenticação JWT**
-- [ ] Proteção das **APIs administrativas**
+- [x] Implementação de **autenticação JWT**
+- [x] Proteção das **APIs administrativas**
 - [x] Validação de **CPF/CNPJ**
 - [x] Validação de **placa de veículo**
 
