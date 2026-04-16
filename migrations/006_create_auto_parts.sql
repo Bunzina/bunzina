@@ -1,4 +1,4 @@
-CREATE TABLE bunzina.auto_parts (
+CREATE TABLE IF NOT EXISTS bunzina.auto_parts (
   id          UUID           PRIMARY KEY,
   name        VARCHAR(255)   NOT NULL,
   description TEXT           NOT NULL,

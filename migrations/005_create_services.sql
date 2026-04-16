@@ -1,4 +1,4 @@
-CREATE TABLE bunzina.services (
+CREATE TABLE IF NOT EXISTS bunzina.services (
   id                   UUID           PRIMARY KEY,
   name                 VARCHAR(255)   NOT NULL,
   description          TEXT           NOT NULL,
