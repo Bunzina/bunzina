@@ -97,4 +97,15 @@ export class VehicleRepository implements IVehicleRepository {
 
     return vehicle;
   }
+
+  async delete(id: string): Promise<void> {
+    logger.debug({
+      message: 'Deleting vehicle from database',
+      data: { id },
+    });
+
+    await this.client`
+      DELETE FROM bunzina.vehicles WHERE id = ${id}
+    `;
+  }
 }
