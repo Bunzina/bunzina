@@ -26,13 +26,12 @@ import { updateUserHandler } from './handlers/user/update';
 import { createVehicleHandler } from './handlers/vehicle/create';
 import { findVehicleHandler } from './handlers/vehicle/find';
 import { findVehicleSchema } from './handlers/vehicle/find-schema';
-<<<<<<< feature/integration-test
-import { createVehicleSchema } from './handlers/vehicle/schema';
-import { authMiddleware } from './middleware/auth';
-=======
+import {
+  createVehicleSchema,
+  updateVehicleSchema,
+} from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
-import { updateVehicleSchema } from './handlers/vehicle/schema';
->>>>>>> main
+import { authMiddleware } from './middleware/auth';
 
 export const app = new Elysia();
 
