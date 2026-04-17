@@ -17,7 +17,7 @@ const setDependencies = () => {
 
 export const createServiceHandler = async (
   context: Context,
-): Promise<Response | undefined> => {
+): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',

@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@elysiajs/openapi": "^1.4.14",
-    "@elysiajs/swagger": "^1.3.1",
     "@lucas-pmelo/handlers": "^0.0.5",
     "@lucas-pmelo/logger": "^0.0.6",
     "@lucas-pmelo/validator": "^0.0.3",
