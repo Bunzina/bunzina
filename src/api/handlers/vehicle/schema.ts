@@ -106,3 +106,23 @@ export const updateVehicleSchema = {
     }),
   }),
 };
+
+export const deleteVehicleSchema = {
+  detail: {
+    tags: ['Vehicles'],
+    summary: 'Deletar veículo',
+    description: 'Deleta um veículo existente pelo ID.',
+    responses: {
+      '204': { description: 'Veículo deletado com sucesso' },
+      '400': { description: 'ID inválido (UUID inválido)' },
+      '404': { description: 'Veículo não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID do veículo (UUID)',
+      examples: ['550e8400-e29b-41d4-a716-446655440000'],
+    }),
+  }),
+};

@@ -107,4 +107,18 @@ describe('vehicle repository', () => {
     expect(result).toBeNull();
     expect(mockClient).toHaveBeenCalled();
   });
+
+  test('should delete a vehicle by id', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    mockClient.mockResolvedValue([]);
+
+    const repository = new VehicleRepository(mockClient as unknown as SQL);
+    const id = '550e8400-e29b-41d4-a716-446655440001';
+
+    await repository.delete(id);
+
+    expect(mockClient).toHaveBeenCalled();
+  });
 });
