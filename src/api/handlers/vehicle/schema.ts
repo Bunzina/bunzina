@@ -28,6 +28,7 @@ export const createVehicleSchema = {
   body: t.Object({
     customerId: t.String({
       description: 'UUID do cliente',
+      format: 'uuid',
       examples: ['f47ac10b-58cc-4372-a567-0e02b2c3d479'],
     }),
     licensePlate: t.String({
@@ -79,12 +80,14 @@ export const updateVehicleSchema = {
   params: t.Object({
     id: t.String({
       description: 'ID do veículo (UUID)',
+      format: 'uuid',
       examples: ['550e8400-e29b-41d4-a716-446655440000'],
     }),
   }),
   body: t.Object({
     customerId: t.String({
       description: 'ID do cliente (UUID)',
+      format: 'uuid',
       examples: ['f47ac10b-58cc-4372-a567-0e02b2c3d479'],
     }),
     licensePlate: t.String({
@@ -122,6 +125,27 @@ export const deleteVehicleSchema = {
   params: t.Object({
     id: t.String({
       description: 'ID do veículo (UUID)',
+      format: 'uuid',
+      examples: ['550e8400-e29b-41d4-a716-446655440000'],
+    }),
+  }),
+};
+
+export const findVehicleSchema = {
+  detail: {
+    tags: ['Vehicles'],
+    summary: 'Buscar veículo',
+    description: 'Busca um veículo pelo ID.',
+    responses: {
+      '200': { description: 'Veículo encontrado' },
+      '404': { description: 'Veículo não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID do veículo (UUID)',
+      format: 'uuid',
       examples: ['550e8400-e29b-41d4-a716-446655440000'],
     }),
   }),

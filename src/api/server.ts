@@ -25,13 +25,15 @@ import {
 import { updateUserHandler } from './handlers/user/update';
 import { createVehicleHandler } from './handlers/vehicle/create';
 import { deleteVehicleHandler } from './handlers/vehicle/delete';
-import { createVehicleSchema } from './handlers/vehicle/schema';
 import { authMiddleware } from './middleware/auth';
 import { findVehicleHandler } from './handlers/vehicle/find';
-import { findVehicleSchema } from './handlers/vehicle/find-schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
-import { updateVehicleSchema } from './handlers/vehicle/schema';
-import { deleteVehicleSchema } from './handlers/vehicle/schema';
+import {
+  createVehicleSchema,
+  deleteVehicleSchema,
+  findVehicleSchema,
+  updateVehicleSchema,
+} from './handlers/vehicle/schema';
 
 const app = new Elysia();
 
@@ -153,6 +155,21 @@ app.guard(
       async (context) => createVehicleHandler(context),
       createVehicleSchema,
     );
+    app.get(
+      '/vehicles/:id',
+      async (context) => findVehicleHandler(context),
+      findVehicleSchema,
+    );
+    app.put(
+      '/vehicles/:id',
+      async (context) => updateVehicleHandler(context),
+      updateVehicleSchema,
+    );
+    app.delete(
+      '/vehicles/:id',
+      async (context) => deleteVehicleHandler(context),
+      deleteVehicleSchema,
+    );
 
     // User routes
     app.get(
@@ -173,21 +190,6 @@ app.guard(
 
     return app;
   },
-);
-app.get(
-  '/vehicles/:id',
-  async (context) => findVehicleHandler(context),
-  findVehicleSchema,
-);
-app.put(
-  '/vehicles/:id',
-  async (context) => updateVehicleHandler(context),
-  updateVehicleSchema,
-);
-app.delete(
-  '/vehicles/:id',
-  async (context) => deleteVehicleHandler(context),
-  deleteVehicleSchema,
 );
 
 app.get('/', ({ redirect }) => redirect('/swagger'), {
