@@ -13,7 +13,11 @@ import {
 import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
 import { createServiceHandler } from './handlers/service/create';
-import { createServiceRouteSchema } from './handlers/service/schema';
+import { findServiceHandler } from './handlers/service/find';
+import {
+  createServiceRouteSchema,
+  findServiceRouteSchema,
+} from './handlers/service/schema';
 import { createUserHandler } from './handlers/user/create';
 import { deleteUserHandler } from './handlers/user/delete';
 import { findUserHandler } from './handlers/user/find';
@@ -203,6 +207,11 @@ app.post(
   '/services',
   async (context) => createServiceHandler(context),
   createServiceRouteSchema,
+);
+app.get(
+  '/services/:id',
+  async (context) => findServiceHandler(context),
+  findServiceRouteSchema,
 );
 
 app.get('/', ({ redirect }) => redirect('/swagger'), {
