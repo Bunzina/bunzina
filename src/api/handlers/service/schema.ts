@@ -1,6 +1,7 @@
 import { createServiceSchema } from '@/adapters/input/service/validations/create-service-schema';
 import { deleteServiceSchema } from '@/adapters/input/service/validations/delete-service-schema';
 import { findServiceSchema } from '@/adapters/input/service/validations/find-service-schema';
+import { t } from 'elysia';
 
 export const createServiceRouteSchema = {
   detail: {
@@ -47,4 +48,29 @@ export const deleteServiceRouteSchema = {
     },
   },
   params: deleteServiceSchema,
+};
+
+export const updateServiceRouteSchema = {
+  detail: {
+    tags: ['Services'],
+    summary: 'Atualizar serviço',
+    description: 'Atualiza um serviço.',
+    responses: {
+      '201': { description: 'Serviço atualizado com sucesso' },
+      '400': { description: 'Dados inválidos' },
+      '401': { description: 'Token ausente ou inválido' },
+      '404': { description: 'Serviço não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.String({ description: 'ID do serviço a ser atualizado' }),
+  body: t.Object({
+    name: t.String({ description: 'Nome do serviço' }),
+    description: t.String({ description: 'Descrição do serviço' }),
+    price: t.Number({ description: 'Preço do serviço' }),
+    durationInMinutes: t.Number({
+      description: 'Duração do serviço em minutos',
+    }),
+    isActive: t.Boolean({ description: 'Indica se o serviço está ativo' }),
+  }),
 };
