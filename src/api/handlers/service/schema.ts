@@ -1,4 +1,5 @@
 import { createServiceSchema } from '@/adapters/input/service/validations/create-service-schema';
+import { deleteServiceSchema } from '@/adapters/input/service/validations/delete-service-schema';
 import { findServiceSchema } from '@/adapters/input/service/validations/find-service-schema';
 
 export const createServiceRouteSchema = {
@@ -30,4 +31,20 @@ export const findServiceRouteSchema = {
     },
   },
   params: findServiceSchema,
+};
+
+export const deleteServiceRouteSchema = {
+  detail: {
+    tags: ['Services'],
+    summary: 'Deletar serviço',
+    description: 'Deleta um serviço pelo ID fornecido.',
+    responses: {
+      '200': { description: 'Serviço deletado com sucesso' },
+      '400': { description: 'ID inválido' },
+      '401': { description: 'Token ausente ou inválido' },
+      '404': { description: 'Serviço não encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: deleteServiceSchema,
 };

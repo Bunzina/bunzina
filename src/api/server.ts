@@ -13,9 +13,11 @@ import {
 import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
 import { createServiceHandler } from './handlers/service/create';
+import { deleteServiceHandler } from './handlers/service/delete';
 import { findServiceHandler } from './handlers/service/find';
 import {
   createServiceRouteSchema,
+  deleteServiceRouteSchema,
   findServiceRouteSchema,
 } from './handlers/service/schema';
 import { createUserHandler } from './handlers/user/create';
@@ -176,6 +178,23 @@ app.guard(
       deleteUserSchema,
     );
 
+    // Service routes
+    app.post(
+      '/services',
+      async (context) => createServiceHandler(context),
+      createServiceRouteSchema,
+    );
+    app.get(
+      '/services/:id',
+      async (context) => findServiceHandler(context),
+      findServiceRouteSchema,
+    );
+    app.delete(
+      '/services/:id',
+      async (context) => deleteServiceHandler(context),
+      deleteServiceRouteSchema,
+    );
+
     return app;
   },
 );
@@ -200,18 +219,6 @@ app.delete(
   '/customers/:documentNumber',
   async (context) => deleteCustomerHandler(context),
   deleteCustomerSchema,
-);
-
-// Service routes
-app.post(
-  '/services',
-  async (context) => createServiceHandler(context),
-  createServiceRouteSchema,
-);
-app.get(
-  '/services/:id',
-  async (context) => findServiceHandler(context),
-  findServiceRouteSchema,
 );
 
 app.get('/', ({ redirect }) => redirect('/swagger'), {
