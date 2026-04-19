@@ -24,10 +24,10 @@ import {
 } from './handlers/user/schema';
 import { updateUserHandler } from './handlers/user/update';
 import { createVehicleHandler } from './handlers/vehicle/create';
-import { deleteVehicleHandler } from './handlers/vehicle/delete';
-import { authMiddleware } from './middleware/auth';
 import { findVehicleHandler } from './handlers/vehicle/find';
 import { updateVehicleHandler } from './handlers/vehicle/update';
+import { authMiddleware } from './middleware/auth';
+import { deleteVehicleHandler } from './handlers/vehicle/delete';
 import {
   createVehicleSchema,
   deleteVehicleSchema,
@@ -35,7 +35,7 @@ import {
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
 
-const app = new Elysia();
+export const app = new Elysia();
 
 app.use(
   swagger({
@@ -196,6 +196,8 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
   detail: { hide: true },
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000/swagger');
-});
+if (import.meta.main) {
+  app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000/swagger');
+  });
+}
