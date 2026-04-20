@@ -3,6 +3,7 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { deleteServiceSchema } from './validations/delete-service-schema';
 
 export class DeleteServiceInput {
@@ -25,7 +26,7 @@ export class DeleteServiceInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -38,7 +39,7 @@ export class DeleteServiceInput {
         data: { id },
       });
 
-      return createResponse({ status: 204, data: null });
+      return createResponse({ status: StatusCodes.NO_CONTENT, data: null });
     }, 'Failed to delete service');
   }
 }
