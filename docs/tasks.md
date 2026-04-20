@@ -128,7 +128,7 @@ Estrutura sugerida:
 # 🧪 7. Testes
 
 - [x] Testes **unitários**
-- [ ] Testes **de integração**
+- [x] Testes **de integração**
 - [x] Cobertura mínima de **80% nos domínios críticos**
 
 ---

@@ -35,10 +35,18 @@ import {
 } from './handlers/user/schema';
 import { updateUserHandler } from './handlers/user/update';
 import { createVehicleHandler } from './handlers/vehicle/create';
-import { createVehicleSchema } from './handlers/vehicle/schema';
+import { deleteVehicleHandler } from './handlers/vehicle/delete';
+import { findVehicleHandler } from './handlers/vehicle/find';
+import {
+  createVehicleSchema,
+  deleteVehicleSchema,
+  findVehicleSchema,
+  updateVehicleSchema,
+} from './handlers/vehicle/schema';
+import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 
-const app = new Elysia();
+export const app = new Elysia();
 
 app.use(
   openapi({
@@ -162,6 +170,21 @@ app.guard(
       async (context) => createVehicleHandler(context),
       createVehicleSchema,
     );
+    app.get(
+      '/vehicles/:id',
+      async (context) => findVehicleHandler(context),
+      findVehicleSchema,
+    );
+    app.put(
+      '/vehicles/:id',
+      async (context) => updateVehicleHandler(context),
+      updateVehicleSchema,
+    );
+    app.delete(
+      '/vehicles/:id',
+      async (context) => deleteVehicleHandler(context),
+      deleteVehicleSchema,
+    );
 
     // User routes
     app.get(
@@ -191,47 +214,27 @@ app.guard(
       async (context) => findServiceHandler(context),
       findServiceRouteSchema,
     );
-    app.delete(
-      '/services/:id',
-      async (context) => deleteServiceHandler(context),
-      deleteServiceRouteSchema,
-    );
     app.put(
       '/services/:id',
       async (context) => updateServiceHandler(context),
       updateServiceRouteSchema,
+    );
+    app.delete(
+      '/services/:id',
+      async (context) => deleteServiceHandler(context),
+      deleteServiceRouteSchema,
     );
 
     return app;
   },
 );
 
-// Customer routes
-app.post(
-  '/customers',
-  async (context) => createCustomerHandler(context),
-  createCustomerSchema,
-);
-app.get(
-  '/customers/:documentNumber',
-  async (context) => findCustomerHandler(context),
-  findCustomerSchema,
-);
-app.put(
-  '/customers/:documentNumber',
-  async (context) => updateCustomerHandler(context),
-  updateCustomerSchema,
-);
-app.delete(
-  '/customers/:documentNumber',
-  async (context) => deleteCustomerHandler(context),
-  deleteCustomerSchema,
-);
-
 app.get('/', ({ redirect }) => redirect('/swagger'), {
   detail: { hide: true },
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000/swagger');
-});
+if (import.meta.main) {
+  app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000/swagger');
+  });
+}
