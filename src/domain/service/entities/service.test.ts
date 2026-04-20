@@ -12,7 +12,7 @@ describe('service entity', () => {
     });
 
     expect(service).toBeInstanceOf(Service);
-    expect(service).toMatchObject({
+    expect(service).toEqual({
       createdAt: expect.any(Date),
       description: 'Complete oil change service',
       durationInMinutes: 60,
@@ -23,6 +23,6 @@ describe('service entity', () => {
         value: 100,
       },
       updatedAt: expect.any(Date),
-    });
+    } as unknown as Service);
   });
 });
