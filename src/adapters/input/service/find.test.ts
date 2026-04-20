@@ -28,6 +28,15 @@ describe('Find Service Input', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toBe('application/json');
+    expect(await response.json()).toMatchObject({
+      id: service.id,
+      name: service.name,
+      description: service.description,
+      price: service.price.value,
+      durationInMinutes: service.durationInMinutes,
+      createdAt: service.createdAt.toISOString(),
+      updatedAt: service.updatedAt.toISOString(),
+    });
   });
 
   test('should return validation error for invalid ID', async () => {

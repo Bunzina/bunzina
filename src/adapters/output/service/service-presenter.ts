@@ -10,7 +10,6 @@ export const ServicePresenter = {
       description: service.description,
       price: service.price.value,
       durationInMinutes: service.durationInMinutes,
-      isActive: service.isActive,
       createdAt: dayjs(service.createdAt).toISOString(),
       updatedAt: dayjs(service.updatedAt).toISOString(),
     };

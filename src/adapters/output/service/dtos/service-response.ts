@@ -4,7 +4,6 @@ export interface ServiceResponse {
   description: string;
   price: number;
   durationInMinutes: number;
-  isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
