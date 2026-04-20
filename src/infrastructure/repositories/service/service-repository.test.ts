@@ -1,6 +1,6 @@
 import { makeService } from '@/test/factories/make-service';
 import type { SQL } from 'bun';
-import { mockFn } from 'bun-mock-extended';
+import { any, mockFn } from 'bun-mock-extended';
 import { ServiceRepository } from './service-repository';
 
 describe('Service Repository', () => {
@@ -30,7 +30,7 @@ describe('Service Repository', () => {
     const repository = new ServiceRepository(mockClient);
     const service = makeService();
 
-    mockClient.mockResolvedValueOnce([
+    mockClient.calledWith(any()).mockResolvedValueOnce([
       {
         id: service.id,
         name: service.name,
@@ -62,7 +62,7 @@ describe('Service Repository', () => {
   test('should return null if service not found by ID', async () => {
     const repository = new ServiceRepository(mockClient);
 
-    mockClient.mockResolvedValueOnce([]);
+    mockClient.calledWith(any()).mockResolvedValueOnce([]);
 
     const result = await repository.findById('non-existent-id');
 

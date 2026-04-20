@@ -14,7 +14,7 @@ export class ServiceRepository implements IServiceRepository {
     });
 
     const result = await this.client`
-            SELECT * FROM bunzina.services WHERE id = ${id}
+            SELECT * FROM bunzina.services WHERE id = ${id} and is_active = true
         `;
 
     if (!result.length) {
@@ -54,7 +54,7 @@ export class ServiceRepository implements IServiceRepository {
     });
 
     await this.client`
-            DELETE FROM bunzina.services WHERE id = ${id}
+            UPDATE bunzina.services SET is_active = false WHERE id = ${id}
         `;
   }
 
