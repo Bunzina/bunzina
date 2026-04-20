@@ -36,7 +36,6 @@ export class UpdateServiceUseCase {
         input.durationInMinutes ?? existingService.durationInMinutes,
       isActive: input.isActive ?? existingService.isActive,
       createdAt: existingService.createdAt,
-      updatedAt: new Date(),
     });
 
     await this.serviceRepository.update(updatedService);

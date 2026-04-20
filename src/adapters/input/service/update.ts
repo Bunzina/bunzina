@@ -47,7 +47,7 @@ export class UpdateServiceInput {
       });
 
       return createResponse({
-        status: 201,
+        status: 200,
         data: ServicePresenter.toHttp(service),
       });
     }, 'Failed to update service');

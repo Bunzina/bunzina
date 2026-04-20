@@ -47,7 +47,7 @@ describe('Update Service Handler', () => {
 
     const response = await updateServiceHandler(context);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toBe('application/json');
   });
 });

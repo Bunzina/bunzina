@@ -1,4 +1,5 @@
 import type { CreateServiceHttpInput } from '@/adapters/input/service/validations/create-service-schema';
+import { Price } from '@/domain/core/value-objects/price';
 import { Service } from '@/domain/service/entities/service';
 import type { IServiceRepository as ServiceRepository } from '@/domain/service/repositories/service-repository';
 import logger from '@lucas-pmelo/logger';
@@ -10,9 +11,7 @@ export class CreateServiceUseCase {
     const service = new Service({
       name: input.name,
       description: input.description,
-      price: {
-        value: input.price,
-      },
+      price: new Price(input.price),
       durationInMinutes: input.durationInMinutes,
       isActive: true,
     });

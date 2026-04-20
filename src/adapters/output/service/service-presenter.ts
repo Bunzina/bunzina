@@ -11,8 +11,8 @@ export const ServicePresenter = {
       price: service.price.value,
       durationInMinutes: service.durationInMinutes,
       isActive: service.isActive,
-      createdAt: dayjs(service.createdAt).format('YYYY-MM-DD'),
-      updatedAt: dayjs(service.updatedAt).format('YYYY-MM-DD'),
+      createdAt: dayjs(service.createdAt).toISOString(),
+      updatedAt: dayjs(service.updatedAt).toISOString(),
     };
   },
 };

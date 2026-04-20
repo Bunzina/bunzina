@@ -45,7 +45,7 @@ describe('Update Service Input', () => {
 
     const response = await updateServiceInput.execute(mockContext);
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toBe('application/json');
   });
 
