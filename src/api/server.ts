@@ -34,6 +34,8 @@ import {
   findVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
+import { sendNotificationHandler } from './handlers/notification/send';
+import { notificationSchema } from './handlers/notification/schema';
 
 const app = new Elysia();
 
@@ -86,6 +88,10 @@ O token é obtido via \`POST /auth/login\`.
         {
           name: 'Vehicles',
           description: 'Cadastro de veículos vinculados a clientes',
+        },
+        {
+          name: 'Notification',
+          description: 'Envio de notificações para clientes',
         },
       ],
       components: {
@@ -186,6 +192,13 @@ app.guard(
       '/users/:id',
       async (context) => deleteUserHandler(context),
       deleteUserSchema,
+    );
+
+    // Notification routes
+    app.post(
+      '/notifications',
+      async (context) => sendNotificationHandler(context),
+      notificationSchema,
     );
 
     return app;
