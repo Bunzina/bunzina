@@ -27,11 +27,13 @@ import { createVehicleHandler } from './handlers/vehicle/create';
 import { deleteVehicleHandler } from './handlers/vehicle/delete';
 import { authMiddleware } from './middleware/auth';
 import { findVehicleHandler } from './handlers/vehicle/find';
+import { listVehiclesHandler } from './handlers/vehicle/list';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import {
   createVehicleSchema,
   deleteVehicleSchema,
   findVehicleSchema,
+  listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
 
@@ -154,6 +156,11 @@ app.guard(
       '/vehicles',
       async (context) => createVehicleHandler(context),
       createVehicleSchema,
+    );
+    app.get(
+      '/vehicles',
+      async (context) => listVehiclesHandler(context),
+      listVehicleSchema,
     );
     app.get(
       '/vehicles/:id',
