@@ -1,7 +1,6 @@
 import type { VehicleRepository } from '@/domain/vehicle/repositories/vehicle-repository';
 import { makeVehicle } from '@/test/factories/make-vehicle';
-import type { MockProxy } from 'bun-mock-extended';
-import { mock } from 'bun-mock-extended';
+import { mock, type MockProxy } from 'bun-mock-extended';
 import { FindVehicleByIdUseCase } from './find-by-id';
 
 describe('find vehicle by id use case', () => {

@@ -121,4 +121,59 @@ describe('vehicle repository', () => {
 
     expect(mockClient).toHaveBeenCalled();
   });
+
+  test('should list paginated vehicles with filters', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+
+    const vehicleRecord = {
+      id: '550e8400-e29b-41d4-a716-446655440001',
+      customer_id: '550e8400-e29b-41d4-a716-446655440002',
+      license_plate: 'ABC1D23',
+      model: 'Model S',
+      brand: 'Tesla',
+      year: 2020,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    mockClient.mockResolvedValue([vehicleRecord]);
+
+    const repository = new VehicleRepository(mockClient as unknown as SQL);
+
+    const result = await repository.findByParams({
+      page: 1,
+      limit: 20,
+      filters: {
+        customerId: '550e8400-e29b-41d4-a716-446655440002',
+        brand: 'tesla',
+      },
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should list paginated vehicles with nested filters payload', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    mockClient.mockResolvedValue([]);
+
+    const repository = new VehicleRepository(mockClient as unknown as SQL);
+
+    const result = await repository.findByParams({
+      page: 2,
+      limit: 10,
+      filters: {
+        model: 'Model',
+        year: 2020,
+      },
+    });
+
+    expect(result).toHaveLength(0);
+    expect(mockClient).toHaveBeenCalled();
+  });
 });
