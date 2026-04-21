@@ -163,8 +163,15 @@ export const listVehicleSchema = {
     },
   },
   query: t.Object({
-    page: t.String({ description: 'Número da página' }),
-    limit: t.String({ description: 'Quantidade de itens (máximo: 100)' }),
+    page: t.String({
+      description: 'Número da página',
+      minimum: '1',
+    }),
+    limit: t.String({
+      description: 'Quantidade de itens (máximo: 100)',
+      minimum: '1',
+      maximum: '100',
+    }),
     customerId: t.Optional(
       t.String({
         description: 'Filtro: ID do cliente',
@@ -189,6 +196,8 @@ export const listVehicleSchema = {
     year: t.Optional(
       t.String({
         description: 'Filtro: Ano do veículo',
+        minimum: '1900',
+        examples: ['2020'],
       }),
     ),
     startCreatedAt: t.Optional(

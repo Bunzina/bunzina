@@ -1,13 +1,4 @@
-export interface VehicleResponse {
-  id: string;
-  customerId: string;
-  licensePlate: string;
-  model: string;
-  brand: string;
-  year: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { VehicleResponse } from './vehicle-response';
 
 export interface VehiclesListResponse {
   data: VehicleResponse[];

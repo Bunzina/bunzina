@@ -1,9 +1,7 @@
 import type { Vehicle } from '@/domain/vehicle/entities/vehicle';
 import { VehiclePresenter } from './vehicle-presenter';
-import type {
-  VehicleResponse,
-  VehiclesListResponse,
-} from './dtos/vehicles-list-response';
+import type { VehiclesListResponse } from './dtos/vehicles-list-response';
+import type { VehicleResponse } from './dtos/vehicle-response';
 
 export const VehiclesListPresenter = {
   toHttp(
