@@ -22,6 +22,8 @@ O Bunzina tem como objetivo digitalizar e centralizar os processos operacionais 
 - [Bun](https://bun.sh) — runtime, test runner e gerenciador de pacotes
 - [Elysia](https://elysiajs.com) — framework HTTP
 - [PostgreSQL](https://www.postgresql.org) — banco de dados
+- [Nodemailer](https://nodemailer.com) — envio de notificações por e-mail via SMTP
+- [MailCatcher](https://mailcatcher.me) — captura de e-mails em ambiente local para testes
 - [Zod](https://zod.dev) — validação de dados
 - [Day.js](https://day.js.org) — formatação de datas
 - [oxlint](https://oxc.rs/docs/guide/usage/linter) + [oxfmt](https://github.com/nicolo-ribaudo/oxfmt) — lint e formatação
@@ -86,12 +88,22 @@ DATABASE_URL=postgres://bun:bun@localhost:5432/bunzina
 APP_ENV=dev
 JWT_SECRET=bunzina-jwt-secret
 JWT_EXPIRES_IN=3600
+EMAIL_SMTP_HOST=localhost
+EMAIL_SMTP_PORT=1025
+EMAIL_SMTP_USER=
+EMAIL_SMTP_PASSWORD=
+EMAIL=bunzina@local.com
 ```
 
 | Variável | Descrição | Padrão |
 | --- | --- | --- |
 | `JWT_SECRET` | Chave secreta para assinar/verificar tokens JWT | `bunzina-jwt-secret` |
 | `JWT_EXPIRES_IN` | Tempo de expiração do token em segundos | `3600` (1 hora) |
+| `EMAIL_SMTP_HOST` | Host do servidor SMTP | `localhost` |
+| `EMAIL_SMTP_PORT` | Porta do servidor SMTP local | `1025` |
+| `EMAIL_SMTP_USER` | Usuário SMTP (quando necessário) | vazio |
+| `EMAIL_SMTP_PASSWORD` | Senha SMTP (quando necessário) | vazio |
+| `EMAIL` | Endereço remetente padrão das notificações | `bunzina@local.com` |
 
 ---
 
@@ -105,17 +117,38 @@ Sobe a aplicação e o banco juntos, com hot reload:
 bun dev
 ```
 
+O Docker Compose também sobe o MailCatcher para testes locais de e-mail:
+
+- SMTP local: `localhost:1025`
+- UI web para visualizar e-mails enviados: `http://localhost:1080`
+
 ### Localmente (sem Docker)
 
 Sobe apenas o banco via Docker e roda a API com hot reload:
 
 ```bash
-docker compose up db -d
+docker compose up -d
 bun --hot run src/api/server.ts
 ```
 
 A API estará disponível em `http://localhost:3000`.  
 Documentação Swagger em `http://localhost:3000/swagger`.
+
+Com o MailCatcher rodando, os e-mails disparados pelo serviço de notificação podem ser visualizados em `http://localhost:1080`.
+
+---
+
+## Serviço de notificação (Nodemailer + MailCatcher)
+
+O envio de notificações por e-mail foi implementado com Nodemailer usando transporte SMTP configurável por variáveis de ambiente.
+
+Em desenvolvimento local com Docker Compose:
+
+1. A API usa SMTP local apontando para o serviço `mailcatcher` na porta `1025`.
+2. Os e-mails não são enviados para provedores reais; ficam capturados localmente.
+3. É possível inspecionar assunto, destinatário e conteúdo no painel web do MailCatcher em `http://localhost:1080`.
+
+Isso permite validar rapidamente o fluxo de notificação sem depender de credenciais externas.
 
 ---
 
@@ -227,6 +260,7 @@ As análises de segurança são feitas com **GitHub CodeQL** (Code scanning), us
 | PUT    | `/customers/:documentNumber`  | Atualizar cliente     |
 | DELETE | `/customers/:documentNumber`  | Excluir cliente       |
 | POST   | `/vehicles`                   | Criar novo veículo    |
+| POST   | `/notifications`              | Enviar notificação    |
 
 ---
 
