@@ -4,7 +4,6 @@ import {
   Notification,
   type NotificationWithoutChannel,
 } from '@/domain/notification/value-objects/notification';
-import logger from '@lucas-pmelo/logger';
 
 export class SendNotificationUseCase {
   deliveryChannelMap: Record<
@@ -27,17 +26,10 @@ export class SendNotificationUseCase {
     to,
     subject,
   }: Notification): Promise<void> {
-    try {
-      await this.deliveryChannelMap[deliveryChannel]({
-        message,
-        to,
-        subject,
-      });
-    } catch (error) {
-      logger.warn({
-        message: 'Failed to delivery notification',
-        data: error.message,
-      });
-    }
+    await this.deliveryChannelMap[deliveryChannel]({
+      message,
+      to,
+      subject,
+    });
   }
 }

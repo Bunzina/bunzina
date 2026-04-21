@@ -4,14 +4,12 @@ import type { MockProxy } from 'bun-mock-extended';
 import { mock as mockExtended } from 'bun-mock-extended';
 import { beforeEach, describe, expect, mock, test } from 'bun:test';
 
-const mockWarn = mock(() => {});
-
 mock.module('@lucas-pmelo/logger', () => ({
   default: {
     setEvent: () => {},
     debug: () => {},
     info: () => {},
-    warn: mockWarn,
+    warn: () => {},
     error: () => {},
   },
 }));
@@ -25,7 +23,6 @@ describe('send notification use case', () => {
   beforeEach(() => {
     notificationService = mockExtended();
     sendNotificationUseCase = new SendNotificationUseCase(notificationService);
-    mockWarn.mockClear();
   });
 
   test('should send an email notification', async () => {
@@ -83,25 +80,5 @@ describe('send notification use case', () => {
     });
     expect(notificationService.sendEmail).not.toHaveBeenCalled();
     expect(notificationService.sendSms).not.toHaveBeenCalled();
-  });
-
-  test('should log warning when delivery fails', async () => {
-    const input = {
-      deliveryChannel: DeliveryChannel.EMAIL,
-      message: 'Your appointment is tomorrow',
-      to: 'john@example.com',
-      subject: 'Appointment reminder',
-    };
-
-    notificationService.sendEmail.mockRejectedValue(new Error('smtp error'));
-
-    await expect(
-      sendNotificationUseCase.execute(input),
-    ).resolves.toBeUndefined();
-
-    expect(mockWarn).toHaveBeenCalledWith({
-      message: 'Failed to delivery notification',
-      data: 'smtp error',
-    });
   });
 });
