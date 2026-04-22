@@ -47,6 +47,8 @@ import {
 } from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
+import { createAutoPartHandler } from './handlers/auto-part/create';
+import { createAutoPartSchema } from './handlers/auto-part/schema';
 
 export const app = new Elysia();
 
@@ -99,6 +101,10 @@ O token é obtido via \`POST /auth/login\`.
         {
           name: 'Vehicles',
           description: 'Cadastro de veículos vinculados a clientes',
+        },
+        {
+          name: 'Auto-Parts',
+          description: 'Cadastro e gestão de peças/insumos em estoque',
         },
       ],
       components: {
@@ -191,6 +197,13 @@ app.guard(
       '/vehicles/:id',
       async (context) => deleteVehicleHandler(context),
       deleteVehicleSchema,
+    );
+
+    // Auto-Part routes
+    app.post(
+      '/auto-parts',
+      async (context) => createAutoPartHandler(context),
+      createAutoPartSchema,
     );
 
     // User routes
