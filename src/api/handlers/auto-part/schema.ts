@@ -43,3 +43,23 @@ export const createAutoPartSchema = {
     }),
   }),
 };
+
+export const findAutoPartRouteSchema = {
+  detail: {
+    tags: ['Auto-Parts'],
+    summary: 'Buscar peça por ID',
+    description: 'Busca uma peça ou insumo pelo ID informado.',
+    responses: {
+      '200': { description: 'Peça encontrada com sucesso' },
+      '400': { description: 'ID inválido' },
+      '404': { description: 'Peça não encontrada' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID da peça a ser buscada',
+      format: 'uuid',
+    }),
+  }),
+};
