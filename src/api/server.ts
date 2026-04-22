@@ -1,5 +1,6 @@
-import swagger from '@elysiajs/swagger';
+import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
+import z from 'zod';
 import { createCustomerHandler } from './handlers/customer/create';
 import { deleteCustomerHandler } from './handlers/customer/delete';
 import { findCustomerHandler } from './handlers/customer/find';
@@ -11,6 +12,16 @@ import {
 } from './handlers/customer/schema';
 import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
+import { createServiceHandler } from './handlers/service/create';
+import { deleteServiceHandler } from './handlers/service/delete';
+import { findServiceHandler } from './handlers/service/find';
+import {
+  createServiceRouteSchema,
+  deleteServiceRouteSchema,
+  findServiceRouteSchema,
+  updateServiceRouteSchema,
+} from './handlers/service/schema';
+import { updateServiceHandler } from './handlers/service/update';
 import { createUserHandler } from './handlers/user/create';
 import { deleteUserHandler } from './handlers/user/delete';
 import { findUserHandler } from './handlers/user/find';
@@ -25,22 +36,24 @@ import {
 import { updateUserHandler } from './handlers/user/update';
 import { createVehicleHandler } from './handlers/vehicle/create';
 import { deleteVehicleHandler } from './handlers/vehicle/delete';
-import { authMiddleware } from './middleware/auth';
 import { findVehicleHandler } from './handlers/vehicle/find';
-import { updateVehicleHandler } from './handlers/vehicle/update';
+import { listVehiclesHandler } from './handlers/vehicle/list';
 import {
   createVehicleSchema,
   deleteVehicleSchema,
   findVehicleSchema,
+  listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
 import { sendNotificationHandler } from './handlers/notification/send';
 import { notificationSchema } from './handlers/notification/schema';
+import { updateVehicleHandler } from './handlers/vehicle/update';
+import { authMiddleware } from './middleware/auth';
 
-const app = new Elysia();
+export const app = new Elysia();
 
 app.use(
-  swagger({
+  openapi({
     documentation: {
       info: {
         title: 'Bunzina API',
@@ -104,6 +117,10 @@ O token é obtido via \`POST /auth/login\`.
         },
       },
     },
+    path: '/swagger',
+    mapJsonSchema: {
+      zod: z.toJSONSchema,
+    },
   }),
 );
 
@@ -162,6 +179,11 @@ app.guard(
       createVehicleSchema,
     );
     app.get(
+      '/vehicles',
+      async (context) => listVehiclesHandler(context),
+      listVehicleSchema,
+    );
+    app.get(
       '/vehicles/:id',
       async (context) => findVehicleHandler(context),
       findVehicleSchema,
@@ -201,6 +223,28 @@ app.guard(
       notificationSchema,
     );
 
+    // Service routes
+    app.post(
+      '/services',
+      async (context) => createServiceHandler(context),
+      createServiceRouteSchema,
+    );
+    app.get(
+      '/services/:id',
+      async (context) => findServiceHandler(context),
+      findServiceRouteSchema,
+    );
+    app.put(
+      '/services/:id',
+      async (context) => updateServiceHandler(context),
+      updateServiceRouteSchema,
+    );
+    app.delete(
+      '/services/:id',
+      async (context) => deleteServiceHandler(context),
+      deleteServiceRouteSchema,
+    );
+
     return app;
   },
 );
@@ -209,6 +253,8 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
   detail: { hide: true },
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000/swagger');
-});
+if (import.meta.main) {
+  app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000/swagger');
+  });
+}
