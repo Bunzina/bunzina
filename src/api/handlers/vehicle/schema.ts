@@ -150,3 +150,65 @@ export const findVehicleSchema = {
     }),
   }),
 };
+
+export const listVehicleSchema = {
+  detail: {
+    tags: ['Vehicles'],
+    summary: 'Listar veículos',
+    description: 'Lista todos os veículos com paginação e filtros opcionais.',
+    responses: {
+      '200': { description: 'Lista de veículos com paginação' },
+      '400': { description: 'Parâmetros inválidos' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  query: t.Object({
+    page: t.String({
+      description: 'Número da página',
+      minimum: '1',
+    }),
+    limit: t.String({
+      description: 'Quantidade de itens (máximo: 100)',
+      minimum: '1',
+      maximum: '100',
+    }),
+    customerId: t.Optional(
+      t.String({
+        description: 'Filtro: ID do cliente',
+        format: 'uuid',
+      }),
+    ),
+    licensePlate: t.Optional(
+      t.String({
+        description: 'Filtro: Placa do veículo (busca parcial)',
+      }),
+    ),
+    model: t.Optional(
+      t.String({
+        description: 'Filtro: Modelo do veículo (busca parcial)',
+      }),
+    ),
+    brand: t.Optional(
+      t.String({
+        description: 'Filtro: Marca do veículo (busca parcial)',
+      }),
+    ),
+    year: t.Optional(
+      t.String({
+        description: 'Filtro: Ano do veículo',
+        minimum: '1900',
+        examples: ['2020'],
+      }),
+    ),
+    startCreatedAt: t.Optional(
+      t.String({
+        description: 'Filtro: Data inicial de criação (ISO 8601)',
+      }),
+    ),
+    endCreatedAt: t.Optional(
+      t.String({
+        description: 'Filtro: Data final de criação (ISO 8601)',
+      }),
+    ),
+  }),
+};

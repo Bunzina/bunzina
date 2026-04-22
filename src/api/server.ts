@@ -37,10 +37,12 @@ import { updateUserHandler } from './handlers/user/update';
 import { createVehicleHandler } from './handlers/vehicle/create';
 import { deleteVehicleHandler } from './handlers/vehicle/delete';
 import { findVehicleHandler } from './handlers/vehicle/find';
+import { listVehiclesHandler } from './handlers/vehicle/list';
 import {
   createVehicleSchema,
   deleteVehicleSchema,
   findVehicleSchema,
+  listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
@@ -169,6 +171,11 @@ app.guard(
       '/vehicles',
       async (context) => createVehicleHandler(context),
       createVehicleSchema,
+    );
+    app.get(
+      '/vehicles',
+      async (context) => listVehiclesHandler(context),
+      listVehicleSchema,
     );
     app.get(
       '/vehicles/:id',

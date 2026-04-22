@@ -8,19 +8,19 @@ const mockDb = mockFn<
 mockDb.mockImplementation(() => Promise.resolve([]));
 mock.module('@/infrastructure/configs/database', () => ({ db: mockDb }));
 
-import { deleteVehicleHandler } from './delete';
+import { listVehiclesHandler } from './list';
 
-describe('deleteVehicleHandler', () => {
+describe('listVehiclesHandler', () => {
   beforeEach(() => {
     mockDb.mockImplementation(() => Promise.resolve([]));
   });
 
-  test('should return 204 when deleting a vehicle', async () => {
+  test('should return 200 when listing vehicles', async () => {
     mockDb.mockImplementation(() =>
       Promise.resolve([
         {
-          id: '550e8400-e29b-41d4-a716-446655440000',
-          customer_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+          id: '550e8400-e29b-41d4-a716-446655440001',
+          customer_id: '550e8400-e29b-41d4-a716-446655440002',
           license_plate: 'ABC1D23',
           model: 'Model S',
           brand: 'Tesla',
@@ -32,13 +32,17 @@ describe('deleteVehicleHandler', () => {
     );
 
     const ctx = {
-      request: { method: 'DELETE' },
-      params: { id: '550e8400-e29b-41d4-a716-446655440000' },
+      request: { method: 'GET' },
+      query: {
+        page: '1',
+        limit: '20',
+      },
     } as unknown as Context;
 
-    const result = await deleteVehicleHandler(ctx);
+    const result = await listVehiclesHandler(ctx);
 
-    expect(result.status).toBe(204);
+    expect(result.status).toBe(200);
+    expect(result.headers.get('Content-Type')).toBe('application/json');
   });
 
   test('should return 500 when an internal error occurs', async () => {
@@ -47,13 +51,13 @@ describe('deleteVehicleHandler', () => {
     });
 
     const ctx = {
-      request: {},
-      params: { id: '550e8400-e29b-41d4-a716-446655440099' },
+      request: { method: 'GET' },
+      query: { page: '1', limit: '20' },
     } as unknown as Context;
 
-    const result = await deleteVehicleHandler(ctx);
+    const result = await listVehiclesHandler(ctx);
 
     expect(result.status).toBe(500);
-    expect(await result.json()).toEqual({ error: 'Failed to delete vehicle' });
+    expect(await result.json()).toEqual({ error: 'Failed to list vehicles' });
   });
 });
