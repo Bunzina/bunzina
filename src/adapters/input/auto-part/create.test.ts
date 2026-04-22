@@ -5,7 +5,7 @@ import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
 import { CreateAutoPartInput } from './create';
 
-describe('create auto-part input', () => {
+describe('create auto part input', () => {
   let createAutoPartUseCase: MockProxy<CreateAutoPartUseCase>;
   let createAutoPartInput: CreateAutoPartInput;
 
@@ -14,7 +14,7 @@ describe('create auto-part input', () => {
     createAutoPartInput = new CreateAutoPartInput(createAutoPartUseCase);
   });
 
-  test('should create an auto-part', async () => {
+  test('should create an auto part', async () => {
     const autoPart = makeAutoPart();
 
     createAutoPartUseCase.execute.calledWith(any()).mockResolvedValue(autoPart);

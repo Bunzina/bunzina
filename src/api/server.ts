@@ -48,6 +48,7 @@ import {
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 import { createAutoPartHandler } from './handlers/auto-part/create';
+import { createAutoPartSchema } from './handlers/auto-part/schema';
 
 export const app = new Elysia();
 
@@ -202,6 +203,7 @@ app.guard(
     app.post(
       '/auto-parts',
       async (context) => createAutoPartHandler(context),
+      createAutoPartSchema,
     );
 
     // User routes

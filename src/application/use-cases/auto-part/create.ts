@@ -15,10 +15,12 @@ export class CreateAutoPartUseCase {
   constructor(private autoPartRepository: AutoPartRepository) {}
 
   async execute(input: Input): Promise<AutoPart> {
-    const persistedAutoPart = await this.autoPartRepository.findByName(input.name);
+    const persistedAutoPart = await this.autoPartRepository.findByName(
+      input.name,
+    );
 
     if (persistedAutoPart) {
-      const message = 'Auto-part already exists';
+      const message = 'Auto part already exists';
 
       logger.warn({
         message,
@@ -37,6 +39,13 @@ export class CreateAutoPartUseCase {
       description: input.description,
       price,
       stock: input.stock,
+    });
+
+    logger.debug({
+      message: 'Creating auto part',
+      data: {
+        autoPart,
+      },
     });
 
     await this.autoPartRepository.create(autoPart);

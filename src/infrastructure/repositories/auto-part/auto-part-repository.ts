@@ -6,7 +6,7 @@ import type { AutoPartDbSchema } from './dtos/auto-part-db-schema';
 import { AutoPartMapper } from './mappers/auto-part-mapper';
 
 export class AutoPartRepository implements IAutoPartRepository {
-  constructor(private client: SQL) { }
+  constructor(private client: SQL) {}
 
   async findByName(name: string): Promise<AutoPart | null> {
     const [record] = await this.client<AutoPartDbSchema[]>`
@@ -15,7 +15,7 @@ export class AutoPartRepository implements IAutoPartRepository {
 
     if (!record) {
       logger.debug({
-        message: 'No auto-part found with name',
+        message: 'No auto part found with name',
         data: { name },
       });
 
@@ -25,7 +25,7 @@ export class AutoPartRepository implements IAutoPartRepository {
     const autoPart = AutoPartMapper.toDomain(record);
 
     logger.debug({
-      message: 'Auto-part found with name',
+      message: 'Auto part found with name',
       data: {
         name,
         autoPart,
@@ -42,7 +42,7 @@ export class AutoPartRepository implements IAutoPartRepository {
 
     if (!record) {
       logger.debug({
-        message: 'No auto-part found with id',
+        message: 'No auto part found with id',
         data: { id },
       });
 
@@ -52,7 +52,7 @@ export class AutoPartRepository implements IAutoPartRepository {
     const autoPart = AutoPartMapper.toDomain(record);
 
     logger.debug({
-      message: 'Auto-part found with id',
+      message: 'Auto part found with id',
       data: {
         id,
         autoPart,
@@ -66,7 +66,7 @@ export class AutoPartRepository implements IAutoPartRepository {
     const recordToSave = AutoPartMapper.toDatabase(autoPart);
 
     logger.debug({
-      message: 'Saving auto-part to database',
+      message: 'Saving auto part to database',
       data: recordToSave,
     });
 

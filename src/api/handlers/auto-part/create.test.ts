@@ -10,7 +10,7 @@ mock.module('@/infrastructure/configs/database', () => ({ db: mockDb }));
 
 import { createAutoPartHandler } from './create';
 
-describe('create auto-part handler', () => {
+describe('create auto part handler', () => {
   beforeEach(() => {
     mockDb.mockImplementation(() => Promise.resolve([]));
   });
@@ -51,7 +51,7 @@ describe('create auto-part handler', () => {
 
     expect(result?.status).toBe(500);
     expect(await result?.json()).toEqual({
-      error: 'Failed to create auto-part',
+      error: 'Failed to create auto part',
     });
   });
 });

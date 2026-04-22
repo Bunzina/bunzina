@@ -2,8 +2,8 @@ import { makeAutoPart } from '@/test/factories/make-auto-part';
 import { describe, expect, test } from 'bun:test';
 import { AutoPartPresenter } from './auto-part-presenter';
 
-describe('auto-part presenter', () => {
-  test('should convert an auto-part entity to http response', () => {
+describe('auto part presenter', () => {
+  test('should convert an auto part entity to http response', () => {
     const autoPart = makeAutoPart();
 
     const response = AutoPartPresenter.toHttp(autoPart);
@@ -14,12 +14,12 @@ describe('auto-part presenter', () => {
       description: 'High-quality brake pad for improved stopping power.',
       price: expect.any(Number),
       stock: 100,
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
+      createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
     });
   });
 
-  test('should convert an auto-part with custom values', () => {
+  test('should convert an auto part with custom values', () => {
     const customDate = new Date('2026-02-15');
     const autoPart = makeAutoPart({
       name: 'Air Filter Premium',
@@ -37,8 +37,8 @@ describe('auto-part presenter', () => {
       description: 'Advanced air filtration system',
       price: expect.any(Number),
       stock: 50,
-      createdAt: '2026-02-15',
-      updatedAt: '2026-02-15',
+      createdAt: new Date('2026-02-15'),
+      updatedAt: new Date('2026-02-15'),
     });
   });
 

@@ -16,7 +16,7 @@ export class CreateAutoPartInput {
     const { body } = context;
 
     logger.info({
-      message: 'Create auto-part request',
+      message: 'Create auto part request',
       data: body,
     });
 
@@ -24,7 +24,7 @@ export class CreateAutoPartInput {
 
     if (errors?.length) {
       logger.warn({
-        message: 'Create auto-part validation error',
+        message: 'Create auto part validation error',
         data: errors,
       });
 
@@ -43,7 +43,7 @@ export class CreateAutoPartInput {
       );
 
       logger.info({
-        message: 'Auto-part created successfully',
+        message: 'Auto part created successfully',
         data: autoPart,
       });
 
@@ -51,6 +51,6 @@ export class CreateAutoPartInput {
         status: 201,
         data: AutoPartPresenter.toHttp(autoPart),
       });
-    }, 'Failed to create auto-part');
+    }, 'Failed to create auto part');
   }
 }

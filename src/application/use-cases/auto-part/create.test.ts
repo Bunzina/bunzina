@@ -4,7 +4,7 @@ import { mock } from 'bun-mock-extended';
 import { CreateAutoPartUseCase } from './create';
 import { makeAutoPart } from '@/test/factories/make-auto-part';
 
-describe('create auto-part use case', () => {
+describe('create auto part use case', () => {
   let autoPartRepository: MockProxy<AutoPartRepository>;
   let createAutoPartUseCase: CreateAutoPartUseCase;
 
@@ -13,7 +13,7 @@ describe('create auto-part use case', () => {
     createAutoPartUseCase = new CreateAutoPartUseCase(autoPartRepository);
   });
 
-  test('should create an auto-part', async () => {
+  test('should create an auto part', async () => {
     const input = {
       name: 'Filtro de Óleo',
       description: 'Filtro para óleo do motor',
@@ -44,7 +44,7 @@ describe('create auto-part use case', () => {
     );
   });
 
-  test('should throw error when auto-part already exists', async () => {
+  test('should throw error when auto part already exists', async () => {
     const existingAutoPart = makeAutoPart({
       name: 'Filtro de Óleo',
     });
@@ -56,10 +56,12 @@ describe('create auto-part use case', () => {
       stock: 10,
     };
 
-    autoPartRepository.findByName.calledWith(input.name).mockResolvedValue(existingAutoPart);
+    autoPartRepository.findByName
+      .calledWith(input.name)
+      .mockResolvedValue(existingAutoPart);
 
     expect(createAutoPartUseCase.execute(input)).rejects.toThrow(
-      'Auto-part already exists',
+      'Auto part already exists',
     );
 
     expect(autoPartRepository.create).not.toHaveBeenCalled();

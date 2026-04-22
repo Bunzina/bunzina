@@ -1,5 +1,4 @@
 import type { AutoPart } from '@/domain/auto-part/entities/auto-part';
-import dayjs from 'dayjs';
 import type { AutoPartResponse } from './dtos/auto-part-response';
 
 export const AutoPartPresenter = {
@@ -10,8 +9,8 @@ export const AutoPartPresenter = {
       description: autoPart.description,
       price: autoPart.price.value,
       stock: autoPart.stock,
-      createdAt: autoPart.createdAt.toISOString(),
-      updatedAt: autoPart.updatedAt.toISOString(),
+      createdAt: autoPart.createdAt,
+      updatedAt: autoPart.updatedAt,
     };
   },
 };

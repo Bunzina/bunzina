@@ -4,8 +4,8 @@ import { mockFn } from 'bun-mock-extended';
 import { describe, expect, test, type Mock } from 'bun:test';
 import { AutoPartRepository } from './auto-part-repository';
 
-describe('auto-part repository', () => {
-  test('should create an auto-part and return it', async () => {
+describe('auto part repository', () => {
+  test('should create an auto part and return it', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
@@ -20,7 +20,7 @@ describe('auto-part repository', () => {
     expect(mockClient).toHaveBeenCalled();
   });
 
-  test('should find an auto-part by name', async () => {
+  test('should find an auto part by name', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
@@ -49,7 +49,7 @@ describe('auto-part repository', () => {
     expect(mockClient).toHaveBeenCalled();
   });
 
-  test('should return null if auto-part not found by name', async () => {
+  test('should return null if auto part not found by name', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
@@ -63,7 +63,7 @@ describe('auto-part repository', () => {
     expect(mockClient).toHaveBeenCalled();
   });
 
-  test('should find an auto-part by id', async () => {
+  test('should find an auto part by id', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
@@ -82,7 +82,9 @@ describe('auto-part repository', () => {
 
     const repository = new AutoPartRepository(mockClient as unknown as SQL);
 
-    const result = await repository.findById('550e8400-e29b-41d4-a716-446655440001');
+    const result = await repository.findById(
+      '550e8400-e29b-41d4-a716-446655440001',
+    );
 
     expect(result).not.toBeNull();
     expect(result?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
@@ -90,7 +92,7 @@ describe('auto-part repository', () => {
     expect(mockClient).toHaveBeenCalled();
   });
 
-  test('should return null if auto-part not found by id', async () => {
+  test('should return null if auto part not found by id', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;

@@ -2,8 +2,8 @@ import { makeAutoPart } from '@/test/factories/make-auto-part';
 import { describe, expect, test } from 'bun:test';
 import { AutoPartMapper } from './auto-part-mapper';
 
-describe('auto-part mapper', () => {
-  test('should convert auto-part to database format', () => {
+describe('auto part mapper', () => {
+  test('should convert auto part to database format', () => {
     const autoPart = makeAutoPart();
 
     const dbRecord = AutoPartMapper.toDatabase(autoPart);
@@ -19,7 +19,7 @@ describe('auto-part mapper', () => {
     });
   });
 
-  test('should convert database record to auto-part entity', () => {
+  test('should convert database record to auto part entity', () => {
     const dbRecord = {
       id: 'auto-part-id',
       name: 'Air Filter',
@@ -34,7 +34,9 @@ describe('auto-part mapper', () => {
 
     expect(autoPart.id).toBe('auto-part-id');
     expect(autoPart.name).toBe('Air Filter');
-    expect(autoPart.description).toBe('Premium air filter for better engine performance.');
+    expect(autoPart.description).toBe(
+      'Premium air filter for better engine performance.',
+    );
     expect(autoPart.price.value).toBe(5000);
     expect(autoPart.stock).toBe(50);
     expect(autoPart.createdAt).toEqual(new Date('2026-01-15'));

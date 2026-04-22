@@ -4,6 +4,6 @@ export interface AutoPartResponse {
   description: string;
   price: number;
   stock: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
