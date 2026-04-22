@@ -8,6 +8,6 @@ export const sendNotificationSchema = z.object({
   deliveryChannel: z.enum(DeliveryChannel),
 });
 
-export type SendNotificationInferedInput = z.infer<
+export type SendNotificationInferredInput = z.infer<
   typeof sendNotificationSchema
 >;
