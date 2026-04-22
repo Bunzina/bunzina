@@ -24,7 +24,8 @@ export const notificationSchema = {
     }),
     subject: t.Optional(
       t.String({
-        description: 'Assunto da mensagem (aplicável principalmente para email)',
+        description:
+          'Assunto da mensagem (aplicável principalmente para email)',
         examples: ['Atualização da ordem de serviço'],
       }),
     ),

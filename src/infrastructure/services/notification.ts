@@ -57,11 +57,11 @@ export class NotificationService implements INotificationService {
     }
   }
 
-  async sendSms(notification: NotificationWithoutChannel): Promise<void> {
+  async sendSms(_notification: NotificationWithoutChannel): Promise<void> {
     throw new Error('Feature not ready yet');
   }
 
-  async sendPush(notification: NotificationWithoutChannel): Promise<void> {
+  async sendPush(_notification: NotificationWithoutChannel): Promise<void> {
     throw new Error('Feature not ready yet');
   }
 }

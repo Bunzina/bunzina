@@ -3,7 +3,7 @@ import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
 import {
   sendNotificationSchema,
-  type SendNotificationInferedInput,
+  type SendNotificationInferredInput,
 } from './validations/send-schema';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import type { SendNotificationUseCase } from '@/application/use-cases/notification/send';
@@ -35,7 +35,7 @@ export class SendNotificationInput {
 
     return withErrorHandler(async () => {
       await this.sendNotificationUseCase.execute(
-        data as SendNotificationInferedInput,
+        data as SendNotificationInferredInput,
       );
 
       logger.info('Notification sent successfully');
