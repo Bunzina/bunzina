@@ -1,20 +1,38 @@
 import type { SQL } from 'bun';
 import { AutoPart } from '@/domain/auto-part/entities/auto-part';
 import type { AutoPartRepository as IAutoPartRepository } from '@/domain/auto-part/repositories/auto-part-repository';
+import logger from '@lucas-pmelo/logger';
 import type { AutoPartDbSchema } from './dtos/auto-part-db-schema';
 import { AutoPartMapper } from './mappers/auto-part-mapper';
 
 export class AutoPartRepository implements IAutoPartRepository {
-  constructor(private client: SQL) {}
+  constructor(private client: SQL) { }
 
   async findByName(name: string): Promise<AutoPart | null> {
     const [record] = await this.client<AutoPartDbSchema[]>`
       SELECT * FROM bunzina.auto_parts WHERE name = ${name} LIMIT 1
     `;
 
-    if (!record) return null;
+    if (!record) {
+      logger.debug({
+        message: 'No auto-part found with name',
+        data: { name },
+      });
 
-    return AutoPartMapper.toDomain(record);
+      return null;
+    }
+
+    const autoPart = AutoPartMapper.toDomain(record);
+
+    logger.debug({
+      message: 'Auto-part found with name',
+      data: {
+        name,
+        autoPart,
+      },
+    });
+
+    return autoPart;
   }
 
   async findById(id: string): Promise<AutoPart | null> {
@@ -22,16 +40,38 @@ export class AutoPartRepository implements IAutoPartRepository {
       SELECT * FROM bunzina.auto_parts WHERE id = ${id} LIMIT 1
     `;
 
-    if (!record) return null;
+    if (!record) {
+      logger.debug({
+        message: 'No auto-part found with id',
+        data: { id },
+      });
 
-    return AutoPartMapper.toDomain(record);
+      return null;
+    }
+
+    const autoPart = AutoPartMapper.toDomain(record);
+
+    logger.debug({
+      message: 'Auto-part found with id',
+      data: {
+        id,
+        autoPart,
+      },
+    });
+
+    return autoPart;
   }
 
   async create(autoPart: AutoPart): Promise<AutoPart> {
-    const dbData = AutoPartMapper.toDatabase(autoPart);
+    const recordToSave = AutoPartMapper.toDatabase(autoPart);
+
+    logger.debug({
+      message: 'Saving auto-part to database',
+      data: recordToSave,
+    });
 
     await this.client`
-      INSERT INTO bunzina.auto_parts ${this.client(dbData)}
+      INSERT INTO bunzina.auto_parts ${this.client(recordToSave)}
     `;
 
     return autoPart;

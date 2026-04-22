@@ -10,8 +10,8 @@ export const AutoPartPresenter = {
       description: autoPart.description,
       price: autoPart.price.value,
       stock: autoPart.stock,
-      createdAt: dayjs(autoPart.createdAt).format('YYYY-MM-DD'),
-      updatedAt: dayjs(autoPart.updatedAt).format('YYYY-MM-DD'),
+      createdAt: autoPart.createdAt.toISOString(),
+      updatedAt: autoPart.updatedAt.toISOString(),
     };
   },
 };
