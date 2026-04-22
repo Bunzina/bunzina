@@ -49,6 +49,12 @@ import { sendNotificationHandler } from './handlers/notification/send';
 import { notificationSchema } from './handlers/notification/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
+import { createAutoPartHandler } from './handlers/auto-part/create';
+import { findAutoPartHandler } from './handlers/auto-part/find';
+import {
+  createAutoPartSchema,
+  findAutoPartRouteSchema,
+} from './handlers/auto-part/schema';
 
 export const app = new Elysia();
 
@@ -105,6 +111,10 @@ O token é obtido via \`POST /auth/login\`.
         {
           name: 'Notification',
           description: 'Envio de notificações para clientes',
+        },
+        {
+          name: 'Auto-Parts',
+          description: 'Cadastro e gestão de peças/insumos em estoque',
         },
       ],
       components: {
@@ -197,6 +207,18 @@ app.guard(
       '/vehicles/:id',
       async (context) => deleteVehicleHandler(context),
       deleteVehicleSchema,
+    );
+
+    // Auto-Part routes
+    app.post(
+      '/auto-parts',
+      async (context) => createAutoPartHandler(context),
+      createAutoPartSchema,
+    );
+    app.get(
+      '/auto-parts/:id',
+      async (context) => findAutoPartHandler(context),
+      findAutoPartRouteSchema,
     );
 
     // User routes
