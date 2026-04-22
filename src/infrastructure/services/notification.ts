@@ -48,7 +48,7 @@ export class NotificationService implements INotificationService {
         case 'EENVELOPE':
           logger.warn({ message: 'Invalid recipients', data: err.rejected });
           throw new ServiceUnavailableError(
-            'Service failed to valid recipients',
+            'Service failed to validate recipients',
           );
         default:
           logger.warn({ message: 'Send failed', data: err.message });
