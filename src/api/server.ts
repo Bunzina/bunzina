@@ -49,9 +49,11 @@ import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 import { createAutoPartHandler } from './handlers/auto-part/create';
 import { findAutoPartHandler } from './handlers/auto-part/find';
+import { listAutoPartsHandler } from './handlers/auto-part/list';
 import {
   createAutoPartSchema,
   findAutoPartRouteSchema,
+  listAutoPartsRouteSchema,
 } from './handlers/auto-part/schema';
 
 export const app = new Elysia();
@@ -208,6 +210,11 @@ app.guard(
       '/auto-parts',
       async (context) => createAutoPartHandler(context),
       createAutoPartSchema,
+    );
+    app.get(
+      '/auto-parts',
+      async (context) => listAutoPartsHandler(context),
+      listAutoPartsRouteSchema,
     );
     app.get(
       '/auto-parts/:id',
