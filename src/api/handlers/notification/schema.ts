@@ -28,9 +28,12 @@ export const notificationSchema = {
         examples: ['Atualização da ordem de serviço'],
       }),
     ),
-    deliveryChannel: t.String({
-      description: 'EMAIL | SMS | PUSH',
-      examples: ['EMAIL'],
-    }),
+    deliveryChannel: t.Union(
+      [t.Literal('EMAIL'), t.Literal('SMS'), t.Literal('PUSH')],
+      {
+        description: 'EMAIL | SMS | PUSH',
+        examples: ['EMAIL'],
+      },
+    ),
   }),
 };
