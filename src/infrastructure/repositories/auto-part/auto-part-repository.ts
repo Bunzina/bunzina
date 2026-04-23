@@ -17,13 +17,9 @@ export class AutoPartRepository implements IAutoPartRepository {
     const nameFilter = filters.name
       ? this.client`AND name ILIKE ${`%${filters.name}%`}`
       : this.client``;
-    const lowStockFilter = filters.lowStock
-      ? this.client`AND stock < ${10}`
-      : this.client``;
 
     return this.client`
       ${nameFilter}
-      ${lowStockFilter}
     `;
   }
 

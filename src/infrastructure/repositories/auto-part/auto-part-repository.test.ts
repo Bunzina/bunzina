@@ -130,33 +130,12 @@ describe('auto part repository', () => {
       limit: 20,
       filters: {
         name: 'Brake',
-        lowStock: false,
       },
     });
 
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
     expect(result[0]?.name).toBe('Brake Pad');
-    expect(mockClient).toHaveBeenCalled();
-  });
-
-  test('should list paginated auto parts with low stock filter', async () => {
-    const mockClient = mockFn<
-      (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
-    mockClient.mockResolvedValue([]);
-
-    const repository = new AutoPartRepository(mockClient as unknown as SQL);
-
-    const result = await repository.findByParams({
-      page: 2,
-      limit: 10,
-      filters: {
-        lowStock: true,
-      },
-    });
-
-    expect(result).toHaveLength(0);
     expect(mockClient).toHaveBeenCalled();
   });
 });

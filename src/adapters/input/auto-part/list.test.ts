@@ -58,25 +58,4 @@ describe('list auto parts input', () => {
       }),
     );
   });
-
-  test('should support lowStock filter', async () => {
-    const part = makeAutoPart({ stock: 2 });
-
-    listAutoPartsUseCase.execute.calledWith(any()).mockResolvedValue({
-      data: [part],
-    });
-
-    const request = {
-      query: { page: '1', limit: '20', lowStock: 'true' },
-    } as unknown as Context;
-
-    const result = await listAutoPartsInput.execute(request);
-
-    expect(result.status).toBe(200);
-    expect(await result.json()).toEqual(
-      expect.objectContaining({
-        data: [expect.objectContaining({ id: part.id })],
-      }),
-    );
-  });
 });

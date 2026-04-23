@@ -73,11 +73,6 @@ export const listAutoPartsRouteSchema = {
         description: 'Filtro por nome da peça (busca parcial)',
       }),
     ),
-    lowStock: t.Optional(
-      t.String({
-        description: 'Filtra peças com estoque baixo (true/false)',
-      }),
-    ),
   }),
 };
 

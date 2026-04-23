@@ -49,23 +49,6 @@ describe('list auto parts use case', () => {
     expect(autoPartRepository.findByParams).toHaveBeenCalled();
   });
 
-  test('should apply lowStock filter', async () => {
-    const part = makeAutoPart({ stock: 2 });
-
-    autoPartRepository.findByParams.calledWith(any()).mockResolvedValue([part]);
-
-    const result = await listAutoPartsUseCase.execute({
-      page: 1,
-      limit: 20,
-      filters: {
-        lowStock: true,
-      },
-    });
-
-    expect(result.data).toHaveLength(1);
-    expect(autoPartRepository.findByParams).toHaveBeenCalled();
-  });
-
   test('should handle empty result', async () => {
     autoPartRepository.findByParams.calledWith(any()).mockResolvedValue([]);
 

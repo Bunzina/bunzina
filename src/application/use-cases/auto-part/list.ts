@@ -7,7 +7,6 @@ interface Input {
   limit: number;
   filters?: {
     name?: string;
-    lowStock?: boolean;
   };
 }
 

@@ -2,7 +2,6 @@ import type { AutoPart } from '../entities/auto-part';
 
 export interface FindAutoPartsFilters {
   name?: string;
-  lowStock?: boolean;
 }
 
 export interface FindAutoPartsParams {
