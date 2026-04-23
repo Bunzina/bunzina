@@ -127,7 +127,7 @@ O Docker Compose também sobe o MailCatcher para testes locais de e-mail:
 Sobe apenas o banco via Docker e roda a API com hot reload:
 
 ```bash
-docker compose up -d
+docker compose up db mailcatcher -d
 bun --hot run src/api/server.ts
 ```
 
