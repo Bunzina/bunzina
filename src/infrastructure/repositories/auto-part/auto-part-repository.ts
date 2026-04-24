@@ -92,6 +92,29 @@ export class AutoPartRepository implements IAutoPartRepository {
     return autoPart;
   }
 
+  async update(autoPart: AutoPart): Promise<AutoPart> {
+    const recordToUpdate = AutoPartMapper.toDatabase(autoPart);
+
+    logger.debug({
+      message: 'Updating auto part',
+      data: { autoPart },
+    });
+
+    const {
+      id: _id,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToUpdate;
+
+    await this.client`
+      UPDATE bunzina.auto_parts
+      SET ${this.client(fieldsToUpdate)}
+      WHERE id = ${autoPart.id}
+    `;
+
+    return autoPart;
+  }
+
   async findByParams(params: FindAutoPartsParams): Promise<AutoPart[]> {
     const filters = params.filters ?? {};
     const filtersSql = this.buildFindByParamsFiltersSql(filters);
