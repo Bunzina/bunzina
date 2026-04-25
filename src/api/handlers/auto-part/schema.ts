@@ -49,7 +49,7 @@ export const listAutoPartsRouteSchema = {
     tags: ['Auto-Parts'],
     summary: 'Listar peças',
     description:
-      'Lista peças e insumos com paginação e filtro opcional por nome ou estoque baixo.',
+      'Lista peças e insumos com paginação e filtro opcional por nome.',
     responses: {
       '200': { description: 'Lista de peças retornada com sucesso' },
       '400': { description: 'Parâmetros inválidos' },
@@ -73,6 +73,40 @@ export const listAutoPartsRouteSchema = {
         description: 'Filtro por nome da peça (busca parcial)',
       }),
     ),
+  }),
+};
+
+export const updateAutoPartRouteSchema = {
+  detail: {
+    tags: ['Auto-Parts'],
+    summary: 'Atualizar peça',
+    description: 'Atualiza uma peça ou insumo existente.',
+    responses: {
+      '200': { description: 'Peça atualizada com sucesso' },
+      '400': { description: 'Dados inválidos' },
+      '404': { description: 'Peça não encontrada' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID da peça a ser atualizada',
+      format: 'uuid',
+    }),
+  }),
+  body: t.Object({
+    name: t.String({
+      description: 'Nome da peça ou insumo',
+    }),
+    description: t.String({
+      description: 'Descrição detalhada da peça',
+    }),
+    price: t.Number({
+      description: 'Preço em centavos',
+    }),
+    stock: t.Number({
+      description: 'Quantidade em estoque',
+    }),
   }),
 };
 

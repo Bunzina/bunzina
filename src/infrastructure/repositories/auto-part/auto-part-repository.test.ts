@@ -1,4 +1,5 @@
 import { makeAutoPart } from '@/test/factories/make-auto-part';
+import { makePrice } from '@/test/factories/make-price';
 import { SQL } from 'bun';
 import { mockFn } from 'bun-mock-extended';
 import { describe, expect, test, type Mock } from 'bun:test';
@@ -136,6 +137,27 @@ describe('auto part repository', () => {
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe('550e8400-e29b-41d4-a716-446655440001');
     expect(result[0]?.name).toBe('Brake Pad');
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should update an existing auto part', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    mockClient.mockResolvedValue([]);
+
+    const repository = new AutoPartRepository(mockClient as unknown as SQL);
+    const autoPart = makeAutoPart({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: 'Brake Pad',
+      description: 'High-quality brake pad',
+      price: makePrice(12000),
+      stock: 50,
+    });
+
+    const result = await repository.update(autoPart);
+
+    expect(result).toEqual(autoPart);
     expect(mockClient).toHaveBeenCalled();
   });
 });
