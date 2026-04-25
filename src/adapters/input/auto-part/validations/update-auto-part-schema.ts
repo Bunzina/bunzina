@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const updateAutoPartSchema = z.object({
-  id: z.string().uuid('Invalid auto part ID'),
+  id: z.uuid('Invalid auto part ID'),
   name: z.string().min(1, 'Name is required'),
   description: z.string().min(1, 'Description is required'),
   price: z.number().positive('Price must be positive'),

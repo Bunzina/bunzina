@@ -1,13 +1,13 @@
 import type { AutoPartRepository } from '@/domain/auto-part/repositories/auto-part-repository';
 import type { StockMovementRepository } from '@/domain/auto-part/repositories/stock-movement-repository';
-import { StockMovementType } from '@/domain/auto-part/types/stock-movement-type';
 import { makeAutoPart } from '@/test/factories/make-auto-part';
 import { makeStockMovement } from '@/test/factories/make-stock-movement';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import { describe, expect, test, beforeEach } from 'bun:test';
-import { NotFoundError } from '@lucas-pmelo/handlers';
+import { NotFoundError, BadRequestError } from '@lucas-pmelo/handlers';
 import { UpdateAutoPartUseCase } from './update';
 import { Price } from '@/domain/core/value-objects/price';
+import { StockMovementType } from '@/domain/auto-part/types/stock-movement-type';
 
 describe('update auto part use case', () => {
   let autoPartRepository: MockProxy<AutoPartRepository>;
@@ -68,7 +68,7 @@ describe('update auto part use case', () => {
     );
   });
 
-  test('should create an output stock movement when stock decreases', async () => {
+  test('should throw ValidationError when stock difference is negative', async () => {
     const existingAutoPart = makeAutoPart({
       id: '550e8400-e29b-41d4-a716-446655440000',
       stock: 10,
@@ -80,25 +80,18 @@ describe('update auto part use case', () => {
     autoPartRepository.update
       .calledWith(any())
       .mockResolvedValue(existingAutoPart);
-    stockMovementRepository.create
-      .calledWith(any())
-      .mockResolvedValue(makeStockMovement());
-
-    await updateAutoPartUseCase.execute({
-      id: '550e8400-e29b-41d4-a716-446655440000',
-      name: existingAutoPart.name,
-      description: existingAutoPart.description,
-      price: existingAutoPart.price.value,
-      stock: 4,
-    });
-
-    expect(stockMovementRepository.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        autoPartId: '550e8400-e29b-41d4-a716-446655440000',
-        quantity: 6,
-        type: StockMovementType.OUT,
+    expect(
+      updateAutoPartUseCase.execute({
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: existingAutoPart.name,
+        description: existingAutoPart.description,
+        price: existingAutoPart.price.value,
+        stock: 4,
       }),
-    );
+    ).rejects.toThrow(BadRequestError);
+
+    expect(autoPartRepository.update).not.toHaveBeenCalled();
+    expect(stockMovementRepository.create).not.toHaveBeenCalled();
   });
 
   test('should not create stock movement when stock does not change', async () => {

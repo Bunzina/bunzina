@@ -1,8 +1,8 @@
 import { StockMovement } from '@/domain/auto-part/entities/stock-movement';
 import type { StockMovementDbSchema } from '../dtos/stock-movement-db-schema';
 
-export class StockMovementMapper {
-  static toDatabase(stockMovement: StockMovement): StockMovementDbSchema {
+export const StockMovementMapper = {
+  toDatabase(stockMovement: StockMovement): StockMovementDbSchema {
     return {
       id: stockMovement.id!,
       auto_part_id: stockMovement.autoPartId,
@@ -11,9 +11,9 @@ export class StockMovementMapper {
       service_order_id: stockMovement.serviceOrderId,
       created_at: stockMovement.createdAt,
     };
-  }
+  },
 
-  static toDomain(record: StockMovementDbSchema): StockMovement {
+  toDomain(record: StockMovementDbSchema): StockMovement {
     return new StockMovement({
       id: record.id,
       autoPartId: record.auto_part_id,
@@ -22,5 +22,5 @@ export class StockMovementMapper {
       serviceOrderId: record.service_order_id,
       createdAt: record.created_at,
     });
-  }
-}
+  },
+};

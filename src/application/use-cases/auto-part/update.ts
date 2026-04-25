@@ -5,7 +5,7 @@ import type { AutoPartRepository } from '@/domain/auto-part/repositories/auto-pa
 import { StockMovement } from '@/domain/auto-part/entities/stock-movement';
 import type { StockMovementRepository } from '@/domain/auto-part/repositories/stock-movement-repository';
 import { StockMovementType } from '@/domain/auto-part/types/stock-movement-type';
-import { NotFoundError } from '@lucas-pmelo/handlers';
+import { NotFoundError, BadRequestError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 export class UpdateAutoPartUseCase {
@@ -33,6 +33,24 @@ export class UpdateAutoPartUseCase {
       data: { input },
     });
 
+    const stockDifference = input.stock - existingAutoPart.stock;
+
+    if (stockDifference < 0) {
+      const message = 'Stock difference cannot be negative';
+
+      logger.warn({
+        message,
+        data: {
+          id: input.id,
+          previousStock: existingAutoPart.stock,
+          currentStock: input.stock,
+          stockDifference,
+        },
+      });
+
+      throw new BadRequestError(message);
+    }
+
     const updatedAutoPart = new AutoPart({
       id: existingAutoPart.id,
       name: input.name,
@@ -44,14 +62,11 @@ export class UpdateAutoPartUseCase {
 
     await this.autoPartRepository.update(updatedAutoPart);
 
-    const stockDifference = input.stock - existingAutoPart.stock;
-
     if (stockDifference !== 0) {
       const stockMovement = new StockMovement({
         autoPartId: existingAutoPart.id!,
-        quantity: Math.abs(stockDifference),
-        type:
-          stockDifference > 0 ? StockMovementType.IN : StockMovementType.OUT,
+        quantity: stockDifference,
+        type: StockMovementType.IN,
       });
 
       logger.debug({
