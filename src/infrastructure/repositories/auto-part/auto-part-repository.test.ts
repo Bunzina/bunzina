@@ -158,6 +158,20 @@ describe('auto part repository', () => {
     const result = await repository.update(autoPart);
 
     expect(result).toEqual(autoPart);
+  });
+
+  test('should soft delete an auto part', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+
+    mockClient.mockResolvedValue([]);
+
+    const repository = new AutoPartRepository(mockClient as unknown as SQL);
+    const autoPartId = '550e8400-e29b-41d4-a716-446655440001';
+
+    await repository.delete(autoPartId);
+
     expect(mockClient).toHaveBeenCalled();
   });
 });

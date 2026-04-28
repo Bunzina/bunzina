@@ -10,6 +10,7 @@ export const AutoPartMapper = {
       description: autoPart.description,
       price: autoPart.price.value,
       stock: autoPart.stock,
+      is_active: true,
       created_at: autoPart.createdAt,
       updated_at: autoPart.updatedAt,
     };

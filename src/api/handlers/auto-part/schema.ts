@@ -129,3 +129,24 @@ export const findAutoPartRouteSchema = {
     }),
   }),
 };
+
+export const deleteAutoPartRouteSchema = {
+  detail: {
+    tags: ['Auto-Parts'],
+    summary: 'Desativar peça',
+    description:
+      'Desativa uma peça ou insumo por ID utilizando soft delete no estoque.',
+    responses: {
+      '204': { description: 'Peça desativada com sucesso' },
+      '400': { description: 'ID inválido' },
+      '404': { description: 'Peça não encontrada' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID da peça a ser desativada',
+      format: 'uuid',
+    }),
+  }),
+};

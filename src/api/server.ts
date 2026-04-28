@@ -48,11 +48,13 @@ import {
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 import { createAutoPartHandler } from './handlers/auto-part/create';
+import { deleteAutoPartHandler } from './handlers/auto-part/delete';
 import { findAutoPartHandler } from './handlers/auto-part/find';
 import { listAutoPartsHandler } from './handlers/auto-part/list';
 import { updateAutoPartHandler } from './handlers/auto-part/update';
 import {
   createAutoPartSchema,
+  deleteAutoPartRouteSchema,
   findAutoPartRouteSchema,
   listAutoPartsRouteSchema,
   updateAutoPartRouteSchema,
@@ -227,6 +229,11 @@ app.guard(
       '/auto-parts/:id',
       async (context) => updateAutoPartHandler(context),
       updateAutoPartRouteSchema,
+    );
+    app.delete(
+      '/auto-parts/:id',
+      async (context) => deleteAutoPartHandler(context),
+      deleteAutoPartRouteSchema,
     );
 
     // User routes

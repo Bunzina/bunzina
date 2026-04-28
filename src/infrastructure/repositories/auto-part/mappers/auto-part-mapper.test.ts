@@ -14,6 +14,7 @@ describe('auto part mapper', () => {
       description: 'High-quality brake pad for improved stopping power.',
       price: autoPart.price.value,
       stock: 100,
+      is_active: true,
       created_at: autoPart.createdAt,
       updated_at: autoPart.updatedAt,
     });
@@ -26,6 +27,7 @@ describe('auto part mapper', () => {
       description: 'Premium air filter for better engine performance.',
       price: 5000,
       stock: 50,
+      is_active: true,
       created_at: new Date('2026-01-15'),
       updated_at: new Date('2026-01-15'),
     };
