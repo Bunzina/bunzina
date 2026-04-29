@@ -16,4 +16,5 @@ export interface AutoPartRepository {
   findById(id: string): Promise<AutoPart | null>;
   update(autoPart: AutoPart): Promise<AutoPart>;
   findByParams(params: FindAutoPartsParams): Promise<AutoPart[]>;
+  delete(id: string): Promise<void>;
 }

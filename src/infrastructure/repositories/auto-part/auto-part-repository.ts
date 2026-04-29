@@ -25,7 +25,11 @@ export class AutoPartRepository implements IAutoPartRepository {
 
   async findByName(name: string): Promise<AutoPart | null> {
     const [record] = await this.client<AutoPartDbSchema[]>`
-      SELECT * FROM bunzina.auto_parts WHERE name = ${name} LIMIT 1
+      SELECT *
+      FROM bunzina.auto_parts
+      WHERE name = ${name}
+        AND is_active = true
+      LIMIT 1
     `;
 
     if (!record) {
@@ -52,7 +56,11 @@ export class AutoPartRepository implements IAutoPartRepository {
 
   async findById(id: string): Promise<AutoPart | null> {
     const [record] = await this.client<AutoPartDbSchema[]>`
-      SELECT * FROM bunzina.auto_parts WHERE id = ${id} LIMIT 1
+      SELECT *
+      FROM bunzina.auto_parts
+      WHERE id = ${id}
+        AND is_active = true
+      LIMIT 1
     `;
 
     if (!record) {
@@ -132,7 +140,7 @@ export class AutoPartRepository implements IAutoPartRepository {
     const records = await this.client<AutoPartDbSchema[]>`
       SELECT *
       FROM bunzina.auto_parts
-      WHERE 1 = 1
+      WHERE is_active = true
       ${filtersSql}
       ORDER BY created_at DESC
       LIMIT ${params.limit}
@@ -151,5 +159,19 @@ export class AutoPartRepository implements IAutoPartRepository {
     });
 
     return data;
+  }
+
+  async delete(id: string): Promise<void> {
+    logger.debug({
+      message: 'Soft deleting auto part from database',
+      data: { id },
+    });
+
+    await this.client`
+      UPDATE bunzina.auto_parts
+      SET is_active = false
+      WHERE id = ${id}
+        AND is_active = true
+    `;
   }
 }
