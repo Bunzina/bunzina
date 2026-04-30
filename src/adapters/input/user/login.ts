@@ -3,7 +3,11 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { loginSchema } from './validations/login-schema';
+import { StatusCodes } from 'http-status-codes';
+import {
+  loginSchema,
+  type LoginInput as LoginHttpInput,
+} from './validations/login-schema';
 
 export class LoginInput {
   constructor(private loginUseCase: LoginUseCase) {}
@@ -15,7 +19,10 @@ export class LoginInput {
       message: 'Login request',
     });
 
-    const { data, errors } = validateSchemaZod(loginSchema, body);
+    const { data, errors } = validateSchemaZod(
+      loginSchema,
+      body as LoginHttpInput,
+    );
 
     if (errors?.length) {
       logger.warn({
@@ -24,7 +31,7 @@ export class LoginInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -37,7 +44,7 @@ export class LoginInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: result,
       });
     }, 'Failed to login');

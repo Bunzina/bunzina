@@ -3,6 +3,7 @@ import type { UpdateCustomerUseCase } from '@/application/use-cases/customer/upd
 import { makeCustomer } from '@/test/factories/make-customer';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { UpdateCustomerInput } from './update';
 
 describe('update customer input', () => {
@@ -38,7 +39,7 @@ describe('update customer input', () => {
 
     const result = await updateCustomerInput.execute(request);
 
-    expect(result.status).toBe(200);
+    expect(result.status).toBe(StatusCodes.OK);
     expect(result.headers.get('Content-Type')).toBe('application/json');
     expect(await result.json()).toEqual(
       JSON.parse(JSON.stringify(CustomerPresenter.toHttp(customer))),
@@ -80,7 +81,7 @@ describe('update customer input', () => {
 
     const result = await updateCustomerInput.execute(request);
 
-    expect(result.status).toBe(500);
+    expect(result.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
     expect(result.headers.get('Content-Type')).toBe('application/json');
     expect(await result.json()).toEqual({ error: 'Failed to update customer' });
   });
@@ -105,7 +106,7 @@ describe('update customer input', () => {
 
     const result = await updateCustomerInput.execute(request);
 
-    expect(result.status).toBe(400);
+    expect(result.status).toBe(StatusCodes.BAD_REQUEST);
     expect(await result.json()).toMatchObject({
       reason: 'Invalid data in request',
     });

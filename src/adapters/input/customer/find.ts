@@ -1,10 +1,11 @@
 import { CustomerPresenter } from '@/adapters/output/customer/customer-presenter';
 import type { FindCustomerUseCase } from '@/application/use-cases/customer/find';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { findCustomerSchema } from './validations/find-customer-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class FindCustomerInput {
   constructor(private findCustomerUseCase: FindCustomerUseCase) {}
@@ -28,7 +29,7 @@ export class FindCustomerInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -44,7 +45,7 @@ export class FindCustomerInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: CustomerPresenter.toHttp(customer),
       });
     }, 'Failed to find customer');
