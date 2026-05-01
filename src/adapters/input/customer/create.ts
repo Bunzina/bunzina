@@ -3,7 +3,10 @@ import type { CreateCustomerUseCase } from '@/application/use-cases/customer/cre
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { createCustomerSchema } from './validations/create-customer-schema';
+import {
+  createCustomerSchema,
+  type CreateCustomerInput as CreateCustomerInputType,
+} from './validations/create-customer-schema';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class CreateCustomerInput {
@@ -32,7 +35,9 @@ export class CreateCustomerInput {
     }
 
     return withErrorHandler(async () => {
-      const customer = await this.createCustomerUseCase.execute(data!);
+      const customer = await this.createCustomerUseCase.execute(
+        data as CreateCustomerInputType,
+      );
 
       logger.info({
         message: 'Customer created successfully',

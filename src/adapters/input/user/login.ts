@@ -3,7 +3,10 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { loginSchema } from './validations/login-schema';
+import {
+  loginSchema,
+  type LoginInput as LoginInputType,
+} from './validations/login-schema';
 
 export class LoginInput {
   constructor(private loginUseCase: LoginUseCase) {}
@@ -30,7 +33,7 @@ export class LoginInput {
     }
 
     return withErrorHandler(async () => {
-      const result = await this.loginUseCase.execute(data!);
+      const result = await this.loginUseCase.execute(data as LoginInputType);
 
       logger.info({
         message: 'Login successful',

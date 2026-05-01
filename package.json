@@ -8,6 +8,7 @@
     "start": "bun run src/api/server.ts",
     "start:dev": "bun --hot run src/api/server.ts",
     "start:with-migrations": "bun run migration && bun run start:dev",
+    "test:integration": "bun test src/test/integration",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
