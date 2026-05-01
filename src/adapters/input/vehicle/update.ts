@@ -1,13 +1,14 @@
 import { VehiclePresenter } from '@/adapters/output/vehicle/vehicle-presenter';
 import type { UpdateVehicleUseCase } from '@/application/use-cases/vehicle/update';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import {
   updateVehicleSchema,
   type UpdateVehicleInput as UpdateVehicleInputType,
 } from './validations/update-vehicle-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class UpdateVehicleInput {
   constructor(private updateVehicleUseCase: UpdateVehicleUseCase) {}
@@ -33,7 +34,7 @@ export class UpdateVehicleInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -49,7 +50,7 @@ export class UpdateVehicleInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: VehiclePresenter.toHttp(vehicle),
       });
     }, 'Failed to update vehicle');

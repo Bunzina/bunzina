@@ -1,6 +1,7 @@
 import { DeleteServiceUseCase } from '@/application/use-cases/service/delete';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { DeleteServiceInput } from './delete';
 
 describe('Delete Service Input', () => {
@@ -24,7 +25,7 @@ describe('Delete Service Input', () => {
 
     const response = await deleteServiceInput.execute(mockContext);
 
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(StatusCodes.NO_CONTENT);
   });
 
   test('should return validation error for invalid ID', async () => {
@@ -35,7 +36,7 @@ describe('Delete Service Input', () => {
 
     const response = await deleteServiceInput.execute(mockContext);
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(StatusCodes.BAD_REQUEST);
     expect(response.headers.get('Content-Type')).toBe('application/json');
   });
 });

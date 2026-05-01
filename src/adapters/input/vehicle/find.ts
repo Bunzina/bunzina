@@ -4,6 +4,7 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { findVehicleSchema } from './validations/find-vehicle-schema';
 
 export class FindVehicleByIdInput {
@@ -26,7 +27,7 @@ export class FindVehicleByIdInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -40,7 +41,7 @@ export class FindVehicleByIdInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: VehiclePresenter.toHttp(vehicle),
       });
     }, 'Failed to find vehicle');

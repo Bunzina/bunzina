@@ -4,7 +4,11 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { updateUserSchema } from './validations/update-user-schema';
+import { StatusCodes } from 'http-status-codes';
+import {
+  updateUserSchema,
+  type UpdateUserInput as UpdateUserHttpInput,
+} from './validations/update-user-schema';
 
 export class UpdateUserInput {
   constructor(private updateUserUseCase: UpdateUserUseCase) {}
@@ -21,7 +25,7 @@ export class UpdateUserInput {
     const { data, errors } = validateSchemaZod(updateUserSchema, {
       id,
       ...(body as object),
-    });
+    } as UpdateUserHttpInput);
 
     if (errors?.length) {
       logger.warn({
@@ -30,7 +34,7 @@ export class UpdateUserInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -44,7 +48,7 @@ export class UpdateUserInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: UserPresenter.toHttp(user),
       });
     }, 'Failed to update user');

@@ -1,6 +1,18 @@
 import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
 import z from 'zod';
+import { createAutoPartHandler } from './handlers/auto-part/create';
+import { deleteAutoPartHandler } from './handlers/auto-part/delete';
+import { findAutoPartHandler } from './handlers/auto-part/find';
+import { listAutoPartsHandler } from './handlers/auto-part/list';
+import {
+  createAutoPartSchema,
+  deleteAutoPartRouteSchema,
+  findAutoPartRouteSchema,
+  listAutoPartsRouteSchema,
+  updateAutoPartRouteSchema,
+} from './handlers/auto-part/schema';
+import { updateAutoPartHandler } from './handlers/auto-part/update';
 import { createCustomerHandler } from './handlers/customer/create';
 import { deleteCustomerHandler } from './handlers/customer/delete';
 import { findCustomerHandler } from './handlers/customer/find';
@@ -47,18 +59,6 @@ import {
 } from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
-import { createAutoPartHandler } from './handlers/auto-part/create';
-import { deleteAutoPartHandler } from './handlers/auto-part/delete';
-import { findAutoPartHandler } from './handlers/auto-part/find';
-import { listAutoPartsHandler } from './handlers/auto-part/list';
-import { updateAutoPartHandler } from './handlers/auto-part/update';
-import {
-  createAutoPartSchema,
-  deleteAutoPartRouteSchema,
-  findAutoPartRouteSchema,
-  listAutoPartsRouteSchema,
-  updateAutoPartRouteSchema,
-} from './handlers/auto-part/schema';
 
 export const app = new Elysia();
 
@@ -107,6 +107,10 @@ O token é obtido via \`POST /auth/login\`.
         {
           name: 'Customers',
           description: 'Cadastro e gestão de clientes da oficina',
+        },
+        {
+          name: 'Services',
+          description: 'Cadastro e gestão de serviços realizados em veículos',
         },
         {
           name: 'Vehicles',

@@ -3,6 +3,7 @@ import type { CreateVehicleUseCase } from '@/application/use-cases/vehicle/creat
 import { makeVehicle } from '@/test/factories/make-vehicle';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { CreateVehicleInput } from './create';
 
 describe('create vehicle input', () => {
@@ -31,7 +32,7 @@ describe('create vehicle input', () => {
 
     const result = await createVehicleInput.execute(request);
 
-    expect(result?.status).toBe(201);
+    expect(result?.status).toBe(StatusCodes.CREATED);
     expect(result?.headers.get('Content-Type')).toBe('application/json');
     expect(await result?.json()).toEqual(
       JSON.parse(JSON.stringify(VehiclePresenter.toHttp(vehicle))),
@@ -63,7 +64,7 @@ describe('create vehicle input', () => {
 
     const result = await createVehicleInput.execute(request);
 
-    expect(result?.status).toBe(500);
+    expect(result?.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
     expect(result?.headers.get('Content-Type')).toBe('application/json');
     expect(await result?.json()).toEqual({ error: 'Failed to create vehicle' });
   });
@@ -81,7 +82,7 @@ describe('create vehicle input', () => {
 
     const result = await createVehicleInput.execute(request);
 
-    expect(result?.status).toBe(400);
+    expect(result?.status).toBe(StatusCodes.BAD_REQUEST);
     expect(await result?.json()).toMatchObject({
       reason: 'Invalid data in request',
     });

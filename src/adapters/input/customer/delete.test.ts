@@ -2,6 +2,7 @@ import type { DeleteCustomerUseCase } from '@/application/use-cases/customer/del
 import { makeCustomer } from '@/test/factories/make-customer';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { DeleteCustomerInput } from './delete';
 
 describe('delete customer input', () => {
@@ -26,7 +27,7 @@ describe('delete customer input', () => {
 
     const result = await deleteCustomerInput.execute(request);
 
-    expect(result.status).toBe(204);
+    expect(result.status).toBe(StatusCodes.NO_CONTENT);
     expect(deleteCustomerUseCase.execute).toHaveBeenCalledWith({
       documentNumber: customer.document.value,
     });
@@ -43,7 +44,7 @@ describe('delete customer input', () => {
 
     const result = await deleteCustomerInput.execute(request);
 
-    expect(result.status).toBe(500);
+    expect(result.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
     expect(result.headers.get('Content-Type')).toBe('application/json');
     expect(await result.json()).toEqual({ error: 'Failed to delete customer' });
   });
@@ -55,7 +56,7 @@ describe('delete customer input', () => {
 
     const result = await deleteCustomerInput.execute(request);
 
-    expect(result.status).toBe(400);
+    expect(result.status).toBe(StatusCodes.BAD_REQUEST);
     expect(await result.json()).toMatchObject({
       reason: 'Invalid data in request',
     });

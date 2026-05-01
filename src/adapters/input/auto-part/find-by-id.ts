@@ -4,6 +4,7 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { findAutoPartSchema } from './validations/find-auto-part-schema';
 
 export class FindAutoPartByIdInput {
@@ -26,7 +27,7 @@ export class FindAutoPartByIdInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -40,7 +41,7 @@ export class FindAutoPartByIdInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: AutoPartPresenter.toHttp(autoPart),
       });
     }, 'Failed to find auto part');
