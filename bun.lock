@@ -6,6 +6,7 @@
       "name": "bunzina",
       "dependencies": {
         "@elysiajs/openapi": "^1.4.14",
+        "@lucas-pmelo/fast-validators": "^0.1.0",
         "@lucas-pmelo/handlers": "^0.0.5",
         "@lucas-pmelo/logger": "^0.0.6",
         "@lucas-pmelo/validator": "^0.0.3",
@@ -34,6 +35,8 @@
     "@hapi/hoek": ["@hapi/hoek@9.3.0", "", {}, "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="],
 
     "@hapi/topo": ["@hapi/topo@5.1.0", "", { "dependencies": { "@hapi/hoek": "^9.0.0" } }, "sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg=="],
+
+    "@lucas-pmelo/fast-validators": ["@lucas-pmelo/fast-validators@0.1.0", "", { "peerDependencies": { "typescript": "^5.0.0", "zod": "^4.0.0" } }, "sha512-PyIU3SpcygwlLe2s2+DZtNVg8l/gxCNpru3snWm9HsrIZU1YLiS+hb8blsmP5Txr0hOBzcRAbvgNDmyXs5eZgA=="],
 
     "@lucas-pmelo/handlers": ["@lucas-pmelo/handlers@0.0.5", "", { "dependencies": { "@lucas-pmelo/logger": "0.0.6", "express": "^4.21.0" } }, "sha512-dkUPtm0RNoTAq8rtXCAlIKEJlSmCcOQq4ia5LrJQ90vfCN3emUSRsInLrEpMUjqj2MeHpGyH72vOd/vVLnxw8Q=="],
 
