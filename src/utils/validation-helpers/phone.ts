@@ -1,5 +1,6 @@
+import { isValidPhone } from '@lucas-pmelo/fast-validators';
 import { z } from 'zod';
 
 export const phoneValidation = z
   .string()
-  .regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number format');
+  .refine((value) => isValidPhone(value), 'Invalid phone number format');
