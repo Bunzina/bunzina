@@ -57,6 +57,8 @@ import {
   listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
+import { sendNotificationHandler } from './handlers/notification/send';
+import { notificationSchema } from './handlers/notification/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 
@@ -115,6 +117,10 @@ O token é obtido via \`POST /auth/login\`.
         {
           name: 'Vehicles',
           description: 'Cadastro de veículos vinculados a clientes',
+        },
+        {
+          name: 'Notification',
+          description: 'Envio de notificações para clientes',
         },
         {
           name: 'Auto-Parts',
@@ -255,6 +261,13 @@ app.guard(
       '/users/:id',
       async (context) => deleteUserHandler(context),
       deleteUserSchema,
+    );
+
+    // Notification routes
+    app.post(
+      '/notifications',
+      async (context) => sendNotificationHandler(context),
+      notificationSchema,
     );
 
     // Service routes

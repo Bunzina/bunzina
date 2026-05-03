@@ -11,6 +11,10 @@ services:
     environment:
       - APP_ENV=dev
       - DATABASE_URL=postgres://bun:bun@db:5432/bunzina
+      - EMAIL_SMTP_HOST=mailcatcher
+      - EMAIL_SMTP_PORT=1025
+      - EMAIL_SMTP_USER=
+      - EMAIL_SMTP_PASSWORD=
     depends_on:
       db:
         condition: service_healthy
@@ -30,6 +34,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
+  mailcatcher:
+    image: 'sj26/mailcatcher'
+    ports:
+      - '1025:1025'
+      - '1080:1080'
 
 volumes:
   db-data:
