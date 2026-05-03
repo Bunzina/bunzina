@@ -189,9 +189,9 @@ bun test --coverage
 
 # Roda um arquivo específico
 bun test src/adapters/input/customer/create.test.ts
+```
 
-
-### Testes de integração
+## Testes de integração
 
 ```bash
 # Subir banco de testes
