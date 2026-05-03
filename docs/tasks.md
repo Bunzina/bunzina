@@ -102,8 +102,8 @@ Estrutura sugerida:
 
 ## Peças e Insumos
 
-- [ ] CRUD de peças
-- [ ] Controle de estoque
+- [x] CRUD de peças
+- [x] Controle de estoque
 
 ## Ordens de Serviço
 

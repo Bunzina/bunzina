@@ -76,6 +76,38 @@ export const listAutoPartsRouteSchema = {
   }),
 };
 
+export const registerStockMovementRouteSchema = {
+  detail: {
+    tags: ['Auto-Parts'],
+    summary: 'Registrar movimentação de estoque',
+    description:
+      'Cria uma movimentação de estoque do tipo IN ou OUT e atualiza a quantidade da peça.',
+    responses: {
+      '200': { description: 'Movimentação registrada com sucesso' },
+      '400': { description: 'Dados inválidos' },
+      '404': { description: 'Peça não encontrada' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID da peça que receberá a movimentação',
+      format: 'uuid',
+    }),
+  }),
+  body: t.Object({
+    quantity: t.Number({
+      description: 'Quantidade da movimentação',
+      minimum: 1,
+      examples: [5],
+    }),
+    type: t.String({
+      description: 'Tipo da movimentação',
+      examples: ['IN', 'OUT'],
+    }),
+  }),
+};
+
 export const listStockMovementsRouteSchema = {
   detail: {
     tags: ['Auto-Parts'],

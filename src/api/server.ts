@@ -6,12 +6,14 @@ import { deleteAutoPartHandler } from './handlers/auto-part/delete';
 import { findAutoPartHandler } from './handlers/auto-part/find';
 import { listAutoPartsHandler } from './handlers/auto-part/list';
 import { listStockMovementsHandler } from './handlers/auto-part/list-stock-movements';
+import { registerStockMovementHandler } from './handlers/auto-part/register-stock-movement';
 import {
   createAutoPartSchema,
   deleteAutoPartRouteSchema,
   findAutoPartRouteSchema,
   listAutoPartsRouteSchema,
   listStockMovementsRouteSchema,
+  registerStockMovementRouteSchema,
   updateAutoPartRouteSchema,
 } from './handlers/auto-part/schema';
 import { updateAutoPartHandler } from './handlers/auto-part/update';
@@ -26,6 +28,8 @@ import {
 } from './handlers/customer/schema';
 import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
+import { notificationSchema } from './handlers/notification/schema';
+import { sendNotificationHandler } from './handlers/notification/send';
 import { createServiceHandler } from './handlers/service/create';
 import { deleteServiceHandler } from './handlers/service/delete';
 import { findServiceHandler } from './handlers/service/find';
@@ -59,8 +63,6 @@ import {
   listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
-import { sendNotificationHandler } from './handlers/notification/send';
-import { notificationSchema } from './handlers/notification/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 
@@ -231,6 +233,11 @@ app.guard(
       '/auto-parts',
       async (context) => listAutoPartsHandler(context),
       listAutoPartsRouteSchema,
+    );
+    app.post(
+      '/auto-parts/:id/stock-movements',
+      async (context) => registerStockMovementHandler(context),
+      registerStockMovementRouteSchema,
     );
     app.get(
       '/auto-parts/:id/stock-movements',
