@@ -21,8 +21,13 @@ describe('service order entity', () => {
         {
           autoPartId: 'auto-part-id',
           id: expect.any(String),
-          price: 100,
           quantity: 2,
+          unitPrice: {
+            value: 100,
+          },
+          totalPrice: {
+            value: 200,
+          },
         },
       ],
       createdAt: expect.any(Date),

@@ -34,6 +34,8 @@ import {
   updateServiceRouteSchema,
 } from './handlers/service/schema';
 import { updateServiceHandler } from './handlers/service/update';
+import { createServiceOrderHandler } from './handlers/service-order/create';
+import { createServiceOrderRouteSchema } from './handlers/service-order/schema';
 import { createUserHandler } from './handlers/user/create';
 import { deleteUserHandler } from './handlers/user/delete';
 import { findUserHandler } from './handlers/user/find';
@@ -113,6 +115,10 @@ O token é obtido via \`POST /auth/login\`.
         {
           name: 'Services',
           description: 'Cadastro e gestão de serviços realizados em veículos',
+        },
+        {
+          name: 'Service-Orders',
+          description: 'Service order workflow and tracking',
         },
         {
           name: 'Vehicles',
@@ -290,6 +296,13 @@ app.guard(
       '/services/:id',
       async (context) => deleteServiceHandler(context),
       deleteServiceRouteSchema,
+    );
+
+    // Service order routes
+    app.post(
+      '/service-orders',
+      async (context) => createServiceOrderHandler(context),
+      createServiceOrderRouteSchema,
     );
 
     return app;
