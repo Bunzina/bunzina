@@ -1,25 +1,24 @@
 import type { AutoPartRepository } from '@/domain/auto-part/repositories/auto-part-repository';
-import type { StockMovementRepository } from '@/domain/auto-part/repositories/stock-movement-repository';
 import { makeAutoPart } from '@/test/factories/make-auto-part';
 import { makeStockMovement } from '@/test/factories/make-stock-movement';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import { describe, expect, test, beforeEach } from 'bun:test';
-import { NotFoundError, BadRequestError } from '@lucas-pmelo/handlers';
+import { NotFoundError } from '@lucas-pmelo/handlers';
 import { UpdateAutoPartUseCase } from './update';
 import { Price } from '@/domain/core/value-objects/price';
-import { StockMovementType } from '@/domain/auto-part/types/stock-movement-type';
+import type { CreateStockMovementUseCase } from './create-stock-movement';
 
 describe('update auto part use case', () => {
   let autoPartRepository: MockProxy<AutoPartRepository>;
-  let stockMovementRepository: MockProxy<StockMovementRepository>;
+  let createStockMovementUseCase: MockProxy<CreateStockMovementUseCase>;
   let updateAutoPartUseCase: UpdateAutoPartUseCase;
 
   beforeEach(() => {
     autoPartRepository = mock();
-    stockMovementRepository = mock();
+    createStockMovementUseCase = mock();
     updateAutoPartUseCase = new UpdateAutoPartUseCase(
       autoPartRepository,
-      stockMovementRepository,
+      createStockMovementUseCase,
     );
   });
 
@@ -38,7 +37,7 @@ describe('update auto part use case', () => {
     autoPartRepository.update
       .calledWith(any())
       .mockResolvedValue(existingAutoPart);
-    stockMovementRepository.create
+    createStockMovementUseCase.execute
       .calledWith(any())
       .mockResolvedValue(makeStockMovement());
 
@@ -59,16 +58,18 @@ describe('update auto part use case', () => {
       '550e8400-e29b-41d4-a716-446655440000',
     );
     expect(autoPartRepository.update).toHaveBeenCalled();
-    expect(stockMovementRepository.create).toHaveBeenCalledWith(
+    expect(createStockMovementUseCase.execute).toHaveBeenCalledWith(
       expect.objectContaining({
-        autoPartId: '550e8400-e29b-41d4-a716-446655440000',
-        quantity: 5,
-        type: StockMovementType.IN,
+        existingAutoPart,
+        updatedAutoPart: expect.objectContaining({
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          stock: 10,
+        }),
       }),
     );
   });
 
-  test('should throw ValidationError when stock difference is negative', async () => {
+  test('should update auto part when stock decreases', async () => {
     const existingAutoPart = makeAutoPart({
       id: '550e8400-e29b-41d4-a716-446655440000',
       stock: 10,
@@ -80,18 +81,27 @@ describe('update auto part use case', () => {
     autoPartRepository.update
       .calledWith(any())
       .mockResolvedValue(existingAutoPart);
-    expect(
-      updateAutoPartUseCase.execute({
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        name: existingAutoPart.name,
-        description: existingAutoPart.description,
-        price: existingAutoPart.price.value,
-        stock: 4,
-      }),
-    ).rejects.toThrow(BadRequestError);
+    createStockMovementUseCase.execute
+      .calledWith(any())
+      .mockResolvedValue(makeStockMovement());
 
-    expect(autoPartRepository.update).not.toHaveBeenCalled();
-    expect(stockMovementRepository.create).not.toHaveBeenCalled();
+    await updateAutoPartUseCase.execute({
+      id: '550e8400-e29b-41d4-a716-446655440000',
+      name: existingAutoPart.name,
+      description: existingAutoPart.description,
+      price: existingAutoPart.price.value,
+      stock: 4,
+    });
+
+    expect(autoPartRepository.update).toHaveBeenCalled();
+    expect(createStockMovementUseCase.execute).toHaveBeenCalledWith(
+      expect.objectContaining({
+        existingAutoPart,
+        updatedAutoPart: expect.objectContaining({
+          stock: 4,
+        }),
+      }),
+    );
   });
 
   test('should not create stock movement when stock does not change', async () => {
@@ -115,7 +125,7 @@ describe('update auto part use case', () => {
       stock: 10,
     });
 
-    expect(stockMovementRepository.create).not.toHaveBeenCalled();
+    expect(createStockMovementUseCase.execute).not.toHaveBeenCalled();
   });
 
   test('should throw NotFoundError when auto part does not exist', async () => {
@@ -131,6 +141,6 @@ describe('update auto part use case', () => {
       }),
     ).rejects.toThrow(NotFoundError);
 
-    expect(stockMovementRepository.create).not.toHaveBeenCalled();
+    expect(createStockMovementUseCase.execute).not.toHaveBeenCalled();
   });
 });
