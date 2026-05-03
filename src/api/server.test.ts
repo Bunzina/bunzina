@@ -1,6 +1,6 @@
 import { app } from './server';
 
-describe('API integration', () => {
+describe('Server', () => {
   test('GET /health returns 200 and status ok', async () => {
     const response = await app.handle(new Request('http://localhost/health'));
 

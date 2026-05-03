@@ -34,6 +34,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  db_test:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: bunzina_test
+      POSTGRES_USER: bun
+      POSTGRES_PASSWORD: bun
+    ports:
+      - '5433:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U bun -d bunzina_test']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   mailcatcher:
     image: 'sj26/mailcatcher'

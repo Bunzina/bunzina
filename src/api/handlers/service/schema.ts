@@ -63,7 +63,12 @@ export const updateServiceRouteSchema = {
       '500': { description: 'Erro interno do servidor' },
     },
   },
-  params: t.String({ description: 'ID do serviço a ser atualizado' }),
+  params: t.Object({
+    id: t.String({
+      description: 'ID do serviço a ser atualizado',
+      format: 'uuid',
+    }),
+  }),
   body: t.Object({
     name: t.String({ description: 'Nome do serviço' }),
     description: t.String({ description: 'Descrição do serviço' }),

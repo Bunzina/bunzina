@@ -1,0 +1,4 @@
+[test]
+root = "."
+coverage = false
+testTimeout = 60000
