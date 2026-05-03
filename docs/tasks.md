@@ -94,7 +94,7 @@ Estrutura sugerida:
 
 ## Veículos
 
-- [ ] CRUD de veículos
+- [x] CRUD de veículos
 
 ## Serviços
 
@@ -175,11 +175,11 @@ Estrutura sugerida:
 
 Deve conter:
 
-- [ ] **Nome do grupo**
-- [ ] **Participantes**
-- [ ] **Usernames no Discord**
-- [ ] **Link da documentação DDD**
-- [ ] **Link do repositório**
+- [x] **Nome do grupo**
+- [x] **Participantes**
+- [x] **Usernames no Discord**
+- [x] **Link da documentação DDD**
+- [x] **Link do repositório**
 - [ ] **Relatório de vulnerabilidades**
 
 ---
