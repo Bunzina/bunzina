@@ -35,7 +35,11 @@ import {
 } from './handlers/service/schema';
 import { updateServiceHandler } from './handlers/service/update';
 import { createServiceOrderHandler } from './handlers/service-order/create';
-import { createServiceOrderRouteSchema } from './handlers/service-order/schema';
+import { findServiceOrderHandler } from './handlers/service-order/find';
+import {
+  createServiceOrderRouteSchema,
+  findServiceOrderRouteSchema,
+} from './handlers/service-order/schema';
 import { createUserHandler } from './handlers/user/create';
 import { deleteUserHandler } from './handlers/user/delete';
 import { findUserHandler } from './handlers/user/find';
@@ -303,6 +307,11 @@ app.guard(
       '/service-orders',
       async (context) => createServiceOrderHandler(context),
       createServiceOrderRouteSchema,
+    );
+    app.get(
+      '/service-orders/:id',
+      async (context) => findServiceOrderHandler(context),
+      findServiceOrderRouteSchema,
     );
 
     return app;

@@ -10,6 +10,11 @@ import {
   ServiceOrderMapper,
   ServiceOrderServiceItemMapper,
 } from './mappers/service-order-mapper';
+import type {
+  ServiceOrderAutoPartItemDbSchema,
+  ServiceOrderDbSchema,
+  ServiceOrderServiceItemDbSchema,
+} from './dtos/service-order-db-schema';
 
 export class ServiceOrderRepository implements IServiceOrderRepository {
   constructor(private client: SQL) {}
@@ -57,8 +62,47 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     return serviceOrder;
   }
 
-  async findById(_id: string): Promise<ServiceOrder | null> {
-    throw new Error('Method not implemented.');
+  async findById(id: string): Promise<ServiceOrder | null> {
+    const [record] = await this.client<ServiceOrderDbSchema[]>`
+      SELECT *
+      FROM bunzina.service_orders
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+
+    if (!record) {
+      logger.debug({
+        message: 'No service order found with id',
+        data: { id },
+      });
+
+      return null;
+    }
+
+    const serviceItems = await this.client<ServiceOrderServiceItemDbSchema[]>`
+      SELECT *
+      FROM bunzina.service_order_service_items
+      WHERE service_order_id = ${id}
+    `;
+
+    const autoPartItems = await this.client<ServiceOrderAutoPartItemDbSchema[]>`
+        SELECT *
+        FROM bunzina.service_order_auto_part_items
+        WHERE service_order_id = ${id}
+      `;
+
+    const serviceOrder = ServiceOrderMapper.toDomain(
+      record,
+      serviceItems,
+      autoPartItems,
+    );
+
+    logger.debug({
+      message: 'Service order found',
+      data: { id },
+    });
+
+    return serviceOrder;
   }
 
   async findByParams(
