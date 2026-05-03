@@ -24,6 +24,74 @@ describe('create service order handler', () => {
   });
 
   test('should return 201 when creating a service order', async () => {
+    const createdAt = new Date('2026-04-01T10:00:00.000Z');
+    const updatedAt = new Date('2026-04-02T10:00:00.000Z');
+
+    mockDb
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: '11111111-1111-4111-8111-111111111111',
+            name: 'John Doe',
+            document: '12345678909',
+            document_kind: 'CPF',
+            email: 'john@example.com',
+            phone: '+5511999999999',
+            address_street: 'Rua A',
+            address_number: '100',
+            address_city: 'Sao Paulo',
+            address_state: 'SP',
+            address_zip_code: '01001000',
+            address_neighborhood: 'Centro',
+            address_complement: null,
+            created_at: createdAt,
+            updated_at: updatedAt,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: '22222222-2222-4222-8222-222222222222',
+            customer_id: '11111111-1111-4111-8111-111111111111',
+            license_plate: 'ABC1D23',
+            model: 'Model S',
+            brand: 'Tesla',
+            year: 2020,
+            created_at: createdAt,
+            updated_at: updatedAt,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: '33333333-3333-4333-8333-333333333333',
+            name: 'Oil Change',
+            description: 'Complete oil change service',
+            price: 200,
+            duration_in_minutes: 60,
+            is_active: true,
+            created_at: createdAt,
+            updated_at: updatedAt,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: '55555555-5555-4555-8555-555555555555',
+            name: 'Oil Filter',
+            description: 'Oil filter',
+            price: 50,
+            stock: 100,
+            is_active: true,
+            created_at: createdAt,
+            updated_at: updatedAt,
+          },
+        ] as unknown[]),
+      );
+
     const ctx = {
       request: { method: 'POST' },
       body: makeServiceOrderInput(),
