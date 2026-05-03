@@ -79,30 +79,30 @@ export const listAutoPartsRouteSchema = {
 export const listStockMovementsRouteSchema = {
   detail: {
     tags: ['Auto-Parts'],
-    summary: 'Consultar movimentacoes',
+    summary: 'Consultar movimentações',
     description:
-      'Lista o historico de movimentacoes de estoque de uma peca ou insumo com paginacao.',
+      'Lista o histórico de movimentações de estoque de uma peça ou insumo com paginação.',
     responses: {
-      '200': { description: 'Movimentacoes retornadas com sucesso' },
-      '400': { description: 'Parametros invalidos' },
-      '404': { description: 'Peca nao encontrada' },
+      '200': { description: 'Movimentações retornadas com sucesso' },
+      '400': { description: 'Parâmetros inválidos' },
+      '404': { description: 'Peça não encontrada' },
       '500': { description: 'Erro interno do servidor' },
     },
   },
   params: t.Object({
     id: t.String({
-      description: 'ID da peca para consultar movimentacoes',
+      description: 'ID da peça para consultar movimentações',
       format: 'uuid',
     }),
   }),
   query: t.Object({
     page: t.String({
-      description: 'Numero da pagina',
+      description: 'Número da página',
       minimum: '1',
       examples: ['1'],
     }),
     limit: t.String({
-      description: 'Quantidade de itens por pagina',
+      description: 'Quantidade de itens por página',
       minimum: '1',
       maximum: '100',
       examples: ['20'],
