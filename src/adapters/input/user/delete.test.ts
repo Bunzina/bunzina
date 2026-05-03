@@ -1,6 +1,7 @@
 import type { DeleteUserUseCase } from '@/application/use-cases/user/delete';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { DeleteUserInput } from './delete';
 
 describe('delete user input', () => {
@@ -25,7 +26,7 @@ describe('delete user input', () => {
 
     const result = await deleteUserInput.execute(request);
 
-    expect(result?.status).toBe(204);
+    expect(result?.status).toBe(StatusCodes.NO_CONTENT);
 
     expect(deleteUserUseCase.execute).toHaveBeenCalledWith({ id });
   });
@@ -39,7 +40,7 @@ describe('delete user input', () => {
 
     const result = await deleteUserInput.execute(request);
 
-    expect(result?.status).toBe(400);
+    expect(result?.status).toBe(StatusCodes.BAD_REQUEST);
     expect(await result?.json()).toMatchObject({
       reason: 'Invalid data in request',
     });
@@ -59,7 +60,7 @@ describe('delete user input', () => {
 
     const result = await deleteUserInput.execute(request);
 
-    expect(result?.status).toBe(500);
+    expect(result?.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
     expect(await result?.json()).toEqual({ error: 'Failed to delete user' });
   });
 });

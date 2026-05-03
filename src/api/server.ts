@@ -1,6 +1,20 @@
 import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
 import z from 'zod';
+import { createAutoPartHandler } from './handlers/auto-part/create';
+import { deleteAutoPartHandler } from './handlers/auto-part/delete';
+import { findAutoPartHandler } from './handlers/auto-part/find';
+import { listAutoPartsHandler } from './handlers/auto-part/list';
+import { listStockMovementsHandler } from './handlers/auto-part/list-stock-movements';
+import {
+  createAutoPartSchema,
+  deleteAutoPartRouteSchema,
+  findAutoPartRouteSchema,
+  listAutoPartsRouteSchema,
+  listStockMovementsRouteSchema,
+  updateAutoPartRouteSchema,
+} from './handlers/auto-part/schema';
+import { updateAutoPartHandler } from './handlers/auto-part/update';
 import { createCustomerHandler } from './handlers/customer/create';
 import { deleteCustomerHandler } from './handlers/customer/delete';
 import { findCustomerHandler } from './handlers/customer/find';
@@ -45,20 +59,10 @@ import {
   listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
+import { sendNotificationHandler } from './handlers/notification/send';
+import { notificationSchema } from './handlers/notification/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
-import { createAutoPartHandler } from './handlers/auto-part/create';
-import { deleteAutoPartHandler } from './handlers/auto-part/delete';
-import { findAutoPartHandler } from './handlers/auto-part/find';
-import { listAutoPartsHandler } from './handlers/auto-part/list';
-import { updateAutoPartHandler } from './handlers/auto-part/update';
-import {
-  createAutoPartSchema,
-  deleteAutoPartRouteSchema,
-  findAutoPartRouteSchema,
-  listAutoPartsRouteSchema,
-  updateAutoPartRouteSchema,
-} from './handlers/auto-part/schema';
 
 export const app = new Elysia();
 
@@ -109,8 +113,16 @@ O token é obtido via \`POST /auth/login\`.
           description: 'Cadastro e gestão de clientes da oficina',
         },
         {
+          name: 'Services',
+          description: 'Cadastro e gestão de serviços realizados em veículos',
+        },
+        {
           name: 'Vehicles',
           description: 'Cadastro de veículos vinculados a clientes',
+        },
+        {
+          name: 'Notification',
+          description: 'Envio de notificações para clientes',
         },
         {
           name: 'Auto-Parts',
@@ -221,6 +233,11 @@ app.guard(
       listAutoPartsRouteSchema,
     );
     app.get(
+      '/auto-parts/:id/stock-movements',
+      async (context) => listStockMovementsHandler(context),
+      listStockMovementsRouteSchema,
+    );
+    app.get(
       '/auto-parts/:id',
       async (context) => findAutoPartHandler(context),
       findAutoPartRouteSchema,
@@ -251,6 +268,13 @@ app.guard(
       '/users/:id',
       async (context) => deleteUserHandler(context),
       deleteUserSchema,
+    );
+
+    // Notification routes
+    app.post(
+      '/notifications',
+      async (context) => sendNotificationHandler(context),
+      notificationSchema,
     );
 
     // Service routes

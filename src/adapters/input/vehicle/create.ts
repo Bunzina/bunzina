@@ -1,13 +1,14 @@
 import { VehiclePresenter } from '@/adapters/output/vehicle/vehicle-presenter';
 import type { CreateVehicleUseCase } from '@/application/use-cases/vehicle/create';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import {
   createVehicleSchema,
   type CreateVehicleInput as CreateVehicleInputType,
 } from './validations/create-vehicle-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class CreateVehicleInput {
   constructor(private createVehicleUseCase: CreateVehicleUseCase) {}
@@ -29,7 +30,7 @@ export class CreateVehicleInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -45,7 +46,7 @@ export class CreateVehicleInput {
       });
 
       return createResponse({
-        status: 201,
+        status: StatusCodes.CREATED,
         data: VehiclePresenter.toHttp(vehicle),
       });
     }, 'Failed to create vehicle');

@@ -3,6 +3,7 @@ import type { FindUserUseCase } from '@/application/use-cases/user/find';
 import { makeUser } from '@/test/factories/make-user';
 import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { FindUserInput } from './find';
 
 describe('find user input', () => {
@@ -27,7 +28,7 @@ describe('find user input', () => {
 
     const result = await findUserInput.execute(request);
 
-    expect(result?.status).toBe(200);
+    expect(result?.status).toBe(StatusCodes.OK);
     expect(result?.headers.get('Content-Type')).toBe('application/json');
     expect(await result?.json()).toEqual(
       JSON.parse(JSON.stringify(UserPresenter.toHttp(user))),
@@ -47,7 +48,7 @@ describe('find user input', () => {
 
     const result = await findUserInput.execute(request);
 
-    expect(result?.status).toBe(400);
+    expect(result?.status).toBe(StatusCodes.BAD_REQUEST);
     expect(await result?.json()).toMatchObject({
       reason: 'Invalid data in request',
     });
@@ -67,7 +68,7 @@ describe('find user input', () => {
 
     const result = await findUserInput.execute(request);
 
-    expect(result?.status).toBe(500);
+    expect(result?.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
     expect(await result?.json()).toEqual({ error: 'Failed to find user' });
   });
 });

@@ -76,6 +76,40 @@ export const listAutoPartsRouteSchema = {
   }),
 };
 
+export const listStockMovementsRouteSchema = {
+  detail: {
+    tags: ['Auto-Parts'],
+    summary: 'Consultar movimentações',
+    description:
+      'Lista o histórico de movimentações de estoque de uma peça ou insumo com paginação.',
+    responses: {
+      '200': { description: 'Movimentações retornadas com sucesso' },
+      '400': { description: 'Parâmetros inválidos' },
+      '404': { description: 'Peça não encontrada' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'ID da peça para consultar movimentações',
+      format: 'uuid',
+    }),
+  }),
+  query: t.Object({
+    page: t.String({
+      description: 'Número da página',
+      minimum: '1',
+      examples: ['1'],
+    }),
+    limit: t.String({
+      description: 'Quantidade de itens por página',
+      minimum: '1',
+      maximum: '100',
+      examples: ['20'],
+    }),
+  }),
+};
+
 export const updateAutoPartRouteSchema = {
   detail: {
     tags: ['Auto-Parts'],

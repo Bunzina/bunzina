@@ -4,6 +4,7 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import {
   listVehicleSchema,
   type ListVehiclesInput as ListVehiclesInputType,
@@ -29,7 +30,7 @@ export class ListVehiclesInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -53,7 +54,7 @@ export class ListVehiclesInput {
       );
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: response,
       });
     }, 'Failed to list vehicles');

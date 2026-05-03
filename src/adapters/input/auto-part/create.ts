@@ -1,13 +1,14 @@
-import type { Context } from 'elysia';
+import { AutoPartPresenter } from '@/adapters/output/auto-part/auto-part-presenter';
 import { CreateAutoPartUseCase } from '@/application/use-cases/auto-part/create';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
+import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import {
   createAutoPartSchema,
   type CreateAutoPartInput as CreateAutoPartInputType,
 } from './validations/create-auto-part-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
-import { AutoPartPresenter } from '@/adapters/output/auto-part/auto-part-presenter';
 
 export class CreateAutoPartInput {
   constructor(private createAutoPartUseCase: CreateAutoPartUseCase) {}
@@ -29,7 +30,7 @@ export class CreateAutoPartInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: {
           reason: 'Invalid data in request',
           invalidParams: errors,
@@ -48,7 +49,7 @@ export class CreateAutoPartInput {
       });
 
       return createResponse({
-        status: 201,
+        status: StatusCodes.CREATED,
         data: AutoPartPresenter.toHttp(autoPart),
       });
     }, 'Failed to create auto part');

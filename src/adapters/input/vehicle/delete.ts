@@ -1,12 +1,13 @@
 import type { DeleteVehicleUseCase } from '@/application/use-cases/vehicle/delete';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import {
   deleteVehicleSchema,
   type DeleteVehicleInput as DeleteVehicleInputType,
 } from './validations/delete-vehicle-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class DeleteVehicleInput {
   constructor(private deleteVehicleUseCase: DeleteVehicleUseCase) {}
@@ -28,7 +29,7 @@ export class DeleteVehicleInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -42,7 +43,7 @@ export class DeleteVehicleInput {
       });
 
       return createResponse({
-        status: 204,
+        status: StatusCodes.NO_CONTENT,
         data: null,
       });
     }, 'Failed to delete vehicle');

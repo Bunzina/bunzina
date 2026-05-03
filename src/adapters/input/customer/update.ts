@@ -1,10 +1,14 @@
 import { CustomerPresenter } from '@/adapters/output/customer/customer-presenter';
 import type { UpdateCustomerUseCase } from '@/application/use-cases/customer/update';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { updateCustomerSchema } from './validations/update-customer-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
+import { StatusCodes } from 'http-status-codes';
+import {
+  updateCustomerSchema,
+  type UpdateCustomerInput as UpdateCustomerHttpInput,
+} from './validations/update-customer-schema';
 
 export class UpdateCustomerInput {
   constructor(private updateCustomerUseCase: UpdateCustomerUseCase) {}
@@ -21,7 +25,7 @@ export class UpdateCustomerInput {
     const { data, errors } = validateSchemaZod(updateCustomerSchema, {
       documentNumber,
       ...(body as object),
-    });
+    } as UpdateCustomerHttpInput);
 
     if (errors?.length) {
       logger.warn({
@@ -30,7 +34,7 @@ export class UpdateCustomerInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -44,7 +48,7 @@ export class UpdateCustomerInput {
       });
 
       return createResponse({
-        status: 200,
+        status: StatusCodes.OK,
         data: CustomerPresenter.toHttp(customer),
       });
     }, 'Failed to update customer');

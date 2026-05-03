@@ -6,7 +6,11 @@ import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
-import { createUserSchema } from './validations/create-user-schema';
+import { StatusCodes } from 'http-status-codes';
+import {
+  createUserSchema,
+  type CreateUserInput as CreateUserHttpInput,
+} from './validations/create-user-schema';
 
 export class CreateUserInput {
   constructor(private createUserUseCase: CreateUserUseCase) {}
@@ -18,7 +22,10 @@ export class CreateUserInput {
       message: 'Create user request',
     });
 
-    const { data, errors } = validateSchemaZod(createUserSchema, body);
+    const { data, errors } = validateSchemaZod(
+      createUserSchema,
+      body as CreateUserHttpInput,
+    );
 
     if (errors?.length) {
       logger.warn({
@@ -27,7 +34,7 @@ export class CreateUserInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -46,7 +53,7 @@ export class CreateUserInput {
       });
 
       return createResponse({
-        status: 201,
+        status: StatusCodes.CREATED,
         data: UserPresenter.toHttp(user),
       });
     }, 'Failed to create user');
@@ -61,7 +68,7 @@ export class CreateUserInput {
       });
 
       return createResponse({
-        status: 401,
+        status: StatusCodes.UNAUTHORIZED,
         data: { reason: 'Missing or invalid authorization header' },
       });
     }
@@ -74,7 +81,7 @@ export class CreateUserInput {
       });
 
       return createResponse({
-        status: 401,
+        status: StatusCodes.UNAUTHORIZED,
         data: { reason: 'Invalid or expired token' },
       });
     }

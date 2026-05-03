@@ -1,9 +1,10 @@
 import type { DeleteCustomerUseCase } from '@/application/use-cases/customer/delete';
+import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
+import { StatusCodes } from 'http-status-codes';
 import { deleteCustomerSchema } from './validations/delete-customer-schema';
-import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 
 export class DeleteCustomerInput {
   constructor(private deleteCustomerUseCase: DeleteCustomerUseCase) {}
@@ -27,7 +28,7 @@ export class DeleteCustomerInput {
       });
 
       return createResponse({
-        status: 400,
+        status: StatusCodes.BAD_REQUEST,
         data: { reason: 'Invalid data in request', invalidParams: errors },
       });
     }
@@ -40,7 +41,7 @@ export class DeleteCustomerInput {
         data: { documentNumber },
       });
 
-      return createResponse({ status: 204, data: null });
+      return createResponse({ status: StatusCodes.NO_CONTENT, data: null });
     }, 'Failed to delete customer');
   }
 }
