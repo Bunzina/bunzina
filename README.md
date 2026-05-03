@@ -190,9 +190,6 @@ bun test --coverage
 # Roda um arquivo específico
 bun test src/adapters/input/customer/create.test.ts
 
-# Roda testes de integração
-bun test src/api/server.test.ts
-```
 
 ### Testes de integração
 
