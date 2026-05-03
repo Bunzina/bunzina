@@ -5,11 +5,13 @@ import { createAutoPartHandler } from './handlers/auto-part/create';
 import { deleteAutoPartHandler } from './handlers/auto-part/delete';
 import { findAutoPartHandler } from './handlers/auto-part/find';
 import { listAutoPartsHandler } from './handlers/auto-part/list';
+import { listStockMovementsHandler } from './handlers/auto-part/list-stock-movements';
 import {
   createAutoPartSchema,
   deleteAutoPartRouteSchema,
   findAutoPartRouteSchema,
   listAutoPartsRouteSchema,
+  listStockMovementsRouteSchema,
   updateAutoPartRouteSchema,
 } from './handlers/auto-part/schema';
 import { updateAutoPartHandler } from './handlers/auto-part/update';
@@ -229,6 +231,11 @@ app.guard(
       '/auto-parts',
       async (context) => listAutoPartsHandler(context),
       listAutoPartsRouteSchema,
+    );
+    app.get(
+      '/auto-parts/:id/stock-movements',
+      async (context) => listStockMovementsHandler(context),
+      listStockMovementsRouteSchema,
     );
     app.get(
       '/auto-parts/:id',

@@ -1,7 +1,11 @@
 import type { SQL } from 'bun';
 import { StockMovement } from '@/domain/auto-part/entities/stock-movement';
-import type { StockMovementRepository as IStockMovementRepository } from '@/domain/auto-part/repositories/stock-movement-repository';
+import type {
+  FindStockMovementsByAutoPartIdParams,
+  StockMovementRepository as IStockMovementRepository,
+} from '@/domain/auto-part/repositories/stock-movement-repository';
 import logger from '@lucas-pmelo/logger';
+import type { StockMovementDbSchema } from './dtos/stock-movement-db-schema';
 import { StockMovementMapper } from './mappers/stock-movement-mapper';
 
 export class StockMovementRepository implements IStockMovementRepository {
@@ -20,5 +24,29 @@ export class StockMovementRepository implements IStockMovementRepository {
     `;
 
     return stockMovement;
+  }
+
+  async findByAutoPartId(
+    params: FindStockMovementsByAutoPartIdParams,
+  ): Promise<StockMovement[]> {
+    const offset = (params.page - 1) * params.limit;
+
+    logger.debug({
+      message: 'Finding stock movements by auto part ID',
+      data: params,
+    });
+
+    const records = await this.client<StockMovementDbSchema[]>`
+      SELECT *
+      FROM bunzina.stock_movements
+      WHERE auto_part_id = ${params.autoPartId}
+      ORDER BY created_at DESC
+      LIMIT ${params.limit}
+      OFFSET ${offset}
+    `;
+
+    return records.map((record: StockMovementDbSchema) =>
+      StockMovementMapper.toDomain(record),
+    );
   }
 }
