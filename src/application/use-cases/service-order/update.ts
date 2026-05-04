@@ -41,43 +41,55 @@ export class UpdateServiceOrderUseCase {
       throw new BadRequestError(message);
     }
 
-    const serviceIds = new Set(
-      (input.serviceItems ?? []).map((item) => item.serviceId),
-    );
+    let serviceItems: ServiceItem[];
 
-    for (const serviceId of serviceIds) {
-      await this.findServiceByIdUseCase.execute({ id: serviceId });
+    if (input.serviceItems !== undefined) {
+      const serviceIds = new Set(
+        input.serviceItems.map((item) => item.serviceId),
+      );
+
+      for (const serviceId of serviceIds) {
+        await this.findServiceByIdUseCase.execute({ id: serviceId });
+      }
+
+      serviceItems = input.serviceItems.map(
+        (item) =>
+          new ServiceItem({
+            serviceId: item.serviceId,
+            price: new Price(item.price),
+            description: item.description,
+          }),
+      );
+    } else {
+      serviceItems = existingServiceOrder.serviceItems;
     }
 
-    const autoPartIds = new Set(
-      (input.autoPartItems ?? []).map((item) => item.autoPartId),
-    );
+    let autoPartItems: AutoPartItem[];
 
-    for (const autoPartId of autoPartIds) {
-      await this.findAutoPartByIdUseCase.execute({ id: autoPartId });
-    }
+    if (input.autoPartItems !== undefined) {
+      const autoPartIds = new Set(
+        input.autoPartItems.map((item) => item.autoPartId),
+      );
 
-    const serviceItems = (input.serviceItems ?? []).map(
-      (item) =>
-        new ServiceItem({
-          serviceId: item.serviceId,
-          price: new Price(item.price),
+      for (const autoPartId of autoPartIds) {
+        await this.findAutoPartByIdUseCase.execute({ id: autoPartId });
+      }
+
+      autoPartItems = input.autoPartItems.map((item) => {
+        const unitPrice = new Price(item.unitPrice);
+        const totalPrice = new Price(unitPrice.value * item.quantity);
+
+        return new AutoPartItem({
+          autoPartId: item.autoPartId,
+          quantity: item.quantity,
+          unitPrice,
+          totalPrice,
           description: item.description,
-        }),
-    );
-
-    const autoPartItems = (input.autoPartItems ?? []).map((item) => {
-      const unitPrice = new Price(item.unitPrice);
-      const totalPrice = new Price(unitPrice.value * item.quantity);
-
-      return new AutoPartItem({
-        autoPartId: item.autoPartId,
-        quantity: item.quantity,
-        unitPrice,
-        totalPrice,
-        description: item.description,
+        });
       });
-    });
+    } else {
+      autoPartItems = existingServiceOrder.autoPartItems;
+    }
 
     const servicesTotal = serviceItems.reduce(
       (total, item) => total + item.price.value,
