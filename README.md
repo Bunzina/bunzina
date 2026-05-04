@@ -189,9 +189,16 @@ bun test --coverage
 
 # Roda um arquivo específico
 bun test src/adapters/input/customer/create.test.ts
+```
 
-# Roda testes de integração
-bun test src/api/server.test.ts
+## Testes de integração
+
+```bash
+# Subir banco de testes
+docker compose up db_test -d
+
+# Executar testes de integração
+bun run test:integration
 ```
 
 ---
