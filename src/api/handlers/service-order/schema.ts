@@ -1,5 +1,6 @@
 import { createServiceOrderSchema } from '@/adapters/input/service-order/validations/create-service-order-schema';
 import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
+import { updateServiceOrderBodySchema } from '@/adapters/input/service-order/validations/update-service-order-schema';
 
 export const createServiceOrderRouteSchema = {
   detail: {
@@ -31,4 +32,21 @@ export const findServiceOrderRouteSchema = {
     },
   },
   params: findServiceOrderSchema,
+};
+
+export const updateServiceOrderRouteSchema = {
+  detail: {
+    tags: ['Service-Orders'],
+    summary: 'Update service order',
+    description: 'Update a service order by id.',
+    responses: {
+      '200': { description: 'Service order updated successfully' },
+      '400': { description: 'Invalid data' },
+      '401': { description: 'Missing or invalid token' },
+      '404': { description: 'Service order not found' },
+      '500': { description: 'Internal server error' },
+    },
+  },
+  params: findServiceOrderSchema,
+  body: updateServiceOrderBodySchema,
 };

@@ -1,55 +1,47 @@
 import type { Context } from 'elysia';
-import { CreateServiceOrderUseCase } from '@/application/use-cases/service-order/create';
-import { CreateServiceOrderInput } from '@/adapters/input/service-order/create';
+import { UpdateServiceOrderUseCase } from '@/application/use-cases/service-order/update';
+import { UpdateServiceOrderInput } from '@/adapters/input/service-order/update';
 import { FindAutoPartByIdUseCase } from '@/application/use-cases/auto-part/find-by-id';
-import { FindCustomerByIdUseCase } from '@/application/use-cases/customer/find-by-id';
 import { FindServiceByIdUseCase } from '@/application/use-cases/service/find-by-id';
-import { FindVehicleByIdUseCase } from '@/application/use-cases/vehicle/find-by-id';
+import { FindServiceOrderByIdUseCase } from '@/application/use-cases/service-order/find-by-id';
 import { AutoPartRepository } from '@/infrastructure/repositories/auto-part/auto-part-repository';
-import { CustomerRepository } from '@/infrastructure/repositories/customer/customer-repository';
 import { ServiceRepository } from '@/infrastructure/repositories/service/service-repository';
 import { ServiceOrderRepository } from '@/infrastructure/repositories/service-order/service-order-repository';
-import { VehicleRepository } from '@/infrastructure/repositories/vehicle/vehicle-repository';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import logger from '@lucas-pmelo/logger';
 
-let createServiceOrderUseCase: CreateServiceOrderUseCase;
+let updateServiceOrderUseCase: UpdateServiceOrderUseCase;
 let serviceOrderRepository: ServiceOrderRepository;
-let customerRepository: CustomerRepository;
-let vehicleRepository: VehicleRepository;
 let serviceRepository: ServiceRepository;
 let autoPartRepository: AutoPartRepository;
-let findCustomerByIdUseCase: FindCustomerByIdUseCase;
-let findVehicleByIdUseCase: FindVehicleByIdUseCase;
+let findServiceOrderByIdUseCase: FindServiceOrderByIdUseCase;
 let findServiceByIdUseCase: FindServiceByIdUseCase;
 let findAutoPartByIdUseCase: FindAutoPartByIdUseCase;
-let createServiceOrderInput: CreateServiceOrderInput;
+let updateServiceOrderInput: UpdateServiceOrderInput;
 
 const setDependencies = () => {
   serviceOrderRepository = new ServiceOrderRepository(dbInstance);
-  customerRepository = new CustomerRepository(dbInstance);
-  vehicleRepository = new VehicleRepository(dbInstance);
   serviceRepository = new ServiceRepository(dbInstance);
   autoPartRepository = new AutoPartRepository(dbInstance);
-  findCustomerByIdUseCase = new FindCustomerByIdUseCase(customerRepository);
-  findVehicleByIdUseCase = new FindVehicleByIdUseCase(vehicleRepository);
+  findServiceOrderByIdUseCase = new FindServiceOrderByIdUseCase(
+    serviceOrderRepository,
+  );
   findServiceByIdUseCase = new FindServiceByIdUseCase(serviceRepository);
   findAutoPartByIdUseCase = new FindAutoPartByIdUseCase(autoPartRepository);
-  createServiceOrderUseCase = new CreateServiceOrderUseCase(
+  updateServiceOrderUseCase = new UpdateServiceOrderUseCase(
     serviceOrderRepository,
-    findCustomerByIdUseCase,
-    findVehicleByIdUseCase,
+    findServiceOrderByIdUseCase,
     findServiceByIdUseCase,
     findAutoPartByIdUseCase,
   );
-  createServiceOrderInput = new CreateServiceOrderInput(
-    createServiceOrderUseCase,
+  updateServiceOrderInput = new UpdateServiceOrderInput(
+    updateServiceOrderUseCase,
   );
 };
 
-export const createServiceOrderHandler = async (
+export const updateServiceOrderHandler = async (
   context: Context,
-): Promise<Response | undefined> => {
+): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',
@@ -58,5 +50,5 @@ export const createServiceOrderHandler = async (
 
   setDependencies();
 
-  return await createServiceOrderInput.execute(context);
+  return await updateServiceOrderInput.execute(context);
 };
