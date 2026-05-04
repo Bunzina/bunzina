@@ -41,13 +41,16 @@ export class UpdateServiceOrderUseCase {
       throw new BadRequestError(message);
     }
 
-    const serviceIds = new Set(
-      (input.serviceItems ?? []).map((item) => item.serviceId),
-    );
+    let serviceItems: ServiceItem[];
 
-    for (const serviceId of serviceIds) {
-      await this.findServiceByIdUseCase.execute({ id: serviceId });
-    }
+    if (input.serviceItems !== undefined) {
+      const serviceIds = new Set(
+        input.serviceItems.map((item) => item.serviceId),
+      );
+
+      for (const serviceId of serviceIds) {
+        await this.findServiceByIdUseCase.execute({ id: serviceId });
+      }
 
     const autoPartIds = new Set(
       (input.autoPartItems ?? []).map((item) => item.autoPartId),
