@@ -57,27 +57,31 @@ export class UpdateServiceOrderUseCase {
       await this.findAutoPartByIdUseCase.execute({ id: autoPartId });
     }
 
-    const serviceItems = (input.serviceItems ?? []).map(
-      (item) =>
-        new ServiceItem({
-          serviceId: item.serviceId,
-          price: new Price(item.price),
-          description: item.description,
-        }),
-    );
+    const serviceItems = input.serviceItems
+      ? input.serviceItems.map(
+          (item) =>
+            new ServiceItem({
+              serviceId: item.serviceId,
+              price: new Price(item.price),
+              description: item.description,
+            }),
+        )
+      : existingServiceOrder.serviceItems;
 
-    const autoPartItems = (input.autoPartItems ?? []).map((item) => {
-      const unitPrice = new Price(item.unitPrice);
-      const totalPrice = new Price(unitPrice.value * item.quantity);
+    const autoPartItems = input.autoPartItems
+      ? input.autoPartItems.map((item) => {
+          const unitPrice = new Price(item.unitPrice);
+          const totalPrice = new Price(unitPrice.value * item.quantity);
 
-      return new AutoPartItem({
-        autoPartId: item.autoPartId,
-        quantity: item.quantity,
-        unitPrice,
-        totalPrice,
-        description: item.description,
-      });
-    });
+          return new AutoPartItem({
+            autoPartId: item.autoPartId,
+            quantity: item.quantity,
+            unitPrice,
+            totalPrice,
+            description: item.description,
+          });
+        })
+      : existingServiceOrder.autoPartItems;
 
     const servicesTotal = serviceItems.reduce(
       (total, item) => total + item.price.value,

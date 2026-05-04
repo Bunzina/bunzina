@@ -150,6 +150,192 @@ describe('update service order use case', () => {
     expect(serviceOrderRepository.update).toHaveBeenCalledWith(result);
   });
 
+  test('should preserve auto part items when autoPartItems is omitted', async () => {
+    const id = '11111111-1111-4111-8111-111111111111';
+    const createdAt = new Date('2026-04-01T10:00:00.000Z');
+    const updatedAt = new Date('2026-04-02T10:00:00.000Z');
+
+    const existingServiceOrder = new ServiceOrder({
+      id,
+      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      status: ServiceOrderStatus.RECEIVED,
+      serviceItems: [
+        new ServiceItem({
+          id: 'old-service-item',
+          serviceId: 'old-service-id',
+          price: new Price(100),
+          description: 'Old service',
+        }),
+      ],
+      autoPartItems: [
+        new AutoPartItem({
+          id: 'old-auto-part-item',
+          autoPartId: 'old-auto-part-id',
+          quantity: 2,
+          unitPrice: new Price(50),
+          totalPrice: new Price(100),
+          description: 'Old part',
+        }),
+      ],
+      quote: new Quote({
+        servicesTotal: 100,
+        autoPartsTotal: 100,
+      }),
+      createdAt,
+      updatedAt,
+    });
+
+    findServiceOrderByIdUseCase.execute.mockResolvedValue(existingServiceOrder);
+    findServiceByIdUseCase.execute.mockImplementation(async ({ id }) =>
+      makeService({ id }),
+    );
+
+    const result = await updateServiceOrderUseCase.execute({
+      id,
+      serviceItems: [
+        {
+          serviceId: 'new-service-id',
+          price: 120,
+          description: 'New service',
+        },
+      ],
+    });
+
+    expect(result).toEqual({
+      id,
+      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      status: ServiceOrderStatus.RECEIVED,
+      serviceItems: [
+        {
+          id: expect.any(String),
+          serviceId: 'new-service-id',
+          price: {
+            value: 120,
+          },
+          description: 'New service',
+        },
+      ],
+      autoPartItems: [
+        {
+          id: 'old-auto-part-item',
+          autoPartId: 'old-auto-part-id',
+          quantity: 2,
+          unitPrice: {
+            value: 50,
+          },
+          totalPrice: {
+            value: 100,
+          },
+          description: 'Old part',
+        },
+      ],
+      quote: {
+        servicesTotal: 120,
+        autoPartsTotal: 100,
+        total: 220,
+      },
+      createdAt,
+      updatedAt: expect.any(Date),
+    });
+    expect(findAutoPartByIdUseCase.execute).not.toHaveBeenCalled();
+    expect(serviceOrderRepository.update).toHaveBeenCalledWith(result);
+  });
+
+  test('should preserve service items when serviceItems is omitted', async () => {
+    const id = '22222222-2222-4222-8222-222222222222';
+    const createdAt = new Date('2026-04-01T10:00:00.000Z');
+    const updatedAt = new Date('2026-04-02T10:00:00.000Z');
+
+    const existingServiceOrder = new ServiceOrder({
+      id,
+      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      status: ServiceOrderStatus.RECEIVED,
+      serviceItems: [
+        new ServiceItem({
+          id: 'old-service-item',
+          serviceId: 'old-service-id',
+          price: new Price(80),
+          description: 'Old service',
+        }),
+      ],
+      autoPartItems: [
+        new AutoPartItem({
+          id: 'old-auto-part-item',
+          autoPartId: 'old-auto-part-id',
+          quantity: 1,
+          unitPrice: new Price(10),
+          totalPrice: new Price(10),
+          description: 'Old part',
+        }),
+      ],
+      quote: new Quote({
+        servicesTotal: 80,
+        autoPartsTotal: 10,
+      }),
+      createdAt,
+      updatedAt,
+    });
+
+    findServiceOrderByIdUseCase.execute.mockResolvedValue(existingServiceOrder);
+    findAutoPartByIdUseCase.execute.mockImplementation(async ({ id }) =>
+      makeAutoPart({ id }),
+    );
+
+    const result = await updateServiceOrderUseCase.execute({
+      id,
+      autoPartItems: [
+        {
+          autoPartId: 'new-auto-part-id',
+          quantity: 3,
+          unitPrice: 30,
+        },
+      ],
+    });
+
+    expect(result).toEqual({
+      id,
+      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      status: ServiceOrderStatus.RECEIVED,
+      serviceItems: [
+        {
+          id: 'old-service-item',
+          serviceId: 'old-service-id',
+          price: {
+            value: 80,
+          },
+          description: 'Old service',
+        },
+      ],
+      autoPartItems: [
+        {
+          id: expect.any(String),
+          autoPartId: 'new-auto-part-id',
+          quantity: 3,
+          unitPrice: {
+            value: 30,
+          },
+          totalPrice: {
+            value: 90,
+          },
+          description: undefined,
+        },
+      ],
+      quote: {
+        servicesTotal: 80,
+        autoPartsTotal: 90,
+        total: 170,
+      },
+      createdAt,
+      updatedAt: expect.any(Date),
+    });
+    expect(findServiceByIdUseCase.execute).not.toHaveBeenCalled();
+    expect(serviceOrderRepository.update).toHaveBeenCalledWith(result);
+  });
+
   test('should throw NotFoundError when service order does not exist', async () => {
     const id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 
