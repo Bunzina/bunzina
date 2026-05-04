@@ -111,11 +111,92 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     throw new Error('Method not implemented.');
   }
 
-  async update(_serviceOrder: ServiceOrder): Promise<ServiceOrder> {
-    throw new Error('Method not implemented.');
+  async update(serviceOrder: ServiceOrder): Promise<ServiceOrder> {
+    const recordToUpdate = ServiceOrderMapper.toDatabase(serviceOrder);
+    const serviceItemRecords = serviceOrder.serviceItems.map((item) =>
+      ServiceOrderServiceItemMapper.toDatabase(serviceOrder.id!, item),
+    );
+    const autoPartItemRecords = serviceOrder.autoPartItems.map((item) =>
+      ServiceOrderAutoPartItemMapper.toDatabase(serviceOrder.id!, item),
+    );
+
+    logger.debug({
+      message: 'Updating service order',
+      data: {
+        serviceOrder: recordToUpdate,
+        serviceItemsCount: serviceItemRecords.length,
+        autoPartItemsCount: autoPartItemRecords.length,
+      },
+    });
+
+    const {
+      id: _id,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToUpdate;
+
+    const persist = async (sql: SQL) => {
+      await sql`
+        UPDATE bunzina.service_orders
+        SET ${sql(fieldsToUpdate)}
+        WHERE id = ${serviceOrder.id}
+      `;
+
+      await sql`
+        DELETE FROM bunzina.service_order_service_items
+        WHERE service_order_id = ${serviceOrder.id}
+      `;
+
+      await sql`
+        DELETE FROM bunzina.service_order_auto_part_items
+        WHERE service_order_id = ${serviceOrder.id}
+      `;
+
+      for (const item of serviceItemRecords) {
+        await sql`
+          INSERT INTO bunzina.service_order_service_items ${sql(item)}
+        `;
+      }
+
+      for (const item of autoPartItemRecords) {
+        await sql`
+          INSERT INTO bunzina.service_order_auto_part_items ${sql(item)}
+        `;
+      }
+    };
+
+    await this.client.transaction(async (sql) => {
+      await persist(sql);
+    });
+
+    return serviceOrder;
   }
 
-  async delete(_id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<void> {
+    logger.debug({
+      message: 'Deleting service order',
+      data: { id },
+    });
+
+    const persist = async (sql: SQL) => {
+      await sql`
+        DELETE FROM bunzina.service_order_service_items
+        WHERE service_order_id = ${id}
+      `;
+
+      await sql`
+        DELETE FROM bunzina.service_order_auto_part_items
+        WHERE service_order_id = ${id}
+      `;
+
+      await sql`
+        DELETE FROM bunzina.service_orders
+        WHERE id = ${id}
+      `;
+    };
+
+    await this.client.transaction(async (sql) => {
+      await persist(sql);
+    });
   }
 }
