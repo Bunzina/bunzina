@@ -7,7 +7,9 @@ import { AutoPartItem } from '@/domain/service-order/entities/auto-part-item';
 import { ServiceItem } from '@/domain/service-order/entities/service-item';
 import { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
+import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
 import { Quote } from '@/domain/service-order/value-objects/quote';
+import { BadRequestError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 export class UpdateServiceOrderUseCase {
@@ -19,8 +21,25 @@ export class UpdateServiceOrderUseCase {
   ) {}
 
   async execute(input: UpdateServiceOrderInput): Promise<ServiceOrder> {
-    const existingServiceOrder =
-      await this.findServiceOrderByIdUseCase.execute({ id: input.id });
+    const existingServiceOrder = await this.findServiceOrderByIdUseCase.execute(
+      { id: input.id },
+    );
+
+    const allowedStatuses = new Set<ServiceOrderStatus>([
+      ServiceOrderStatus.RECEIVED,
+      ServiceOrderStatus.IN_DIAGNOSTIC,
+    ]);
+
+    if (!allowedStatuses.has(existingServiceOrder.status)) {
+      const message = 'Service order cannot be updated in current status';
+
+      logger.warn({
+        message,
+        data: { id: input.id, status: existingServiceOrder.status },
+      });
+
+      throw new BadRequestError(message);
+    }
 
     const serviceIds = new Set(
       (input.serviceItems ?? []).map((item) => item.serviceId),

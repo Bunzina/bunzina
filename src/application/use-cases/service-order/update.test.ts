@@ -10,7 +10,7 @@ import { Quote } from '@/domain/service-order/value-objects/quote';
 import { Price } from '@/domain/core/value-objects/price';
 import { makeAutoPart } from '@/test/factories/make-auto-part';
 import { makeService } from '@/test/factories/make-service';
-import { NotFoundError } from '@lucas-pmelo/handlers';
+import { BadRequestError, NotFoundError } from '@lucas-pmelo/handlers';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import { beforeEach, describe, expect, test } from 'bun:test';
 import { UpdateServiceOrderUseCase } from './update';
@@ -242,6 +242,39 @@ describe('update service order use case', () => {
         ],
       }),
     ).rejects.toThrow(NotFoundError);
+
+    expect(serviceOrderRepository.update).not.toHaveBeenCalled();
+  });
+
+  test('should throw BadRequestError when status is not updatable', async () => {
+    const id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const existingServiceOrder = new ServiceOrder({
+      id,
+      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      status: ServiceOrderStatus.AWAITING_APPROVAL,
+      serviceItems: [],
+      autoPartItems: [],
+      quote: new Quote({
+        servicesTotal: 0,
+        autoPartsTotal: 0,
+      }),
+    });
+
+    findServiceOrderByIdUseCase.execute.mockResolvedValue(existingServiceOrder);
+
+    await expect(
+      updateServiceOrderUseCase.execute({
+        id,
+        serviceItems: [
+          {
+            serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+            price: 120,
+          },
+        ],
+        autoPartItems: [],
+      }),
+    ).rejects.toThrow(BadRequestError);
 
     expect(serviceOrderRepository.update).not.toHaveBeenCalled();
   });
