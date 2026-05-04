@@ -129,8 +129,11 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
       },
     });
 
-    const { id: _id, created_at: _created_at, ...fieldsToUpdate } =
-      recordToUpdate;
+    const {
+      id: _id,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToUpdate;
 
     const persist = async (sql: SQL) => {
       await sql`
@@ -169,7 +172,31 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     return serviceOrder;
   }
 
-  async delete(_id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(id: string): Promise<void> {
+    logger.debug({
+      message: 'Deleting service order',
+      data: { id },
+    });
+
+    const persist = async (sql: SQL) => {
+      await sql`
+        DELETE FROM bunzina.service_order_service_items
+        WHERE service_order_id = ${id}
+      `;
+
+      await sql`
+        DELETE FROM bunzina.service_order_auto_part_items
+        WHERE service_order_id = ${id}
+      `;
+
+      await sql`
+        DELETE FROM bunzina.service_orders
+        WHERE id = ${id}
+      `;
+    };
+
+    await this.client.transaction(async (sql) => {
+      await persist(sql);
+    });
   }
 }
