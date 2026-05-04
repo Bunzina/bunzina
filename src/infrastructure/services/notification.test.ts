@@ -94,7 +94,7 @@ describe('notification infrastructure service', () => {
     });
 
     await expect(service.sendEmail(makeNotification())).rejects.toThrow(
-      'Service failed to valid recipients',
+      'Service failed to validate recipients',
     );
   });
 
