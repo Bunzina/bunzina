@@ -3,14 +3,12 @@ import { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
 import {
   determineStatusTransition,
-  type StatusDirection,
+  StatusDirection,
 } from '@/domain/service-order/state-machines/status-machine';
 import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
 import { ForbiddenError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import type { FindServiceOrderByIdUseCase } from './find-by-id';
-
-type Direction = StatusDirection;
 
 export class UpdateServiceOrderStatusUseCase {
   constructor(
@@ -77,7 +75,7 @@ export class UpdateServiceOrderStatusUseCase {
   }
 
   private resolveTimestamps(
-    direction: Direction,
+    direction: StatusDirection,
     targetStatus: ServiceOrderStatus,
     serviceOrder: ServiceOrder,
   ): {
@@ -85,7 +83,7 @@ export class UpdateServiceOrderStatusUseCase {
     completedAt?: Date;
     deliveredAt?: Date;
   } {
-    if (direction === 'back') {
+    if (direction === StatusDirection.BACK) {
       return {
         startedAt: undefined,
         completedAt: undefined,

@@ -1,26 +1,29 @@
 import { ServiceOrderStatus } from '../types/service-order-status';
 
-export type StatusDirection = 'next' | 'back';
+export enum StatusDirection {
+  NEXT = 'next',
+  BACK = 'back',
+}
 
 const statusTransitionMap: Record<
   ServiceOrderStatus,
   Partial<Record<StatusDirection, ServiceOrderStatus>>
 > = {
   [ServiceOrderStatus.RECEIVED]: {
-    next: ServiceOrderStatus.IN_DIAGNOSTIC,
+    [StatusDirection.NEXT]: ServiceOrderStatus.IN_DIAGNOSTIC,
   },
   [ServiceOrderStatus.IN_DIAGNOSTIC]: {
-    next: ServiceOrderStatus.AWAITING_APPROVAL,
+    [StatusDirection.NEXT]: ServiceOrderStatus.AWAITING_APPROVAL,
   },
   [ServiceOrderStatus.AWAITING_APPROVAL]: {
-    next: ServiceOrderStatus.IN_EXECUTION,
-    back: ServiceOrderStatus.RECEIVED,
+    [StatusDirection.NEXT]: ServiceOrderStatus.IN_EXECUTION,
+    [StatusDirection.BACK]: ServiceOrderStatus.RECEIVED,
   },
   [ServiceOrderStatus.IN_EXECUTION]: {
-    next: ServiceOrderStatus.COMPLETED,
+    [StatusDirection.NEXT]: ServiceOrderStatus.COMPLETED,
   },
   [ServiceOrderStatus.COMPLETED]: {
-    next: ServiceOrderStatus.DELIVERED,
+    [StatusDirection.NEXT]: ServiceOrderStatus.DELIVERED,
   },
   [ServiceOrderStatus.DELIVERED]: {},
   [ServiceOrderStatus.CANCELED]: {},

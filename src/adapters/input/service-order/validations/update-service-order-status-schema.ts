@@ -1,7 +1,8 @@
+import { StatusDirection } from '@/domain/service-order/state-machines/status-machine';
 import { z } from 'zod';
 
 export const updateServiceOrderStatusBodySchema = z.object({
-  direction: z.enum(['next', 'back']),
+  direction: z.enum(StatusDirection),
 });
 
 export const updateServiceOrderStatusSchema =
