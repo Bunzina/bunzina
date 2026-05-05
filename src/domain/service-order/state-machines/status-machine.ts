@@ -1,40 +1,39 @@
-import type { ServiceOrderStatus } from '../types/service-order-status';
+import { ServiceOrderStatus } from '../types/service-order-status';
 
-export const determineNextStatus = (
+export enum StatusDirection {
+  NEXT = 'next',
+  BACK = 'back',
+}
+
+const statusTransitionMap: Record<
+  ServiceOrderStatus,
+  Partial<Record<StatusDirection, ServiceOrderStatus>>
+> = {
+  [ServiceOrderStatus.RECEIVED]: {
+    [StatusDirection.NEXT]: ServiceOrderStatus.IN_DIAGNOSTIC,
+  },
+  [ServiceOrderStatus.IN_DIAGNOSTIC]: {
+    [StatusDirection.NEXT]: ServiceOrderStatus.AWAITING_APPROVAL,
+  },
+  [ServiceOrderStatus.AWAITING_APPROVAL]: {
+    [StatusDirection.NEXT]: ServiceOrderStatus.IN_EXECUTION,
+    [StatusDirection.BACK]: ServiceOrderStatus.RECEIVED,
+  },
+  [ServiceOrderStatus.IN_EXECUTION]: {
+    [StatusDirection.NEXT]: ServiceOrderStatus.COMPLETED,
+  },
+  [ServiceOrderStatus.COMPLETED]: {
+    [StatusDirection.NEXT]: ServiceOrderStatus.DELIVERED,
+  },
+  [ServiceOrderStatus.DELIVERED]: {},
+  [ServiceOrderStatus.CANCELED]: {},
+};
+
+export const determineStatusTransition = (
   currentStatus: ServiceOrderStatus,
-  receivedStatus: ServiceOrderStatus,
-): ServiceOrderStatus => {
-  const nextStatus = {
-    RECEIVED: {
-      IN_DIAGNOSTIC: 'IN_DIAGNOSTIC',
-      CANCELED: 'CANCELED',
-    },
-    IN_DIAGNOSTIC: {
-      AWAITING_APPROVAL: 'AWAITING_APPROVAL',
-      CANCELED: 'CANCELED',
-    },
-    AWAITING_APPROVAL: {
-      IN_EXECUTION: 'IN_EXECUTION',
-      RECEIVED: 'RECEIVED',
-      CANCELED: 'CANCELED',
-    },
-    IN_EXECUTION: {
-      COMPLETED: 'COMPLETED',
-    },
-    COMPLETED: {
-      DELIVERED: 'DELIVERED',
-    },
-    DELIVERED: {},
-    CANCELED: {},
-  };
+  direction: StatusDirection,
+): ServiceOrderStatus | undefined => {
+  const transition = statusTransitionMap[currentStatus];
 
-  const fromMap = (nextStatus as Record<string, Record<string, string>>)[
-    currentStatus as unknown as string
-  ];
-
-  const candidate = fromMap
-    ? fromMap[receivedStatus as unknown as string]
-    : undefined;
-
-  return (candidate as unknown as ServiceOrderStatus) ?? currentStatus;
+  return transition?.[direction];
 };

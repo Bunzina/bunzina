@@ -210,4 +210,16 @@ describe('service order repository', () => {
     expect(mockTransaction).toHaveBeenCalledTimes(1);
     expect(mockClient).toHaveBeenCalled();
   });
+
+  test('should throw when findByParams is not implemented', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+
+    const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
+
+    await expect(
+      repository.findByParams({ page: 1, limit: 10 }),
+    ).rejects.toThrow('Method not implemented.');
+  });
 });
