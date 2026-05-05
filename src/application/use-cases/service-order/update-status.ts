@@ -1,28 +1,16 @@
 import type { UpdateServiceOrderStatusInput } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
 import { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
+import {
+  determineStatusTransition,
+  type StatusDirection,
+} from '@/domain/service-order/state-machines/status-machine';
 import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
 import { ForbiddenError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import type { FindServiceOrderByIdUseCase } from './find-by-id';
 
-type StatusDirection = UpdateServiceOrderStatusInput['direction'];
-type StatusTransition = Partial<Record<StatusDirection, ServiceOrderStatus>>;
-
-const statusTransitionMap: Record<ServiceOrderStatus, StatusTransition> = {
-  [ServiceOrderStatus.RECEIVED]: { next: ServiceOrderStatus.IN_DIAGNOSTIC },
-  [ServiceOrderStatus.IN_DIAGNOSTIC]: {
-    next: ServiceOrderStatus.AWAITING_APPROVAL,
-  },
-  [ServiceOrderStatus.AWAITING_APPROVAL]: {
-    next: ServiceOrderStatus.IN_EXECUTION,
-    back: ServiceOrderStatus.RECEIVED,
-  },
-  [ServiceOrderStatus.IN_EXECUTION]: { next: ServiceOrderStatus.COMPLETED },
-  [ServiceOrderStatus.COMPLETED]: { next: ServiceOrderStatus.DELIVERED },
-  [ServiceOrderStatus.DELIVERED]: {},
-  [ServiceOrderStatus.CANCELED]: {},
-};
+type Direction = StatusDirection;
 
 export class UpdateServiceOrderStatusUseCase {
   constructor(
@@ -35,8 +23,10 @@ export class UpdateServiceOrderStatusUseCase {
       id: input.id,
     });
 
-    const transition = statusTransitionMap[serviceOrder.status];
-    const targetStatus = transition[input.direction];
+    const targetStatus = determineStatusTransition(
+      serviceOrder.status,
+      input.direction,
+    );
 
     if (!targetStatus) {
       const message = `Service order status cannot move ${input.direction}`;
@@ -87,7 +77,7 @@ export class UpdateServiceOrderStatusUseCase {
   }
 
   private resolveTimestamps(
-    direction: UpdateServiceOrderStatusInput['direction'],
+    direction: Direction,
     targetStatus: ServiceOrderStatus,
     serviceOrder: ServiceOrder,
   ): {
