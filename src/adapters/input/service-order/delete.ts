@@ -17,7 +17,9 @@ export class DeleteServiceOrderInput {
       data: { id },
     });
 
-    const { errors, data } = validateSchemaZod(deleteServiceOrderSchema, { id });
+    const { errors, data } = validateSchemaZod(deleteServiceOrderSchema, {
+      id,
+    });
 
     if (errors?.length) {
       logger.warn({
