@@ -10,7 +10,7 @@
     "start:with-migrations": "bun run migration && bun run start:dev",
     "test": "bun test",
     "test:database": "docker compose up db_test -d",
-    "test:integration": "bun run test:database && bun test --config=./bunfig.integration.toml ./src/test/integration/",
+    "test:integration": "bun run test:database && sleep 2 && bun test --config=./bunfig.integration.toml ./src/test/integration/",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
