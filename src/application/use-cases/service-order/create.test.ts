@@ -88,6 +88,9 @@ describe('create service order use case', () => {
             value: 150,
           },
           description: undefined,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
         {
           id: expect.any(String),
@@ -96,6 +99,9 @@ describe('create service order use case', () => {
             value: 50,
           },
           description: undefined,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
       ],
       autoPartItems: [

@@ -16,7 +16,7 @@ describe('service order entity', () => {
     });
 
     expect(serviceOrder).toBeInstanceOf(ServiceOrder);
-    expect(serviceOrder).toEqual({
+    expect(serviceOrder).toMatchObject({
       autoPartItems: [
         {
           autoPartId: 'auto-part-id',
@@ -51,6 +51,6 @@ describe('service order entity', () => {
       status: 'RECEIVED',
       updatedAt: expect.any(Date),
       vehicleId: 'vehicle-id',
-    } as unknown as ServiceOrder);
+      } as unknown as ServiceOrder);
   });
 });

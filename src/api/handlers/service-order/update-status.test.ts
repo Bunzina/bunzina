@@ -93,6 +93,7 @@ describe('update service order status handler', () => {
           serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
           price: 120,
           description: 'Brake check',
+          isCompleted: false,
         },
       ],
       autoPartItems: [

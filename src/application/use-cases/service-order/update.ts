@@ -25,6 +25,8 @@ export class UpdateServiceOrderUseCase {
       { id: input.id },
     );
 
+    const now = new Date();
+
     const allowedStatuses = new Set<ServiceOrderStatus>([
       ServiceOrderStatus.RECEIVED,
       ServiceOrderStatus.IN_DIAGNOSTIC,
@@ -57,15 +59,35 @@ export class UpdateServiceOrderUseCase {
       await this.findAutoPartByIdUseCase.execute({ id: autoPartId });
     }
 
+    const existingCreatedAtMap = new Map(
+      existingServiceOrder.serviceItems.map((si) => [
+        si.serviceId,
+        si.createdAt,
+      ]),
+    );
+
     const serviceItems = input.serviceItems
-      ? input.serviceItems.map(
-          (item) =>
-            new ServiceItem({
-              serviceId: item.serviceId,
-              price: new Price(item.price),
-              description: item.description,
-            }),
-        )
+      ? input.serviceItems.map((item) => {
+          const createdAt = existingCreatedAtMap.get(item.serviceId);
+          const finishedAt = item.isCompleted ? now : undefined;
+
+          const svc = new ServiceItem({
+            serviceId: item.serviceId,
+            price: new Price(item.price),
+            description: item.description,
+            createdAt,
+            isCompleted: item.isCompleted ?? false,
+            finishedAt,
+            updatedAt: now,
+          });
+
+          if (svc.finishedAt && svc.createdAt) {
+            svc.executionTimeMs =
+              svc.finishedAt.getTime() - svc.createdAt.getTime();
+          }
+
+          return svc;
+        })
       : existingServiceOrder.serviceItems;
 
     const autoPartItems = input.autoPartItems
@@ -106,7 +128,7 @@ export class UpdateServiceOrderUseCase {
       autoPartItems,
       quote,
       createdAt: existingServiceOrder.createdAt,
-      updatedAt: new Date(),
+      updatedAt: now,
       approvedAt: existingServiceOrder.approvedAt,
       startedAt: existingServiceOrder.startedAt,
       completedAt: existingServiceOrder.completedAt,

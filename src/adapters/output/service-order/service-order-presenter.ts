@@ -13,6 +13,9 @@ export const ServiceOrderPresenter = {
         serviceId: item.serviceId,
         price: item.price.value,
         description: item.description,
+        isCompleted: item.isCompleted,
+        finishedAt: item.finishedAt,
+        executionTimeMs: item.executionTimeMs,
       })),
       autoPartItems: serviceOrder.autoPartItems.map((item) => ({
         id: item.id!,

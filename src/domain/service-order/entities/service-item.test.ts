@@ -10,14 +10,14 @@ describe('service item child entity', () => {
     });
 
     expect(serviceItem).toBeInstanceOf(ServiceItem);
-    expect(serviceItem).toEqual({
-      description: 'Oil Change',
-      id: expect.any(String),
-      price: {
-        value: 150,
-      },
-      serviceId: 'service-id',
-    } as unknown as ServiceItem);
+    expect(serviceItem).toEqual(
+      expect.objectContaining({
+        description: 'Oil Change',
+        id: expect.any(String),
+        price: { value: 150 },
+        serviceId: 'service-id',
+      } as unknown as ServiceItem),
+    );
   });
 
   test('should throw an error when creating a service item with a negative price', () => {

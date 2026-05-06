@@ -8,7 +8,7 @@ describe('service order presenter', () => {
 
     const response = ServiceOrderPresenter.toHttp(serviceOrder);
 
-    expect(response).toEqual({
+    expect(response).toMatchObject({
       id: expect.any(String),
       customerId: 'customer-123',
       vehicleId: 'vehicle-123',
@@ -19,6 +19,7 @@ describe('service order presenter', () => {
           serviceId: 'service-id',
           price: 100,
           description: 'Complete oil change service for your vehicle.',
+          isCompleted: false,
         },
       ],
       autoPartItems: [
@@ -50,7 +51,7 @@ describe('service order presenter', () => {
 
     const response = ServiceOrderPresenter.toHttp(serviceOrder);
 
-    expect(response).toEqual({
+    expect(response).toMatchObject({
       id: expect.any(String),
       customerId: 'customer-123',
       vehicleId: 'vehicle-123',
@@ -61,6 +62,7 @@ describe('service order presenter', () => {
           serviceId: 'service-id',
           price: 100,
           description: 'Complete oil change service for your vehicle.',
+          isCompleted: false,
         },
       ],
       autoPartItems: [

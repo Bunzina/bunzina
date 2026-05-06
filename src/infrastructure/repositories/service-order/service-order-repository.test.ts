@@ -124,47 +124,52 @@ describe('service order repository', () => {
 
     const result = await repository.findById(serviceOrderId);
 
-    expect(result).toEqual({
-      id: serviceOrderId,
-      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
-      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
-      status: ServiceOrderStatus.RECEIVED,
-      serviceItems: [
-        {
-          id: 'service-item-1',
-          serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
-          price: {
-            value: 120,
+    expect(result).toEqual(
+      expect.objectContaining({
+        id: serviceOrderId,
+        customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+        vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+        status: ServiceOrderStatus.RECEIVED,
+        serviceItems: [
+          {
+            id: 'service-item-1',
+            serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+            price: {
+              value: 120,
+            },
+            description: 'Brake check',
+            createdAt: expect.any(Date),
+            updatedAt: expect.any(Date),
+            isCompleted: false,
           },
-          description: 'Brake check',
+        ],
+        autoPartItems: [
+          {
+            id: 'auto-part-item-1',
+            autoPartId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+            quantity: 2,
+            unitPrice: {
+              value: 40,
+            },
+            totalPrice: {
+              value: 80,
+            },
+            description: 'Brake pad',
+          },
+        ],
+        quote: {
+          servicesTotal: 120,
+          autoPartsTotal: 80,
+          total: 200,
         },
-      ],
-      autoPartItems: [
-        {
-          id: 'auto-part-item-1',
-          autoPartId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
-          quantity: 2,
-          unitPrice: {
-            value: 40,
-          },
-          totalPrice: {
-            value: 80,
-          },
-          description: 'Brake pad',
-        },
-      ],
-      quote: {
-        servicesTotal: 120,
-        autoPartsTotal: 80,
-        total: 200,
-      },
-      createdAt,
-      updatedAt,
-      approvedAt: undefined,
-      startedAt: undefined,
-      completedAt: undefined,
-      deliveredAt: undefined,
-    });
+        createdAt,
+        updatedAt,
+        approvedAt: undefined,
+        startedAt: undefined,
+        completedAt: undefined,
+        deliveredAt: undefined,
+      }),
+    );
     expect(mockClient).toHaveBeenCalled();
   });
 

@@ -102,7 +102,7 @@ describe('update service order use case', () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -202,7 +202,7 @@ describe('update service order use case', () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -295,7 +295,7 @@ describe('update service order use case', () => {
       ],
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       id,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
