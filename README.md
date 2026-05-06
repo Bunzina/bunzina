@@ -194,9 +194,6 @@ bun test src/adapters/input/customer/create.test.ts
 ## Testes de integração
 
 ```bash
-# Subir banco de testes
-docker compose up db_test -d
-
 # Executar testes de integração
 bun run test:integration
 ```
