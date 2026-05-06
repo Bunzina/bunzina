@@ -1,3 +1,14 @@
+import { mockFn } from 'bun-mock-extended';
+import { mock, test, describe, expect } from 'bun:test';
+
+const mockDb = mockFn<
+  (..._args: unknown[]) => Promise<unknown[]>
+>();
+
+mock.module('@/infrastructure/configs/database', () => ({
+  db: mockDb,
+}));
+
 import { app } from './server';
 
 describe('Server', () => {
@@ -59,5 +70,20 @@ describe('Server', () => {
     expect(await response.json()).toEqual({
       reason: 'Missing or invalid authorization header',
     });
+  });
+
+  test('GET /service-orders/customer/:documentNumber is public', async () => {
+    mockDb.mockResolvedValueOnce([]);
+
+    const response = await app.handle(
+      new Request('http://localhost/service-orders/customer/12345678909', {
+        method: 'GET',
+      }),
+    );
+
+    expect(response).toBeDefined();
+    expect(response.status).not.toBe(401);
+    expect(response.headers.get('Content-Type')).toContain('application/json');
+    expect(await response.json()).toEqual([]);
   });
 });
