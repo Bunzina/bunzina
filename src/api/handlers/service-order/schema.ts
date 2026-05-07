@@ -1,4 +1,5 @@
 import { createServiceOrderSchema } from '@/adapters/input/service-order/validations/create-service-order-schema';
+import { findCustomerSchema } from '@/adapters/input/customer/validations/find-customer-schema';
 import { deleteServiceOrderSchema } from '@/adapters/input/service-order/validations/delete-service-order-schema';
 import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
 import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
@@ -34,6 +35,21 @@ export const findServiceOrderRouteSchema = {
     },
   },
   params: findServiceOrderSchema,
+};
+
+export const findServiceOrdersByCustomerRouteSchema = {
+  detail: {
+    tags: ['Service-Orders'],
+    summary: 'Find service orders by customer',
+    description:
+      'Public route to list service orders linked to a customer document number.',
+    responses: {
+      '200': { description: 'Service orders found successfully' },
+      '400': { description: 'Invalid data' },
+      '500': { description: 'Internal server error' },
+    },
+  },
+  params: findCustomerSchema,
 };
 
 export const updateServiceOrderRouteSchema = {

@@ -39,10 +39,12 @@ import { updateServiceHandler } from './handlers/service/update';
 import { createServiceOrderHandler } from './handlers/service-order/create';
 import { deleteServiceOrderHandler } from './handlers/service-order/delete';
 import { findServiceOrderHandler } from './handlers/service-order/find';
+import { findServiceOrdersByCustomerHandler } from './handlers/service-order/find-by-customer';
 import {
   createServiceOrderRouteSchema,
   deleteServiceOrderRouteSchema,
   findServiceOrderRouteSchema,
+  findServiceOrdersByCustomerRouteSchema,
   updateServiceOrderRouteSchema,
   updateServiceOrderStatusRouteSchema,
 } from './handlers/service-order/schema';
@@ -315,6 +317,21 @@ app.guard(
       deleteServiceRouteSchema,
     );
 
+    return app;
+  },
+);
+
+app.get(
+  '/service-orders/customer/:documentNumber',
+  async (context) => findServiceOrdersByCustomerHandler(context),
+  findServiceOrdersByCustomerRouteSchema,
+);
+
+app.guard(
+  {
+    beforeHandle: async (context) => authMiddleware(context),
+  },
+  (app) => {
     // Service order routes
     app.post(
       '/service-orders',

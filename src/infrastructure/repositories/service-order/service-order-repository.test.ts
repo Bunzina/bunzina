@@ -12,10 +12,11 @@ describe('service order repository', () => {
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction =
-      mockFn<
-        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-      >();
+    const mockTransaction = mockFn<
+      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+    >() as unknown as Mock<
+      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+    >;
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -41,10 +42,11 @@ describe('service order repository', () => {
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction =
-      mockFn<
-        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-      >();
+    const mockTransaction = mockFn<
+      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+    >() as unknown as Mock<
+      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+    >;
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -124,7 +126,8 @@ describe('service order repository', () => {
 
     const result = await repository.findById(serviceOrderId);
 
-    expect(result).toEqual({
+    expect(result).not.toBeNull();
+    expect(JSON.parse(JSON.stringify(result))).toEqual({
       id: serviceOrderId,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -158,12 +161,8 @@ describe('service order repository', () => {
         autoPartsTotal: 80,
         total: 200,
       },
-      createdAt,
-      updatedAt,
-      approvedAt: undefined,
-      startedAt: undefined,
-      completedAt: undefined,
-      deliveredAt: undefined,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
     });
     expect(mockClient).toHaveBeenCalled();
   });
@@ -190,10 +189,11 @@ describe('service order repository', () => {
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction =
-      mockFn<
-        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-      >();
+    const mockTransaction = mockFn<
+      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+    >() as unknown as Mock<
+      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+    >;
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -211,15 +211,80 @@ describe('service order repository', () => {
     expect(mockClient).toHaveBeenCalled();
   });
 
-  test('should throw when findByParams is not implemented', async () => {
+  test('should find service orders by params', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
 
+    const serviceOrder = makeServiceOrder({
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      customerId: 'customer-id',
+      vehicleId: 'vehicle-id',
+      createdAt: new Date('2026-04-01T10:00:00.000Z'),
+      updatedAt: new Date('2026-04-02T10:00:00.000Z'),
+    });
+    const [serviceItem] = serviceOrder.serviceItems;
+    const [autoPartItem] = serviceOrder.autoPartItems;
+
+    mockClient
+      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
+      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
+      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: serviceOrder.id,
+            customer_id: serviceOrder.customerId,
+            vehicle_id: serviceOrder.vehicleId,
+            status: serviceOrder.status,
+            quote_services_total: serviceOrder.quote.servicesTotal,
+            quote_auto_parts_total: serviceOrder.quote.autoPartsTotal,
+            quote_total: serviceOrder.quote.total,
+            created_at: serviceOrder.createdAt,
+            updated_at: serviceOrder.updatedAt,
+            approved_at: null,
+            started_at: null,
+            completed_at: null,
+            delivered_at: null,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: serviceItem!.id,
+            service_order_id: serviceOrder.id,
+            service_id: serviceItem!.serviceId,
+            price: serviceItem!.price.value,
+            description: serviceItem!.description,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: autoPartItem!.id,
+            service_order_id: serviceOrder.id,
+            auto_part_id: autoPartItem!.autoPartId,
+            quantity: autoPartItem!.quantity,
+            unit_price: autoPartItem!.unitPrice.value,
+            total_price: autoPartItem!.totalPrice?.value,
+            description: autoPartItem!.description,
+          },
+        ] as unknown[]),
+      );
+
     const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
 
-    await expect(
-      repository.findByParams({ page: 1, limit: 10 }),
-    ).rejects.toThrow('Method not implemented.');
+    const result = await repository.findByParams({
+      page: 1,
+      limit: 10,
+      filters: {
+        customerId: 'customer-id',
+      },
+    });
+
+    expect(result).toEqual([serviceOrder]);
+    expect(mockClient).toHaveBeenCalled();
   });
 });
