@@ -15,6 +15,7 @@ import type {
   ServiceOrderDbSchema,
   ServiceOrderServiceItemDbSchema,
 } from './dtos/service-order-db-schema';
+import type { ServiceItem } from '@/domain/service-order/entities/service-item';
 
 export class ServiceOrderRepository implements IServiceOrderRepository {
   constructor(private client: SQL) {}
@@ -198,5 +199,74 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     await this.client.transaction(async (sql) => {
       await persist(sql);
     });
+  }
+
+  async findServiceItemById(id: string): Promise<ServiceItem | null> {
+    const [record] = await this.client<ServiceOrderServiceItemDbSchema[]>`
+      SELECT *
+      FROM bunzina.service_order_service_items
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+
+    if (!record) return null;
+
+    return ServiceOrderServiceItemMapper.toDomain(record);
+  }
+
+  async updateServiceItem(
+    serviceItem: ServiceItem,
+  ): Promise<ServiceItem | null> {
+    const [existing] = await this.client<ServiceOrderServiceItemDbSchema[]>`
+      SELECT *
+      FROM bunzina.service_order_service_items
+      WHERE id = ${serviceItem.id}
+      LIMIT 1
+    `;
+
+    if (!existing) return null;
+
+    const recordToUpdate = ServiceOrderServiceItemMapper.toDatabase(
+      existing.service_order_id,
+      serviceItem,
+    );
+
+    const {
+      id: _id,
+      service_order_id: _service_order_id,
+      created_at: _created_at,
+      ...fieldsToUpdate
+    } = recordToUpdate;
+
+    const [updated] = await this.client<ServiceOrderServiceItemDbSchema[]>`
+      UPDATE bunzina.service_order_service_items
+      SET ${this.client(fieldsToUpdate)}
+      WHERE id = ${serviceItem.id}
+      RETURNING *
+    `;
+
+    return updated ? ServiceOrderServiceItemMapper.toDomain(updated) : null;
+  }
+
+  async findByServiceItemId(
+    serviceItemId: string,
+  ): Promise<ServiceOrder | null> {
+    const [itemRecord] = await this.client<ServiceOrderServiceItemDbSchema[]>`
+      SELECT service_order_id
+      FROM bunzina.service_order_service_items
+      WHERE id = ${serviceItemId}
+      LIMIT 1
+    `;
+
+    if (!itemRecord) {
+      logger.debug({
+        message: 'No service item found with id',
+        data: { serviceItemId },
+      });
+
+      return null;
+    }
+
+    return this.findById(itemRecord.service_order_id);
   }
 }

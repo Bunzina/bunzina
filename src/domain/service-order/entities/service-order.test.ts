@@ -51,6 +51,6 @@ describe('service order entity', () => {
       status: 'RECEIVED',
       updatedAt: expect.any(Date),
       vehicleId: 'vehicle-id',
-      } as unknown as ServiceOrder);
+    } as unknown as ServiceOrder);
   });
 });

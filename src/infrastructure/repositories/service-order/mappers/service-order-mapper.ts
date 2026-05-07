@@ -39,7 +39,9 @@ export const ServiceOrderServiceItemMapper = {
       updatedAt: record.updated_at,
       isCompleted: record.is_completed,
       finishedAt: record.finished_at ?? undefined,
-      executionTimeMs: record.execution_time_ms ?? undefined,
+      executionTimeMs: record.execution_time_ms
+        ? Number(record.execution_time_ms)
+        : undefined,
     });
   },
 };

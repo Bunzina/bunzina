@@ -2,8 +2,8 @@ export interface ServiceOrderServiceItemResponse {
   id: string;
   serviceId: string;
   price: number;
+  isCompleted: boolean;
   description?: string;
-  isCompleted?: boolean;
   finishedAt?: Date;
   executionTimeMs?: number;
 }

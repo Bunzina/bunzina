@@ -45,9 +45,11 @@ import {
   findServiceOrderRouteSchema,
   updateServiceOrderRouteSchema,
   updateServiceOrderStatusRouteSchema,
+  completeServiceOrderItemRouteSchema,
 } from './handlers/service-order/schema';
 import { updateServiceOrderHandler } from './handlers/service-order/update';
 import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
+import { completeServiceItemHandler } from './handlers/service-order/complete-service-item';
 import { createUserHandler } from './handlers/user/create';
 import { deleteUserHandler } from './handlers/user/delete';
 import { findUserHandler } from './handlers/user/find';
@@ -340,6 +342,11 @@ app.guard(
       '/service-orders/:id/status',
       async (context) => updateServiceOrderStatusHandler(context),
       updateServiceOrderStatusRouteSchema,
+    );
+    app.post(
+      '/service-orders/services/:id/complete',
+      async (context) => completeServiceItemHandler(context),
+      completeServiceOrderItemRouteSchema,
     );
 
     return app;

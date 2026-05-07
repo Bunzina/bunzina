@@ -43,7 +43,8 @@ export class UpdateServiceOrderStatusUseCase {
       );
 
       if (!allCompleted) {
-        const message = 'All service items must be completed before closing the service order';
+        const message =
+          'All service items must be completed before closing the service order';
 
         logger.warn({
           message,

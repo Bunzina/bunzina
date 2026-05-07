@@ -102,7 +102,7 @@ describe('update service order use case', () => {
       ],
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       id,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -115,6 +115,9 @@ describe('update service order use case', () => {
             value: 120,
           },
           description: 'Brake check',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
         {
           id: expect.any(String),
@@ -123,6 +126,9 @@ describe('update service order use case', () => {
             value: 80,
           },
           description: undefined,
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
       ],
       autoPartItems: [
@@ -202,7 +208,7 @@ describe('update service order use case', () => {
       ],
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       id,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -215,6 +221,9 @@ describe('update service order use case', () => {
             value: 120,
           },
           description: 'New service',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
       ],
       autoPartItems: [
@@ -295,7 +304,7 @@ describe('update service order use case', () => {
       ],
     });
 
-    expect(result).toMatchObject({
+    expect(result).toEqual({
       id,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -308,6 +317,9 @@ describe('update service order use case', () => {
             value: 80,
           },
           description: 'Old service',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
       ],
       autoPartItems: [

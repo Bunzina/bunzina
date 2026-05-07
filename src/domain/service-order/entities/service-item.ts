@@ -15,10 +15,10 @@ export interface ServiceItemProps extends EntityProps {
 export class ServiceItem extends Entity {
   serviceId!: string;
   price!: Price;
-  description?: string;
+  isCompleted!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
-  isCompleted?: boolean;
+  description?: string;
   finishedAt?: Date;
   executionTimeMs?: number;
 
