@@ -6,7 +6,7 @@ describe('service item presenter', () => {
   test('should convert a service item entity to http response', () => {
     const serviceItem = makeServiceItem();
 
-    const response = ServiceItemPresenter.toHttp(serviceItem as any);
+    const response = ServiceItemPresenter.toHttp(serviceItem);
 
     expect(response).toMatchObject({
       id: expect.any(String),
@@ -18,9 +18,9 @@ describe('service item presenter', () => {
   });
 
   test('should map price value when price is a value object', () => {
-    const serviceItem = makeServiceItem({ price: { value: 250 } as any });
+    const serviceItem = makeServiceItem({ price: { value: 250 } });
 
-    const response = ServiceItemPresenter.toHttp(serviceItem as any);
+    const response = ServiceItemPresenter.toHttp(serviceItem);
 
     expect(response.price).toBe(250);
   });
