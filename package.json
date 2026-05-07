@@ -11,6 +11,7 @@
     "test": "bun test",
     "test:database": "docker compose up db_test -d",
     "test:integration": "bun run test:database && sleep 2 && bun test --config=./bunfig.integration.toml ./src/test/integration/",
+    "posttest:integration": "docker compose stop db_test",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
