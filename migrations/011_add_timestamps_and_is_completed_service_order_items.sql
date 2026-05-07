@@ -6,4 +6,3 @@ ADD COLUMN IF NOT EXISTS finished_at TIMESTAMPTZ,
 ADD COLUMN IF NOT EXISTS execution_time_ms BIGINT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_so_service_items_order_id_is_completed ON bunzina.service_order_service_items(service_order_id, is_completed);
-CREATE INDEX IF NOT EXISTS idx_so_service_items_execution_time_ms ON bunzina.service_order_service_items (execution_time_ms);
