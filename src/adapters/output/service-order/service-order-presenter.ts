@@ -9,9 +9,7 @@ export const ServiceOrderPresenter = {
       customerId: serviceOrder.customerId,
       vehicleId: serviceOrder.vehicleId,
       status: serviceOrder.status,
-      serviceItems: serviceOrder.serviceItems.map((item) =>
-        ServiceItemPresenter.toHttp(item),
-      ),
+      serviceItems: serviceOrder.serviceItems.map(ServiceItemPresenter.toHttp),
       autoPartItems: serviceOrder.autoPartItems.map((item) => ({
         id: item.id!,
         autoPartId: item.autoPartId,

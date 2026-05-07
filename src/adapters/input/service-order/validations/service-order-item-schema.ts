@@ -4,7 +4,6 @@ export const serviceItemSchema = z.object({
   serviceId: z.uuid('Service ID must be a valid UUID'),
   price: z.number().nonnegative('Price cannot be negative'),
   description: z.string().optional(),
-  isCompleted: z.boolean().optional(),
 });
 
 export const autoPartItemSchema = z.object({

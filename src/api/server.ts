@@ -343,7 +343,7 @@ app.guard(
       async (context) => updateServiceOrderStatusHandler(context),
       updateServiceOrderStatusRouteSchema,
     );
-    app.post(
+    app.patch(
       '/service-orders/services/:id/complete',
       async (context) => completeServiceItemHandler(context),
       completeServiceOrderItemRouteSchema,

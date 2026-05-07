@@ -97,6 +97,9 @@ export const completeServiceOrderItemRouteSchema = {
       '200': { description: 'Service item completed successfully' },
       '400': { description: 'Invalid data' },
       '401': { description: 'Missing or invalid token' },
+      '403': {
+        description: 'Forbidden when parent service order is not in execution',
+      },
       '404': { description: 'Service item not found' },
       '500': { description: 'Internal server error' },
     },

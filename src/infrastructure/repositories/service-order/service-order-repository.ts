@@ -224,7 +224,14 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
       LIMIT 1
     `;
 
-    if (!existing) return null;
+    if (!existing) {
+      logger.debug({
+        message: 'No service item found for update',
+        data: { id: serviceItem.id },
+      });
+
+      return null;
+    }
 
     const recordToUpdate = ServiceOrderServiceItemMapper.toDatabase(
       existing.service_order_id,
@@ -237,6 +244,15 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
       created_at: _created_at,
       ...fieldsToUpdate
     } = recordToUpdate;
+
+    logger.debug({
+      message: 'Updating service item',
+      data: {
+        id: serviceItem.id,
+        serviceOrderId: existing.service_order_id,
+        fieldsToUpdate,
+      },
+    });
 
     const [updated] = await this.client<ServiceOrderServiceItemDbSchema[]>`
       UPDATE bunzina.service_order_service_items

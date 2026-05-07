@@ -8,7 +8,7 @@ describe('service order presenter', () => {
 
     const response = ServiceOrderPresenter.toHttp(serviceOrder);
 
-    expect(response).toMatchObject({
+    expect(response).toEqual({
       id: expect.any(String),
       customerId: 'customer-123',
       vehicleId: 'vehicle-123',
@@ -51,7 +51,7 @@ describe('service order presenter', () => {
 
     const response = ServiceOrderPresenter.toHttp(serviceOrder);
 
-    expect(response).toMatchObject({
+    expect(response).toEqual({
       id: expect.any(String),
       customerId: 'customer-123',
       vehicleId: 'vehicle-123',
