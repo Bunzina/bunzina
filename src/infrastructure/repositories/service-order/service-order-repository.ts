@@ -298,6 +298,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     const {
       id: _id,
       created_at: _created_at,
+      service_order_id: _service_order_id,
       ...fieldsToUpdate
     } = recordToSave;
 

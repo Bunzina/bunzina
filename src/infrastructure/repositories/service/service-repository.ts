@@ -75,7 +75,9 @@ export class ServiceRepository implements IServiceRepository {
       data: { serviceId },
     });
 
-    const result = await this.client<{ avg_execution_time: number | null }[]>`
+    const result = await this.client<{
+      avg_execution_time: number | string | null;
+    }[]>`
       SELECT AVG(execution_time_ms) as avg_execution_time
       FROM bunzina.service_order_service_items
       WHERE service_id = ${serviceId} AND is_completed = true
