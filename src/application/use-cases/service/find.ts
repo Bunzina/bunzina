@@ -1,5 +1,6 @@
 import type { Service } from '@/domain/service/entities/service';
 import type { IServiceRepository as ServiceRepository } from '@/domain/service/repositories/service-repository';
+import { NotFoundError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 export class FindServiceUseCase {
@@ -14,12 +15,14 @@ export class FindServiceUseCase {
     });
 
     if (!service) {
+      const message = 'Service not found';
+
       logger.warn({
-        message: 'Service not found',
+        message,
         data: { id },
       });
 
-      throw new Error('Service not found');
+      throw new NotFoundError(message);
     }
 
     const averageExecutionTimeMs =
