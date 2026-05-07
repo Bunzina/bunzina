@@ -20,6 +20,22 @@ import type { ServiceItem } from '@/domain/service-order/entities/service-item';
 export class ServiceOrderRepository implements IServiceOrderRepository {
   constructor(private client: SQL) {}
 
+  private buildFindByParamsFiltersSql(
+    filters: NonNullable<FindServiceOrdersParams['filters']>,
+  ) {
+    const customerIdFilter = filters.customerId
+      ? this.client`AND customer_id = ${filters.customerId}`
+      : this.client``;
+    const statusFilter = filters.status
+      ? this.client`AND status = ${filters.status}`
+      : this.client``;
+
+    return this.client`
+      ${customerIdFilter}
+      ${statusFilter}
+    `;
+  }
+
   async create(serviceOrder: ServiceOrder): Promise<ServiceOrder> {
     const recordToSave = ServiceOrderMapper.toDatabase(serviceOrder);
     const serviceItemRecords = serviceOrder.serviceItems.map((item) =>
@@ -106,10 +122,62 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     return serviceOrder;
   }
 
-  async findByParams(
-    _params: FindServiceOrdersParams,
-  ): Promise<ServiceOrder[]> {
-    throw new Error('Method not implemented.');
+  async findByParams(params: FindServiceOrdersParams): Promise<ServiceOrder[]> {
+    const filters = params.filters ?? {};
+    const filtersSql = this.buildFindByParamsFiltersSql(filters);
+    const offset = (params.page - 1) * params.limit;
+
+    logger.debug({
+      message: 'Finding paginated service orders',
+      data: {
+        page: params.page,
+        limit: params.limit,
+        filters,
+      },
+    });
+
+    const records = await this.client<ServiceOrderDbSchema[]>`
+      SELECT *
+      FROM bunzina.service_orders
+      WHERE 1 = 1
+      ${filtersSql}
+      ORDER BY created_at DESC
+      LIMIT ${params.limit}
+      OFFSET ${offset}
+    `;
+
+    const serviceOrders: ServiceOrder[] = [];
+
+    for (const record of records) {
+      const serviceItems = await this.client<ServiceOrderServiceItemDbSchema[]>`
+        SELECT *
+        FROM bunzina.service_order_service_items
+        WHERE service_order_id = ${record.id}
+      `;
+
+      const autoPartItems = await this.client<
+        ServiceOrderAutoPartItemDbSchema[]
+      >`
+        SELECT *
+        FROM bunzina.service_order_auto_part_items
+        WHERE service_order_id = ${record.id}
+      `;
+
+      serviceOrders.push(
+        ServiceOrderMapper.toDomain(record, serviceItems, autoPartItems),
+      );
+    }
+
+    logger.debug({
+      message: 'Paginated service orders found',
+      data: {
+        count: serviceOrders.length,
+        page: params.page,
+        limit: params.limit,
+      },
+    });
+
+    return serviceOrders;
   }
 
   async update(serviceOrder: ServiceOrder): Promise<ServiceOrder> {
