@@ -65,9 +65,7 @@ describe('Find Service Handler', () => {
           },
         ] as unknown[]);
       }
-      return Promise.resolve([
-        { avg_execution_time: 5000 },
-      ] as unknown[]);
+      return Promise.resolve([{ avg_execution_time: 5000 }] as unknown[]);
     });
 
     const context = {
@@ -76,7 +74,9 @@ describe('Find Service Handler', () => {
     } as unknown as Context;
 
     const response = await findServiceHandler(context);
-    const responseBody = (await response.json()) as { averageExecutionTimeMs?: number | null };
+    const responseBody = (await response.json()) as {
+      averageExecutionTimeMs?: number | null;
+    };
 
     expect(response.status).toBe(200);
     expect(responseBody).toHaveProperty('averageExecutionTimeMs');
@@ -103,9 +103,7 @@ describe('Find Service Handler', () => {
           },
         ] as unknown[]);
       }
-      return Promise.resolve([
-        { avg_execution_time: null },
-      ] as unknown[]);
+      return Promise.resolve([{ avg_execution_time: null }] as unknown[]);
     });
 
     const context = {
@@ -114,7 +112,9 @@ describe('Find Service Handler', () => {
     } as unknown as Context;
 
     const response = await findServiceHandler(context);
-    const responseBody = (await response.json()) as { averageExecutionTimeMs?: number | null };
+    const responseBody = (await response.json()) as {
+      averageExecutionTimeMs?: number | null;
+    };
 
     expect(response.status).toBe(200);
     expect(responseBody).toHaveProperty('averageExecutionTimeMs');
