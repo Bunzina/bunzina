@@ -284,52 +284,28 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
 
   async updateServiceItem(
     serviceItem: ServiceItem,
-  ): Promise<ServiceItem | null> {
-    const [existing] = await this.client<ServiceOrderServiceItemDbSchema[]>`
-      SELECT *
-      FROM bunzina.service_order_service_items
-      WHERE id = ${serviceItem.id}
-      LIMIT 1
-    `;
-
-    if (!existing) {
-      logger.debug({
-        message: 'No service item found for update',
-        data: { id: serviceItem.id },
-      });
-
-      return null;
-    }
-
-    const recordToUpdate = ServiceOrderServiceItemMapper.toDatabase(
-      existing.service_order_id,
+    serviceOrderId: string,
+  ): Promise<ServiceItem> {
+    const recordToSave = ServiceOrderServiceItemMapper.toDatabase(
+      serviceOrderId,
       serviceItem,
     );
+    logger.debug({
+      message: 'Updating service item in database',
+      data: recordToSave,
+    });
 
     const {
       id: _id,
-      service_order_id: _service_order_id,
       created_at: _created_at,
       ...fieldsToUpdate
-    } = recordToUpdate;
+    } = recordToSave;
 
-    logger.debug({
-      message: 'Updating service item',
-      data: {
-        id: serviceItem.id,
-        serviceOrderId: existing.service_order_id,
-        fieldsToUpdate,
-      },
-    });
-
-    const [updated] = await this.client<ServiceOrderServiceItemDbSchema[]>`
-      UPDATE bunzina.service_order_service_items
-      SET ${this.client(fieldsToUpdate)}
-      WHERE id = ${serviceItem.id}
-      RETURNING *
+    await this.client`
+      UPDATE bunzina.service_order_service_items SET ${this.client(fieldsToUpdate)} WHERE id = ${serviceItem.id}
     `;
 
-    return updated ? ServiceOrderServiceItemMapper.toDomain(updated) : null;
+    return serviceItem;
   }
 
   async findByServiceItemId(

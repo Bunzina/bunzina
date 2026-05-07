@@ -79,7 +79,10 @@ export class CompleteServiceItemUseCase {
       executionTimeMs,
     });
 
-    await this.serviceOrderRepository.updateServiceItem(updatedServiceItem);
+    await this.serviceOrderRepository.updateServiceItem(
+      updatedServiceItem,
+      serviceOrder.id!,
+    );
 
     return updatedServiceItem;
   }

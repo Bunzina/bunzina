@@ -20,6 +20,9 @@ export interface ServiceOrderRepository {
   update(serviceOrder: ServiceOrder): Promise<ServiceOrder>;
   delete(id: string): Promise<void>;
   findServiceItemById(id: string): Promise<ServiceItem | null>;
-  updateServiceItem(serviceItem: ServiceItem): Promise<ServiceItem | null>;
+  updateServiceItem(
+    serviceItem: ServiceItem,
+    serviceOrderId: string,
+  ): Promise<ServiceItem>;
   findByServiceItemId(serviceItemId: string): Promise<ServiceOrder | null>;
 }

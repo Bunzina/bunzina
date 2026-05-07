@@ -220,12 +220,15 @@ describe('service order repository', () => {
       (..._args: unknown[]) => Promise<unknown[]>
     >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
 
+    const createdAt = new Date('2026-04-01T10:00:00.000Z');
+    const updatedAt = new Date('2026-04-02T10:00:00.000Z');
+
     const serviceOrder = makeServiceOrder({
       id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
       customerId: 'customer-id',
       vehicleId: 'vehicle-id',
-      createdAt: new Date('2026-04-01T10:00:00.000Z'),
-      updatedAt: new Date('2026-04-02T10:00:00.000Z'),
+      createdAt,
+      updatedAt,
     });
     const [serviceItem] = serviceOrder.serviceItems;
     const [autoPartItem] = serviceOrder.autoPartItems;
@@ -244,8 +247,8 @@ describe('service order repository', () => {
             quote_services_total: serviceOrder.quote.servicesTotal,
             quote_auto_parts_total: serviceOrder.quote.autoPartsTotal,
             quote_total: serviceOrder.quote.total,
-            created_at: serviceOrder.createdAt,
-            updated_at: serviceOrder.updatedAt,
+            created_at: createdAt,
+            updated_at: updatedAt,
             approved_at: null,
             started_at: null,
             completed_at: null,
@@ -261,6 +264,11 @@ describe('service order repository', () => {
             service_id: serviceItem!.serviceId,
             price: serviceItem!.price.value,
             description: serviceItem!.description,
+            created_at: serviceItem!.createdAt,
+            updated_at: serviceItem!.updatedAt,
+            is_completed: serviceItem!.isCompleted ?? false,
+            finished_at: null,
+            execution_time_ms: null,
           },
         ] as unknown[]),
       )
@@ -289,6 +297,161 @@ describe('service order repository', () => {
     });
 
     expect(result).toEqual([serviceOrder]);
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should find a service item by id', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+
+    const serviceOrderId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const createdAt = new Date('2026-04-01T10:00:00.000Z');
+    const updatedAt = new Date('2026-04-02T10:00:00.000Z');
+
+    mockClient.mockResolvedValueOnce([
+      {
+        id: 'service-item-1',
+        service_order_id: serviceOrderId,
+        service_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+        price: 120,
+        description: 'Brake check',
+        created_at: createdAt,
+        updated_at: updatedAt,
+        is_completed: false,
+        finished_at: null,
+        execution_time_ms: null,
+      },
+    ] as unknown[]);
+
+    const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
+
+    const result = await repository.findServiceItemById('service-item-1');
+
+    const expected = {
+      id: 'service-item-1',
+      serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      price: {
+        value: 120,
+      },
+      description: 'Brake check',
+      createdAt,
+      updatedAt,
+      isCompleted: false,
+    } as unknown as typeof result;
+
+    expect(result).not.toBeNull();
+    expect(result).toEqual(expected);
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should find service order by service item id', async () => {
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+
+    const serviceOrderId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    const createdAt = new Date('2026-04-01T10:00:00.000Z');
+    const updatedAt = new Date('2026-04-02T10:00:00.000Z');
+
+    mockClient
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            service_order_id: serviceOrderId,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: serviceOrderId,
+            customer_id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+            vehicle_id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+            status: ServiceOrderStatus.RECEIVED,
+            quote_services_total: 120,
+            quote_auto_parts_total: 80,
+            quote_total: 200,
+            created_at: createdAt,
+            updated_at: updatedAt,
+            approved_at: null,
+            started_at: null,
+            completed_at: null,
+            delivered_at: null,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: 'service-item-1',
+            service_order_id: serviceOrderId,
+            service_id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+            price: 120,
+            description: 'Brake check',
+            created_at: createdAt,
+            updated_at: updatedAt,
+            is_completed: false,
+            finished_at: null,
+            execution_time_ms: null,
+          },
+        ] as unknown[]),
+      )
+      .mockImplementationOnce(() =>
+        Promise.resolve([
+          {
+            id: 'auto-part-item-1',
+            service_order_id: serviceOrderId,
+            auto_part_id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+            quantity: 2,
+            unit_price: 40,
+            total_price: 80,
+            description: 'Brake pad',
+          },
+        ] as unknown[]),
+      );
+
+    const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
+
+    const result = await repository.findByServiceItemId('service-item-1');
+
+    const expected = {
+      id: serviceOrderId,
+      customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      status: ServiceOrderStatus.RECEIVED,
+      serviceItems: [
+        {
+          id: 'service-item-1',
+          serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+          price: { value: 120 },
+          description: 'Brake check',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
+        },
+      ],
+      autoPartItems: [
+        {
+          id: 'auto-part-item-1',
+          autoPartId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+          quantity: 2,
+          unitPrice: { value: 40 },
+          totalPrice: { value: 80 },
+          description: 'Brake pad',
+        },
+      ],
+      quote: {
+        servicesTotal: 120,
+        autoPartsTotal: 80,
+        total: 200,
+      },
+      createdAt,
+      updatedAt,
+    } as unknown as typeof result;
+
+    expect(result).not.toBeNull();
+    expect(result).toEqual(expected);
     expect(mockClient).toHaveBeenCalled();
   });
 });
