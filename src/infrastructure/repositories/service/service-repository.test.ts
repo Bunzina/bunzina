@@ -98,4 +98,46 @@ describe('Service Repository', () => {
 
     expect(mockClient).toHaveBeenCalled();
   });
+
+  test('should return average execution time when service items are completed', async () => {
+    const repository = new ServiceRepository(mockClient);
+    const serviceId = 'service-123';
+
+    mockClient
+      .calledWith(any())
+      .mockResolvedValueOnce([{ avg_execution_time: 5000 }]);
+
+    const result = await repository.getAverageExecutionTimeMs(serviceId);
+
+    expect(result).toBe(5000);
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should return null when no service items are completed', async () => {
+    const repository = new ServiceRepository(mockClient);
+    const serviceId = 'service-456';
+
+    mockClient
+      .calledWith(any())
+      .mockResolvedValueOnce([{ avg_execution_time: null }]);
+
+    const result = await repository.getAverageExecutionTimeMs(serviceId);
+
+    expect(result).toBeNull();
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should return average with multiple completed service items', async () => {
+    const repository = new ServiceRepository(mockClient);
+    const serviceId = 'service-789';
+
+    mockClient
+      .calledWith(any())
+      .mockResolvedValueOnce([{ avg_execution_time: 7500 }]);
+
+    const result = await repository.getAverageExecutionTimeMs(serviceId);
+
+    expect(result).toBe(7500);
+    expect(mockClient).toHaveBeenCalled();
+  });
 });

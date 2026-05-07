@@ -6,4 +6,5 @@ export interface ServiceResponse {
   durationInMinutes: number;
   createdAt: string;
   updatedAt: string;
+  averageExecutionTimeMs?: number | null;
 }

@@ -22,6 +22,10 @@ export class FindServiceUseCase {
       throw new Error('Service not found');
     }
 
+    const averageExecutionTimeMs =
+      await this.serviceRepository.getAverageExecutionTimeMs(id);
+    service.averageExecutionTimeMs = averageExecutionTimeMs;
+
     return service;
   }
 }

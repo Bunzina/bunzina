@@ -9,6 +9,7 @@ export interface ServiceProps extends EntityProps {
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  averageExecutionTimeMs?: number | null;
 }
 
 export class Service extends Entity {
@@ -19,6 +20,7 @@ export class Service extends Entity {
   isActive!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
+  averageExecutionTimeMs?: number | null;
 
   constructor({ id, ...input }: ServiceProps) {
     super(id);

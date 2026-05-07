@@ -12,6 +12,7 @@ export const ServicePresenter = {
       durationInMinutes: service.durationInMinutes,
       createdAt: dayjs(service.createdAt).toISOString(),
       updatedAt: dayjs(service.updatedAt).toISOString(),
+      averageExecutionTimeMs: service.averageExecutionTimeMs ?? null,
     };
   },
 };
