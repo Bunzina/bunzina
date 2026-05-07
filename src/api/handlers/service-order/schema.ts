@@ -2,6 +2,7 @@ import { createServiceOrderSchema } from '@/adapters/input/service-order/validat
 import { findCustomerSchema } from '@/adapters/input/customer/validations/find-customer-schema';
 import { deleteServiceOrderSchema } from '@/adapters/input/service-order/validations/delete-service-order-schema';
 import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
+import { findServiceOrderItemSchema } from '@/adapters/input/service-order/validations/find-service-order-item-schema';
 import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
 import { updateServiceOrderBodySchema } from '@/adapters/input/service-order/validations/update-service-order-schema';
 
@@ -101,4 +102,23 @@ export const updateServiceOrderStatusRouteSchema = {
   },
   params: findServiceOrderSchema,
   body: updateServiceOrderStatusBodySchema,
+};
+
+export const completeServiceOrderItemRouteSchema = {
+  detail: {
+    tags: ['Service-Orders'],
+    summary: 'Complete a single service item',
+    description: 'Mark a service-order service item as completed by its id.',
+    responses: {
+      '200': { description: 'Service item completed successfully' },
+      '400': { description: 'Invalid data' },
+      '401': { description: 'Missing or invalid token' },
+      '403': {
+        description: 'Forbidden when parent service order is not in execution',
+      },
+      '404': { description: 'Service item not found' },
+      '500': { description: 'Internal server error' },
+    },
+  },
+  params: findServiceOrderItemSchema,
 };

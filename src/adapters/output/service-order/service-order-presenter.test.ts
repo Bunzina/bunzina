@@ -19,6 +19,7 @@ describe('service order presenter', () => {
           serviceId: 'service-id',
           price: 100,
           description: 'Complete oil change service for your vehicle.',
+          isCompleted: false,
         },
       ],
       autoPartItems: [
@@ -61,6 +62,7 @@ describe('service order presenter', () => {
           serviceId: 'service-id',
           price: 100,
           description: 'Complete oil change service for your vehicle.',
+          isCompleted: false,
         },
       ],
       autoPartItems: [

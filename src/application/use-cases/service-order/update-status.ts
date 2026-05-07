@@ -37,6 +37,24 @@ export class UpdateServiceOrderStatusUseCase {
       throw new ForbiddenError(message);
     }
 
+    if (targetStatus === ServiceOrderStatus.COMPLETED) {
+      const allCompleted = serviceOrder.serviceItems.every(
+        (item) => item.isCompleted === true,
+      );
+
+      if (!allCompleted) {
+        const message =
+          'All service items must be completed before closing the service order';
+
+        logger.warn({
+          message,
+          data: { id: input.id },
+        });
+
+        throw new ForbiddenError(message);
+      }
+    }
+
     const { startedAt, completedAt, deliveredAt } = this.resolveTimestamps(
       input.direction,
       targetStatus,

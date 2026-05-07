@@ -112,6 +112,7 @@ describe('create service order handler', () => {
           serviceId: '33333333-3333-4333-8333-333333333333',
           price: 200,
           description: 'Oil change service',
+          isCompleted: false,
         },
       ],
       autoPartItems: [

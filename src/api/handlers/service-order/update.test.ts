@@ -155,12 +155,14 @@ describe('update service order handler', () => {
           serviceId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
           price: 120,
           description: 'Brake check',
+          isCompleted: false,
         },
         {
           id: expect.any(String),
           serviceId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
           price: 80,
           description: undefined,
+          isCompleted: false,
         },
       ],
       autoPartItems: [

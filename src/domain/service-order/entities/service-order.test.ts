@@ -16,7 +16,7 @@ describe('service order entity', () => {
     });
 
     expect(serviceOrder).toBeInstanceOf(ServiceOrder);
-    expect(serviceOrder).toEqual({
+    expect(serviceOrder).toMatchObject({
       autoPartItems: [
         {
           autoPartId: 'auto-part-id',

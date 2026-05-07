@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
   autoPartItemSchema,
   serviceItemSchema,
-} from './service-order-item-schemas';
+} from './service-order-item-schema';
 
 const updateServiceOrderBaseSchema = z.object({
   serviceItems: z.array(serviceItemSchema).optional(),

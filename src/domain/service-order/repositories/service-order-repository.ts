@@ -1,4 +1,5 @@
 import type { ServiceOrder } from '../entities/service-order';
+import type { ServiceItem } from '../entities/service-item';
 import type { ServiceOrderStatus } from '../types/service-order-status';
 
 export interface FindServiceOrdersFilters {
@@ -18,4 +19,7 @@ export interface ServiceOrderRepository {
   findByParams(params: FindServiceOrdersParams): Promise<ServiceOrder[]>;
   update(serviceOrder: ServiceOrder): Promise<ServiceOrder>;
   delete(id: string): Promise<void>;
+  findServiceItemById(id: string): Promise<ServiceItem | null>;
+  updateServiceItem(serviceItem: ServiceItem): Promise<ServiceItem | null>;
+  findByServiceItemId(serviceItemId: string): Promise<ServiceOrder | null>;
 }

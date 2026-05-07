@@ -21,6 +21,11 @@ export const ServiceOrderServiceItemMapper = {
       service_id: serviceItem.serviceId,
       price: serviceItem.price.value,
       description: serviceItem.description ?? null,
+      created_at: serviceItem.createdAt,
+      updated_at: serviceItem.updatedAt,
+      is_completed: serviceItem.isCompleted ?? false,
+      finished_at: serviceItem.finishedAt ?? null,
+      execution_time_ms: serviceItem.executionTimeMs ?? null,
     };
   },
 
@@ -30,6 +35,13 @@ export const ServiceOrderServiceItemMapper = {
       serviceId: record.service_id,
       price: new Price(record.price),
       description: record.description ?? undefined,
+      createdAt: record.created_at,
+      updatedAt: record.updated_at,
+      isCompleted: record.is_completed,
+      finishedAt: record.finished_at ?? undefined,
+      executionTimeMs: record.execution_time_ms
+        ? Number(record.execution_time_ms)
+        : undefined,
     });
   },
 };

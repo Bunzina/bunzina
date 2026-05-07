@@ -6,6 +6,8 @@ import { ForbiddenError, NotFoundError } from '@lucas-pmelo/handlers';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import { beforeEach, describe, expect, test } from 'bun:test';
 import { UpdateServiceOrderStatusUseCase } from './update-status';
+import { makeServiceItem } from '@/test/factories/make-service-item';
+import { StatusDirection } from '@/domain/service-order/state-machines/status-machine';
 
 describe('update service order status use case', () => {
   let serviceOrderRepository: MockProxy<ServiceOrderRepository>;
@@ -140,6 +142,34 @@ describe('update service order status use case', () => {
       updateServiceOrderStatusUseCase.execute({
         id,
         direction: 'next',
+      }),
+    ).rejects.toThrow(ForbiddenError);
+
+    expect(serviceOrderRepository.update).not.toHaveBeenCalled();
+  });
+
+  test('should throw ForbiddenError when completing order with incomplete service items', async () => {
+    const id = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+    const serviceOrder = makeServiceOrder({
+      id,
+      status: ServiceOrderStatus.IN_EXECUTION,
+      serviceItems: [
+        makeServiceItem({
+          isCompleted: false,
+        }),
+      ],
+    });
+
+    if (serviceOrder.serviceItems.length === 0) {
+      throw new Error('factory must create at least one service item');
+    }
+
+    findServiceOrderByIdUseCase.execute.mockResolvedValue(serviceOrder);
+
+    await expect(
+      updateServiceOrderStatusUseCase.execute({
+        id,
+        direction: StatusDirection.NEXT,
       }),
     ).rejects.toThrow(ForbiddenError);
 

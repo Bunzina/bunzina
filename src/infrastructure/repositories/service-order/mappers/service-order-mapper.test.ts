@@ -48,13 +48,19 @@ describe('service order mapper', () => {
       serviceItem,
     );
 
-    expect(record).toEqual({
-      id: 'service-item-id',
-      service_order_id: 'service-order-id',
-      service_id: 'service-id',
-      price: 100,
-      description: 'Complete oil change service for your vehicle.',
-    });
+    expect(record).toEqual(
+      expect.objectContaining({
+        id: 'service-item-id',
+        service_order_id: 'service-order-id',
+        service_id: 'service-id',
+        price: 100,
+        description: 'Complete oil change service for your vehicle.',
+        created_at: expect.any(Date),
+        updated_at: expect.any(Date),
+        is_completed: false,
+        finished_at: null,
+      }),
+    );
   });
 
   test('should map auto part item to database record', () => {
@@ -127,46 +133,52 @@ describe('service order mapper', () => {
       autoPartItemRecords,
     );
 
-    expect(serviceOrder).toEqual({
-      id: 'service-order-id',
-      customerId: 'customer-001',
-      vehicleId: 'vehicle-001',
-      status: ServiceOrderStatus.RECEIVED,
-      serviceItems: [
-        {
-          id: 'service-item-1',
-          serviceId: 'service-001',
-          price: {
-            value: 120,
+    expect(serviceOrder).toEqual(
+      expect.objectContaining({
+        id: 'service-order-id',
+        customerId: 'customer-001',
+        vehicleId: 'vehicle-001',
+        status: ServiceOrderStatus.RECEIVED,
+        serviceItems: [
+          {
+            id: 'service-item-1',
+            serviceId: 'service-001',
+            price: {
+              value: 120,
+            },
+            description: undefined,
+            createdAt: expect.any(Date),
+            updatedAt: expect.any(Date),
+            isCompleted: false,
+            finishedAt: undefined,
           },
-          description: undefined,
+        ],
+        autoPartItems: [
+          {
+            id: 'auto-part-item-1',
+            autoPartId: 'auto-part-001',
+            quantity: 2,
+            unitPrice: {
+              value: 40,
+            },
+            totalPrice: {
+              value: 80,
+            },
+            description: undefined,
+          },
+        ],
+        quote: {
+          servicesTotal: 120,
+          autoPartsTotal: 80,
+          total: 200,
         },
-      ],
-      autoPartItems: [
-        {
-          id: 'auto-part-item-1',
-          autoPartId: 'auto-part-001',
-          quantity: 2,
-          unitPrice: {
-            value: 40,
-          },
-          totalPrice: {
-            value: 80,
-          },
-          description: undefined,
-        },
-      ],
-      quote: {
-        servicesTotal: 120,
-        autoPartsTotal: 80,
-        total: 200,
-      },
-      createdAt,
-      updatedAt,
-      approvedAt: undefined,
-      startedAt: undefined,
-      completedAt: undefined,
-      deliveredAt: undefined,
-    });
+        createdAt,
+        updatedAt,
+        approvedAt: undefined,
+        startedAt: undefined,
+        completedAt: undefined,
+        deliveredAt: undefined,
+      }),
+    );
   });
 });

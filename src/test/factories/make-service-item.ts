@@ -8,6 +8,7 @@ export const makeServiceItem = (
     serviceId: 'service-id',
     description: 'Complete oil change service for your vehicle.',
     price: makePrice(),
+    isCompleted: false,
     ...override,
   } as unknown as ServiceItem);
 };

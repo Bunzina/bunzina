@@ -11,12 +11,13 @@ describe('service item child entity', () => {
 
     expect(serviceItem).toBeInstanceOf(ServiceItem);
     expect(serviceItem).toEqual({
+      createdAt: expect.any(Date),
       description: 'Oil Change',
       id: expect.any(String),
-      price: {
-        value: 150,
-      },
+      isCompleted: false,
+      price: { value: 150 },
       serviceId: 'service-id',
+      updatedAt: expect.any(Date),
     } as unknown as ServiceItem);
   });
 

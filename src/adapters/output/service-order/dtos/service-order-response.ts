@@ -2,7 +2,10 @@ export interface ServiceOrderServiceItemResponse {
   id: string;
   serviceId: string;
   price: number;
+  isCompleted: boolean;
   description?: string;
+  finishedAt?: Date;
+  executionTimeMs?: number;
 }
 
 export interface ServiceOrderAutoPartItemResponse {

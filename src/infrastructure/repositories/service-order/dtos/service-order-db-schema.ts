@@ -22,6 +22,11 @@ export interface ServiceOrderServiceItemDbSchema {
   service_id: string;
   price: number;
   description: string | null;
+  created_at: Date;
+  updated_at: Date;
+  is_completed: boolean;
+  finished_at: Date | null;
+  execution_time_ms: number | null;
 }
 
 export interface ServiceOrderAutoPartItemDbSchema {

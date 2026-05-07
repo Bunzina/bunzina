@@ -1,5 +1,6 @@
 import type { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type { ServiceOrderResponse } from './dtos/service-order-response';
+import { ServiceItemPresenter } from './service-item-presenter';
 
 export const ServiceOrderPresenter = {
   toHttp(serviceOrder: ServiceOrder): ServiceOrderResponse {
@@ -8,12 +9,7 @@ export const ServiceOrderPresenter = {
       customerId: serviceOrder.customerId,
       vehicleId: serviceOrder.vehicleId,
       status: serviceOrder.status,
-      serviceItems: serviceOrder.serviceItems.map((item) => ({
-        id: item.id!,
-        serviceId: item.serviceId,
-        price: item.price.value,
-        description: item.description,
-      })),
+      serviceItems: serviceOrder.serviceItems.map(ServiceItemPresenter.toHttp),
       autoPartItems: serviceOrder.autoPartItems.map((item) => ({
         id: item.id!,
         autoPartId: item.autoPartId,

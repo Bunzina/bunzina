@@ -125,9 +125,7 @@ describe('service order repository', () => {
     const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
 
     const result = await repository.findById(serviceOrderId);
-
-    expect(result).not.toBeNull();
-    expect(JSON.parse(JSON.stringify(result))).toEqual({
+    const expected = {
       id: serviceOrderId,
       customerId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
       vehicleId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
@@ -140,6 +138,9 @@ describe('service order repository', () => {
             value: 120,
           },
           description: 'Brake check',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          isCompleted: false,
         },
       ],
       autoPartItems: [
@@ -161,9 +162,12 @@ describe('service order repository', () => {
         autoPartsTotal: 80,
         total: 200,
       },
-      createdAt: createdAt.toISOString(),
-      updatedAt: updatedAt.toISOString(),
-    });
+      createdAt,
+      updatedAt,
+    } as unknown as typeof result;
+
+    expect(result).not.toBeNull();
+    expect(result).toEqual(expected);
     expect(mockClient).toHaveBeenCalled();
   });
 
