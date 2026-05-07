@@ -37,11 +37,10 @@ export class FindServiceOrdersByCustomerInput {
     }
 
     return withErrorHandler(async () => {
-      const serviceOrders = await this.findServiceOrdersByCustomerUseCase.execute(
-        {
+      const serviceOrders =
+        await this.findServiceOrdersByCustomerUseCase.execute({
           documentNumber,
-        },
-      );
+        });
 
       logger.info({
         message: 'Service orders found successfully',

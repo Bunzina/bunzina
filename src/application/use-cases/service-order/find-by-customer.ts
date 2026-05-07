@@ -14,9 +14,8 @@ export class FindServiceOrdersByCustomerUseCase {
   ) {}
 
   async execute({ documentNumber }: Input): Promise<ServiceOrder[]> {
-    const customer = await this.customerRepository.findByDocumentNumber(
-      documentNumber,
-    );
+    const customer =
+      await this.customerRepository.findByDocumentNumber(documentNumber);
 
     if (!customer) {
       logger.debug({

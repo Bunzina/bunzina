@@ -1,9 +1,7 @@
 import { mockFn } from 'bun-mock-extended';
 import { mock, test, describe, expect } from 'bun:test';
 
-const mockDb = mockFn<
-  (..._args: unknown[]) => Promise<unknown[]>
->();
+const mockDb = mockFn<(..._args: unknown[]) => Promise<unknown[]>>();
 
 mock.module('@/infrastructure/configs/database', () => ({
   db: mockDb,
