@@ -86,9 +86,6 @@ export class ServiceRepository implements IServiceRepository {
       UPDATE bunzina.services
       SET completed_count = completed_count + 1,
           total_execution_time_ms = total_execution_time_ms + ${newTimeMs},
-          average_execution_time_ms = ROUND(
-            (total_execution_time_ms + ${newTimeMs}) / (completed_count + 1)
-          )::BIGINT,
           updated_at = NOW()
       WHERE id = ${serviceId}
     `;

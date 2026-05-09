@@ -24,6 +24,10 @@ export class FindServiceByIdUseCase {
       throw new NotFoundError(message);
     }
 
+    service.averageExecutionTimeMs = service.completedCount
+      ? Math.round(service.totalExecutionTimeMs / service.completedCount)
+      : undefined;
+
     return service;
   }
 }

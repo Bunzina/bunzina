@@ -12,7 +12,6 @@ export const ServiceMapper = {
       is_active: service.isActive,
       completed_count: service.completedCount,
       total_execution_time_ms: service.totalExecutionTimeMs,
-      average_execution_time_ms: service.averageExecutionTimeMs,
       created_at: service.createdAt,
       updated_at: service.updatedAt,
     };
@@ -30,7 +29,6 @@ export const ServiceMapper = {
       isActive: record.is_active,
       completedCount: record.completed_count,
       totalExecutionTimeMs: record.total_execution_time_ms,
-      averageExecutionTimeMs: record.average_execution_time_ms,
       createdAt: record.created_at,
       updatedAt: record.updated_at,
     });
