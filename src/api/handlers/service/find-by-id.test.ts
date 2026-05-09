@@ -9,7 +9,7 @@ const mockDb = mockFn<
 mockDb.mockImplementation(() => Promise.resolve([]));
 mock.module('@/infrastructure/configs/database', () => ({ db: mockDb }));
 
-import { findServiceHandler } from './find';
+import { findServiceByIdHandler } from './find-by-id';
 
 describe('Find Service Handler', () => {
   beforeEach(() => {
@@ -39,7 +39,7 @@ describe('Find Service Handler', () => {
       params: { id: validUUID },
     } as unknown as Context;
 
-    const response = await findServiceHandler(context);
+    const response = await findServiceByIdHandler(context);
 
     expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toBe('application/json');

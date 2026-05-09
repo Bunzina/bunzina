@@ -1,17 +1,19 @@
 import { ServicePresenter } from '@/adapters/output/service/service-presenter';
-import type { FindServiceUseCase } from '@/application/use-cases/service/find';
+import type { FindServiceByIdUseCase } from '@/application/use-cases/service/find-by-id';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
 import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
-  findServiceSchema,
-  type FindServiceHttpInput,
-} from './validations/find-service-schema';
+  findServiceByIdSchema,
+  type FindServiceByIdHttpInput,
+} from './validations/find-service-by-id-schema';
 
-export class FindServiceInput {
-  constructor(private readonly findServiceUseCase: FindServiceUseCase) {}
+export class FindServiceByIdInput {
+  constructor(
+    private readonly findServiceByIdUseCase: FindServiceByIdUseCase,
+  ) {}
 
   async execute(context: Context): Promise<Response> {
     const { id } = context.params;
@@ -21,9 +23,9 @@ export class FindServiceInput {
       data: { id },
     });
 
-    const { errors, data } = validateSchemaZod(findServiceSchema, {
+    const { errors, data } = validateSchemaZod(findServiceByIdSchema, {
       id,
-    } as FindServiceHttpInput);
+    } as FindServiceByIdHttpInput);
 
     if (errors?.length) {
       logger.warn({
@@ -38,7 +40,9 @@ export class FindServiceInput {
     }
 
     return withErrorHandler(async () => {
-      const service = await this.findServiceUseCase.execute(data!.id);
+      const service = await this.findServiceByIdUseCase.execute({
+        id: data!.id,
+      });
 
       logger.info({
         message: 'Service found successfully',

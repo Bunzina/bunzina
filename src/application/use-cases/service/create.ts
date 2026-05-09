@@ -1,7 +1,7 @@
 import type { CreateServiceHttpInput } from '@/adapters/input/service/validations/create-service-schema';
 import { Price } from '@/domain/core/value-objects/price';
 import { Service } from '@/domain/service/entities/service';
-import type { IServiceRepository as ServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import logger from '@lucas-pmelo/logger';
 
 export class CreateServiceUseCase {

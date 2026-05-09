@@ -1,5 +1,5 @@
 import type { DeleteServiceHttpInput } from '@/adapters/input/service/validations/delete-service-schema';
-import type { IServiceRepository as ServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import { NotFoundError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 

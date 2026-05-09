@@ -1,6 +1,6 @@
 import { createServiceSchema } from '@/adapters/input/service/validations/create-service-schema';
 import { deleteServiceSchema } from '@/adapters/input/service/validations/delete-service-schema';
-import { findServiceSchema } from '@/adapters/input/service/validations/find-service-schema';
+import { findServiceByIdSchema } from '@/adapters/input/service/validations/find-service-by-id-schema';
 import { t } from 'elysia';
 
 export const createServiceRouteSchema = {
@@ -18,7 +18,7 @@ export const createServiceRouteSchema = {
   body: createServiceSchema,
 };
 
-export const findServiceRouteSchema = {
+export const findServiceByIdRouteSchema = {
   detail: {
     tags: ['Services'],
     summary: 'Encontrar serviço',
@@ -31,7 +31,7 @@ export const findServiceRouteSchema = {
       '500': { description: 'Erro interno do servidor' },
     },
   },
-  params: findServiceSchema,
+  params: findServiceByIdSchema,
 };
 
 export const deleteServiceRouteSchema = {

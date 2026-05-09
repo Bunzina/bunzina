@@ -1,9 +1,9 @@
-import type { IServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import { CreateServiceUseCase } from './create';
 
 describe('Create Service Use Case', () => {
-  const mockServiceRepository: MockProxy<IServiceRepository> = mock();
+  const mockServiceRepository: MockProxy<ServiceRepository> = mock();
 
   const createServiceUseCase = new CreateServiceUseCase(mockServiceRepository);
 

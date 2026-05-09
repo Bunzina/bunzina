@@ -1,10 +1,10 @@
-import type { IServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import { makeService } from '@/test/factories/make-service';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import { FindServiceByIdUseCase } from './find-by-id';
 
 describe('find service by id use case', () => {
-  let serviceRepository: MockProxy<IServiceRepository>;
+  let serviceRepository: MockProxy<ServiceRepository>;
   let findServiceByIdUseCase: FindServiceByIdUseCase;
 
   beforeEach(() => {

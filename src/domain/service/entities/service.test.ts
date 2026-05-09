@@ -13,6 +13,8 @@ describe('service entity', () => {
 
     expect(service).toBeInstanceOf(Service);
     expect(service).toEqual({
+      averageExecutionTimeMs: undefined,
+      completedCount: 0,
       createdAt: expect.any(Date),
       description: 'Complete oil change service',
       durationInMinutes: 60,
@@ -22,6 +24,7 @@ describe('service entity', () => {
       price: {
         value: 100,
       },
+      totalExecutionTimeMs: 0,
       updatedAt: expect.any(Date),
     } as unknown as Service);
   });

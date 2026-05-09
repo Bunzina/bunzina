@@ -1,4 +1,5 @@
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import {
   NotFoundError,
   ForbiddenError,
@@ -13,7 +14,10 @@ export interface CompleteServiceItemInput {
 }
 
 export class CompleteServiceItemUseCase {
-  constructor(private serviceOrderRepository: ServiceOrderRepository) {}
+  constructor(
+    private serviceOrderRepository: ServiceOrderRepository,
+    private serviceRepository: ServiceRepository,
+  ) {}
 
   async execute(input: CompleteServiceItemInput) {
     const now = new Date();
@@ -80,6 +84,13 @@ export class CompleteServiceItemUseCase {
     });
 
     await this.serviceOrderRepository.updateServiceItem(updatedServiceItem);
+
+    if (executionTimeMs) {
+      await this.serviceRepository.incrementExecutionStats(
+        existingServiceItem.serviceId,
+        executionTimeMs,
+      );
+    }
 
     return updatedServiceItem;
   }

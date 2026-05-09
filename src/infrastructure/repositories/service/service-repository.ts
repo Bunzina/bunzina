@@ -1,5 +1,5 @@
 import type { Service } from '@/domain/service/entities/service';
-import type { IServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository as IServiceRepository } from '@/domain/service/repositories/service-repository';
 import logger from '@lucas-pmelo/logger';
 import type { SQL } from 'bun';
 import { ServiceMapper } from './mappers/service-mappers';
@@ -71,5 +71,26 @@ export class ServiceRepository implements IServiceRepository {
         `;
 
     return service;
+  }
+
+  async incrementExecutionStats(
+    serviceId: string,
+    newTimeMs: number,
+  ): Promise<void> {
+    logger.debug({
+      message: 'Incrementing service execution stats',
+      data: { serviceId, newTimeMs },
+    });
+
+    await this.client`
+      UPDATE bunzina.services
+      SET completed_count = completed_count + 1,
+          total_execution_time_ms = total_execution_time_ms + ${newTimeMs},
+          average_execution_time_ms = ROUND(
+            (total_execution_time_ms + ${newTimeMs}) / (completed_count + 1)
+          )::BIGINT,
+          updated_at = NOW()
+      WHERE id = ${serviceId}
+    `;
   }
 }
