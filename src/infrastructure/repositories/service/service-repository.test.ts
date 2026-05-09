@@ -98,4 +98,24 @@ describe('Service Repository', () => {
 
     expect(mockClient).toHaveBeenCalled();
   });
+
+  test('should increment execution stats for a service', async () => {
+    const repository = new ServiceRepository(mockClient);
+    const serviceId = 'service-123';
+    const executionTimeMs = 5000;
+
+    await repository.incrementExecutionStats(serviceId, executionTimeMs);
+
+    expect(mockClient).toHaveBeenCalled();
+  });
+
+  test('should handle error when incrementing execution stats fails', async () => {
+    const mockClientError = mockFn<SQL>();
+    mockClientError.mockRejectedValueOnce(new Error('DB error'));
+    const repository = new ServiceRepository(mockClientError);
+
+    await expect(
+      repository.incrementExecutionStats('service-123', 5000),
+    ).rejects.toThrow('DB error');
+  });
 });

@@ -1,13 +1,13 @@
-import type { IServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import { DeleteServiceUseCase } from './delete';
 
 describe('Delete Service Use Case', () => {
-  let serviceRepository: MockProxy<IServiceRepository>;
+  let serviceRepository: MockProxy<ServiceRepository>;
   let deleteServiceUseCase: DeleteServiceUseCase;
 
   beforeEach(() => {
-    serviceRepository = mock<IServiceRepository>();
+    serviceRepository = mock<ServiceRepository>();
     deleteServiceUseCase = new DeleteServiceUseCase(serviceRepository);
   });
 

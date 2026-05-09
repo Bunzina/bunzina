@@ -4,6 +4,9 @@ export interface ServiceResponse {
   description: string;
   price: number;
   durationInMinutes: number;
+  completedCount: number;
+  totalExecutionTimeMs: number;
+  averageExecutionTimeMs: number | null;
   createdAt: string;
   updatedAt: string;
 }

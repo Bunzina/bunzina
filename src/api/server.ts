@@ -28,11 +28,11 @@ import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
 import { createServiceHandler } from './handlers/service/create';
 import { deleteServiceHandler } from './handlers/service/delete';
-import { findServiceHandler } from './handlers/service/find';
+import { findServiceByIdHandler } from './handlers/service/find-by-id';
 import {
   createServiceRouteSchema,
   deleteServiceRouteSchema,
-  findServiceRouteSchema,
+  findServiceByIdRouteSchema,
   updateServiceRouteSchema,
 } from './handlers/service/schema';
 import { updateServiceHandler } from './handlers/service/update';
@@ -305,8 +305,8 @@ app.guard(
     );
     app.get(
       '/services/:id',
-      async (context) => findServiceHandler(context),
-      findServiceRouteSchema,
+      async (context) => findServiceByIdHandler(context),
+      findServiceByIdRouteSchema,
     );
     app.put(
       '/services/:id',

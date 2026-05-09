@@ -112,7 +112,7 @@ Estrutura sugerida:
 
 ## Métricas
 
-- [ ] Monitoramento do **tempo médio de execução dos serviços**
+- [x] Monitoramento do **tempo médio de execução dos serviços**
 
 ---
 

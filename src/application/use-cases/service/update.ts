@@ -1,11 +1,11 @@
 import type { UpdateServiceHttpInput } from '@/adapters/input/service/validations/update-service-schema';
 import { Service } from '@/domain/service/entities/service';
-import type { IServiceRepository } from '@/domain/service/repositories/service-repository';
+import type { ServiceRepository } from '@/domain/service/repositories/service-repository';
 import { NotFoundError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 export class UpdateServiceUseCase {
-  constructor(private serviceRepository: IServiceRepository) {}
+  constructor(private serviceRepository: ServiceRepository) {}
 
   async execute(input: UpdateServiceHttpInput): Promise<Service> {
     const existingService = await this.serviceRepository.findById(input.id);

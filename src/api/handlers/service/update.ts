@@ -1,12 +1,11 @@
 import { UpdateServiceInput } from '@/adapters/input/service/update';
 import { UpdateServiceUseCase } from '@/application/use-cases/service/update';
-import type { IServiceRepository } from '@/domain/service/repositories/service-repository';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { ServiceRepository } from '@/infrastructure/repositories/service/service-repository';
 import logger from '@lucas-pmelo/logger';
 import type { Context } from 'elysia';
 
-let serviceRepository: IServiceRepository;
+let serviceRepository: ServiceRepository;
 let updateServiceUseCase: UpdateServiceUseCase;
 let updateServiceInput: UpdateServiceInput;
 

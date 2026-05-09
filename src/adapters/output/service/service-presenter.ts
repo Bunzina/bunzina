@@ -10,6 +10,9 @@ export const ServicePresenter = {
       description: service.description,
       price: service.price.value,
       durationInMinutes: service.durationInMinutes,
+      completedCount: service.completedCount,
+      totalExecutionTimeMs: service.totalExecutionTimeMs,
+      averageExecutionTimeMs: service.averageExecutionTimeMs ?? null,
       createdAt: dayjs(service.createdAt).toISOString(),
       updatedAt: dayjs(service.updatedAt).toISOString(),
     };

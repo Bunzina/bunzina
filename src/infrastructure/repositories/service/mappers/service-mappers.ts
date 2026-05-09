@@ -10,6 +10,8 @@ export const ServiceMapper = {
       price: service.price.value,
       duration_in_minutes: service.durationInMinutes,
       is_active: service.isActive,
+      completed_count: service.completedCount,
+      total_execution_time_ms: service.totalExecutionTimeMs,
       created_at: service.createdAt,
       updated_at: service.updatedAt,
     };
@@ -25,6 +27,8 @@ export const ServiceMapper = {
       },
       durationInMinutes: record.duration_in_minutes,
       isActive: record.is_active,
+      completedCount: record.completed_count,
+      totalExecutionTimeMs: record.total_execution_time_ms,
       createdAt: record.created_at,
       updatedAt: record.updated_at,
     });

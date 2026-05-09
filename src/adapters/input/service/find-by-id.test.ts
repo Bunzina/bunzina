@@ -1,16 +1,16 @@
-import { FindServiceUseCase } from '@/application/use-cases/service/find';
+import { FindServiceByIdUseCase } from '@/application/use-cases/service/find-by-id';
 import { makeService } from '@/test/factories/make-service';
-import { mock, type MockProxy } from 'bun-mock-extended';
+import { any, mock, type MockProxy } from 'bun-mock-extended';
 import type { Context } from 'elysia';
-import { FindServiceInput } from './find';
+import { FindServiceByIdInput } from './find-by-id';
 
 describe('Find Service Input', () => {
-  let findServiceUseCase: MockProxy<FindServiceUseCase>;
-  let findServiceInput: FindServiceInput;
+  let findServiceByIdUseCase: MockProxy<FindServiceByIdUseCase>;
+  let findServiceByIdInput: FindServiceByIdInput;
 
   beforeEach(() => {
-    findServiceUseCase = mock<FindServiceUseCase>();
-    findServiceInput = new FindServiceInput(findServiceUseCase);
+    findServiceByIdUseCase = mock<FindServiceByIdUseCase>();
+    findServiceByIdInput = new FindServiceByIdInput(findServiceByIdUseCase);
   });
 
   test('should find a service by ID', async () => {
@@ -22,9 +22,9 @@ describe('Find Service Input', () => {
 
     const service = makeService({ id: serviceId });
 
-    findServiceUseCase.execute.calledWith(serviceId).mockResolvedValue(service);
+    findServiceByIdUseCase.execute.calledWith(any()).mockResolvedValue(service);
 
-    const response = await findServiceInput.execute(mockContext);
+    const response = await findServiceByIdInput.execute(mockContext);
 
     expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toBe('application/json');
@@ -37,6 +37,9 @@ describe('Find Service Input', () => {
       createdAt: service.createdAt.toISOString(),
       updatedAt: service.updatedAt.toISOString(),
     });
+    expect(findServiceByIdUseCase.execute).toHaveBeenCalledWith({
+      id: serviceId,
+    });
   });
 
   test('should return validation error for invalid ID', async () => {
@@ -46,7 +49,7 @@ describe('Find Service Input', () => {
       params: { id: invalidId },
     } as unknown as Context;
 
-    const response = await findServiceInput.execute(mockContext);
+    const response = await findServiceByIdInput.execute(mockContext);
 
     expect(response.status).toBe(400);
   });
