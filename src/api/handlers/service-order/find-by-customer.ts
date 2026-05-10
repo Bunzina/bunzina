@@ -4,7 +4,7 @@ import { CustomerRepository } from '@/infrastructure/repositories/customer/custo
 import { ServiceOrderRepository } from '@/infrastructure/repositories/service-order/service-order-repository';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 let customerRepository: CustomerRepository;
 let serviceOrderRepository: ServiceOrderRepository;
@@ -24,7 +24,7 @@ const setDependencies = () => {
 };
 
 export const findServiceOrdersByCustomerHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

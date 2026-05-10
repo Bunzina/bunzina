@@ -2,14 +2,14 @@ import type { DeleteCustomerUseCase } from '@/application/use-cases/customer/del
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import { deleteCustomerSchema } from './validations/delete-customer-schema';
 
 export class DeleteCustomerInput {
   constructor(private deleteCustomerUseCase: DeleteCustomerUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { documentNumber } = context.params as { documentNumber: string };
 
     logger.info({

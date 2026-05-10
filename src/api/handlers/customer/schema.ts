@@ -10,6 +10,28 @@ const addressSchema = t.Object({
   complement: t.Optional(t.String({ examples: ['Sala 101'] })),
 });
 
+const addressResponseSchema = t.Object({
+  street: t.String(),
+  number: t.String(),
+  city: t.String(),
+  state: t.String(),
+  zipCode: t.String(),
+  neighborhood: t.String(),
+  complement: t.Optional(t.String()),
+});
+
+const customerResponseSchema = t.Object({
+  id: t.String({ format: 'uuid' }),
+  name: t.String(),
+  document: t.String(),
+  documentKind: t.Union([t.Literal('CPF'), t.Literal('CNPJ')]),
+  email: t.String({ format: 'email' }),
+  phone: t.String(),
+  address: addressResponseSchema,
+  createdAt: t.String({ format: 'date' }),
+  updatedAt: t.String({ format: 'date' }),
+});
+
 export const createCustomerSchema = {
   detail: {
     tags: ['Customers'],
@@ -79,6 +101,9 @@ export const createCustomerSchema = {
     }),
     address: addressSchema,
   }),
+  response: {
+    201: customerResponseSchema,
+  },
 };
 
 export const findCustomerSchema = {
@@ -98,6 +123,9 @@ export const findCustomerSchema = {
       examples: ['12345678909'],
     }),
   }),
+  response: {
+    200: customerResponseSchema,
+  },
 };
 
 export const updateCustomerSchema = {
@@ -128,6 +156,9 @@ export const updateCustomerSchema = {
     }),
     address: addressSchema,
   }),
+  response: {
+    200: customerResponseSchema,
+  },
 };
 
 export const deleteCustomerSchema = {

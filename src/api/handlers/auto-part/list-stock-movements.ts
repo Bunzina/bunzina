@@ -4,7 +4,7 @@ import { db as dbInstance } from '@/infrastructure/configs/database';
 import { AutoPartRepository } from '@/infrastructure/repositories/auto-part/auto-part-repository';
 import { StockMovementRepository } from '@/infrastructure/repositories/auto-part/stock-movement-repository';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 let autoPartRepository: AutoPartRepository;
 let stockMovementRepository: StockMovementRepository;
@@ -24,7 +24,7 @@ const setDependencies = () => {
 };
 
 export const listStockMovementsHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

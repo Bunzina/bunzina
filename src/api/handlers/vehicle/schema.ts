@@ -1,5 +1,24 @@
 import { t } from 'elysia';
 
+const vehicleResponseSchema = t.Object({
+  id: t.String({ format: 'uuid' }),
+  customerId: t.String({ format: 'uuid' }),
+  licensePlate: t.String(),
+  model: t.String(),
+  brand: t.String(),
+  year: t.Number(),
+  createdAt: t.String({ format: 'date-time' }),
+  updatedAt: t.String({ format: 'date-time' }),
+});
+
+const vehiclesListResponseSchema = t.Object({
+  data: t.Array(vehicleResponseSchema),
+  pagination: t.Object({
+    page: t.Number(),
+    limit: t.Number(),
+  }),
+});
+
 export const createVehicleSchema = {
   detail: {
     tags: ['Vehicles'],
@@ -49,6 +68,9 @@ export const createVehicleSchema = {
       examples: [2020],
     }),
   }),
+  response: {
+    201: vehicleResponseSchema,
+  },
 };
 
 export const updateVehicleSchema = {
@@ -108,6 +130,9 @@ export const updateVehicleSchema = {
       examples: [2023],
     }),
   }),
+  response: {
+    200: vehicleResponseSchema,
+  },
 };
 
 export const deleteVehicleSchema = {
@@ -149,6 +174,9 @@ export const findVehicleSchema = {
       examples: ['550e8400-e29b-41d4-a716-446655440000'],
     }),
   }),
+  response: {
+    200: vehicleResponseSchema,
+  },
 };
 
 export const listVehicleSchema = {
@@ -211,4 +239,7 @@ export const listVehicleSchema = {
       }),
     ),
   }),
+  response: {
+    200: vehiclesListResponseSchema,
+  },
 };

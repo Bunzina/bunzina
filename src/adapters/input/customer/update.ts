@@ -3,7 +3,7 @@ import type { UpdateCustomerUseCase } from '@/application/use-cases/customer/upd
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   updateCustomerSchema,
@@ -13,7 +13,7 @@ import {
 export class UpdateCustomerInput {
   constructor(private updateCustomerUseCase: UpdateCustomerUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { documentNumber } = context.params as { documentNumber: string };
     const { body } = context;
 

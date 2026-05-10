@@ -3,7 +3,7 @@ import type { UpdateVehicleUseCase } from '@/application/use-cases/vehicle/updat
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   updateVehicleSchema,
@@ -13,7 +13,7 @@ import {
 export class UpdateVehicleInput {
   constructor(private updateVehicleUseCase: UpdateVehicleUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { id } = context.params as { id: string };
     const { body } = context;
 
