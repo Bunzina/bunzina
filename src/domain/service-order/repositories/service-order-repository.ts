@@ -4,7 +4,10 @@ import type { ServiceOrderStatus } from '../types/service-order-status';
 
 export interface FindServiceOrdersFilters {
   customerId?: string;
+  vehicleId?: string;
   status?: ServiceOrderStatus;
+  startCreatedAt?: Date;
+  endCreatedAt?: Date;
 }
 
 export interface FindServiceOrdersParams {
