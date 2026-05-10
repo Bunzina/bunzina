@@ -3,17 +3,17 @@ import type { ListServiceOrdersUseCase } from '@/application/use-cases/service-o
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
   listServiceOrdersSchema,
   type ListServiceOrdersInput as ListServiceOrdersInputType,
 } from './validations/list-service-orders-schema';
+import type { HandlerContext } from '@/api/handler-context';
 
 export class ListServiceOrdersInput {
   constructor(private listServiceOrdersUseCase: ListServiceOrdersUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const query = context.query as Record<string, unknown>;
 
     logger.info({
