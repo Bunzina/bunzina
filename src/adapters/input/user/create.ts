@@ -5,7 +5,7 @@ import { verifyJwt } from '@/infrastructure/services/jwt';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   createUserSchema,
@@ -15,7 +15,7 @@ import {
 export class CreateUserInput {
   constructor(private createUserUseCase: CreateUserUseCase) {}
 
-  async execute(context: Context): Promise<Response | undefined> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { body } = context;
 
     logger.info({
@@ -59,7 +59,9 @@ export class CreateUserInput {
     }, 'Failed to create user');
   }
 
-  private async validateAuth(context: Context): Promise<Response | undefined> {
+  private async validateAuth(
+    context: HandlerContext,
+  ): Promise<Response | null> {
     const authorization = context.request.headers.get('Authorization');
 
     if (!authorization || !authorization.startsWith('Bearer ')) {

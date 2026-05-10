@@ -1,4 +1,4 @@
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { UpdateServiceOrderUseCase } from '@/application/use-cases/service-order/update';
 import { UpdateServiceOrderInput } from '@/adapters/input/service-order/update';
 import { FindAutoPartByIdUseCase } from '@/application/use-cases/auto-part/find-by-id';
@@ -40,7 +40,7 @@ const setDependencies = () => {
 };
 
 export const updateServiceOrderHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

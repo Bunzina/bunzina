@@ -1,3 +1,5 @@
+import { t } from 'elysia';
+
 export const healthSchema = {
   detail: {
     tags: ['Health'],
@@ -6,5 +8,10 @@ export const healthSchema = {
     responses: {
       '200': { description: 'API online' },
     },
+  },
+  response: {
+    200: t.Object({
+      status: t.Literal('ok'),
+    }),
   },
 };

@@ -3,7 +3,7 @@ import { UpdateUserUseCase } from '@/application/use-cases/user/update';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { UserRepository } from '@/infrastructure/repositories/user/user-repository';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 let userRepository: UserRepository;
 let updateUserUseCase: UpdateUserUseCase;
@@ -16,7 +16,7 @@ const setDependencies = () => {
 };
 
 export const updateUserHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

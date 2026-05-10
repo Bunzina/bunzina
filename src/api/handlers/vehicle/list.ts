@@ -3,7 +3,7 @@ import { ListVehiclesUseCase } from '@/application/use-cases/vehicle/list';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { VehicleRepository } from '@/infrastructure/repositories/vehicle/vehicle-repository';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 let vehicleRepository: VehicleRepository;
 let listVehiclesUseCase: ListVehiclesUseCase;
@@ -16,7 +16,7 @@ const setDependencies = () => {
 };
 
 export const listVehiclesHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

@@ -2,7 +2,7 @@ import type { DeleteVehicleUseCase } from '@/application/use-cases/vehicle/delet
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   deleteVehicleSchema,
@@ -12,7 +12,7 @@ import {
 export class DeleteVehicleInput {
   constructor(private deleteVehicleUseCase: DeleteVehicleUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({
