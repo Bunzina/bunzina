@@ -3,7 +3,7 @@ import type { CreateVehicleUseCase } from '@/application/use-cases/vehicle/creat
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   createVehicleSchema,
@@ -13,7 +13,7 @@ import {
 export class CreateVehicleInput {
   constructor(private createVehicleUseCase: CreateVehicleUseCase) {}
 
-  async execute(context: Context): Promise<Response | undefined> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { body } = context;
 
     logger.info({

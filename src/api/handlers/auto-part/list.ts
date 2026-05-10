@@ -2,7 +2,7 @@ import { ListAutoPartsInput } from '@/adapters/input/auto-part/list';
 import { ListAutoPartsUseCase } from '@/application/use-cases/auto-part/list';
 import { AutoPartRepository } from '@/infrastructure/repositories/auto-part/auto-part-repository';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 import { db as dbInstance } from '@/infrastructure/configs/database';
 
@@ -17,7 +17,7 @@ const setDependencies = () => {
 };
 
 export const listAutoPartsHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

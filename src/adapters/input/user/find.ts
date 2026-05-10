@@ -3,14 +3,14 @@ import type { FindUserUseCase } from '@/application/use-cases/user/find';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import { findUserSchema } from './validations/find-user-schema';
 
 export class FindUserInput {
   constructor(private findUserUseCase: FindUserUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({

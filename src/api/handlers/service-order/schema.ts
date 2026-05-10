@@ -5,6 +5,92 @@ import { findServiceOrderSchema } from '@/adapters/input/service-order/validatio
 import { findServiceOrderItemSchema } from '@/adapters/input/service-order/validations/find-service-order-item-schema';
 import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
 import { updateServiceOrderBodySchema } from '@/adapters/input/service-order/validations/update-service-order-schema';
+import { t } from 'elysia';
+
+const serviceOrderStatusSchema = t.Union([
+  t.Literal('RECEIVED'),
+  t.Literal('IN_DIAGNOSTIC'),
+  t.Literal('AWAITING_APPROVAL'),
+  t.Literal('IN_EXECUTION'),
+  t.Literal('COMPLETED'),
+  t.Literal('DELIVERED'),
+  t.Literal('CANCELED'),
+]);
+
+const serviceOrderItemResponseSchema = t.Object({
+  id: t.String({ format: 'uuid' }),
+  serviceId: t.String({ format: 'uuid' }),
+  price: t.Number(),
+  isCompleted: t.Boolean(),
+  description: t.Optional(t.String()),
+  finishedAt: t.Optional(t.String({ format: 'date-time' })),
+  executionTimeMs: t.Optional(t.Number()),
+});
+
+const serviceOrderAutoPartItemResponseSchema = t.Object({
+  id: t.String({ format: 'uuid' }),
+  autoPartId: t.String({ format: 'uuid' }),
+  quantity: t.Number(),
+  unitPrice: t.Number(),
+  totalPrice: t.Optional(t.Number()),
+  description: t.Optional(t.String()),
+});
+
+const serviceOrderQuoteResponseSchema = t.Object({
+  servicesTotal: t.Number(),
+  autoPartsTotal: t.Number(),
+  total: t.Number(),
+});
+
+const serviceOrderResponseSchema = t.Object({
+  id: t.String({ format: 'uuid' }),
+  customerId: t.String({ format: 'uuid' }),
+  vehicleId: t.String({ format: 'uuid' }),
+  status: serviceOrderStatusSchema,
+  serviceItems: t.Array(serviceOrderItemResponseSchema),
+  autoPartItems: t.Array(serviceOrderAutoPartItemResponseSchema),
+  quote: serviceOrderQuoteResponseSchema,
+  createdAt: t.String({ format: 'date-time' }),
+  updatedAt: t.String({ format: 'date-time' }),
+  approvedAt: t.Optional(t.String({ format: 'date-time' })),
+  startedAt: t.Optional(t.String({ format: 'date-time' })),
+  completedAt: t.Optional(t.String({ format: 'date-time' })),
+  deliveredAt: t.Optional(t.String({ format: 'date-time' })),
+});
+
+const serviceOrderPublicServiceItemResponseSchema = t.Object({
+  description: t.Optional(t.String()),
+  price: t.Number(),
+});
+
+const serviceOrderPublicAutoPartItemResponseSchema = t.Object({
+  description: t.Optional(t.String()),
+  quantity: t.Number(),
+  unitPrice: t.Number(),
+  totalPrice: t.Optional(t.Number()),
+});
+
+const serviceOrderPublicResponseSchema = t.Object({
+  status: serviceOrderStatusSchema,
+  serviceItems: t.Array(serviceOrderPublicServiceItemResponseSchema),
+  autoPartItems: t.Array(serviceOrderPublicAutoPartItemResponseSchema),
+  createdAt: t.String({ format: 'date-time' }),
+  updatedAt: t.String({ format: 'date-time' }),
+  approvedAt: t.Optional(t.String({ format: 'date-time' })),
+  startedAt: t.Optional(t.String({ format: 'date-time' })),
+  completedAt: t.Optional(t.String({ format: 'date-time' })),
+  deliveredAt: t.Optional(t.String({ format: 'date-time' })),
+});
+
+const serviceItemResponseSchema = t.Object({
+  id: t.String({ format: 'uuid' }),
+  serviceId: t.String({ format: 'uuid' }),
+  price: t.Number(),
+  isCompleted: t.Boolean(),
+  description: t.Optional(t.String()),
+  finishedAt: t.Optional(t.String({ format: 'date-time' })),
+  executionTimeMs: t.Optional(t.Number()),
+});
 
 export const createServiceOrderRouteSchema = {
   detail: {
@@ -20,6 +106,9 @@ export const createServiceOrderRouteSchema = {
     },
   },
   body: createServiceOrderSchema,
+  response: {
+    201: serviceOrderResponseSchema,
+  },
 };
 
 export const findServiceOrderRouteSchema = {
@@ -36,6 +125,9 @@ export const findServiceOrderRouteSchema = {
     },
   },
   params: findServiceOrderSchema,
+  response: {
+    200: serviceOrderResponseSchema,
+  },
 };
 
 export const findServiceOrdersByCustomerRouteSchema = {
@@ -51,6 +143,9 @@ export const findServiceOrdersByCustomerRouteSchema = {
     },
   },
   params: findCustomerSchema,
+  response: {
+    200: t.Array(serviceOrderPublicResponseSchema),
+  },
 };
 
 export const updateServiceOrderRouteSchema = {
@@ -68,6 +163,9 @@ export const updateServiceOrderRouteSchema = {
   },
   params: findServiceOrderSchema,
   body: updateServiceOrderBodySchema,
+  response: {
+    200: serviceOrderResponseSchema,
+  },
 };
 
 export const deleteServiceOrderRouteSchema = {
@@ -102,6 +200,9 @@ export const updateServiceOrderStatusRouteSchema = {
   },
   params: findServiceOrderSchema,
   body: updateServiceOrderStatusBodySchema,
+  response: {
+    200: serviceOrderResponseSchema,
+  },
 };
 
 export const completeServiceOrderItemRouteSchema = {
@@ -121,4 +222,7 @@ export const completeServiceOrderItemRouteSchema = {
     },
   },
   params: findServiceOrderItemSchema,
+  response: {
+    200: serviceItemResponseSchema,
+  },
 };

@@ -3,7 +3,7 @@ import type { ListAutoPartsUseCase } from '@/application/use-cases/auto-part/lis
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   listAutoPartSchema,
@@ -13,7 +13,7 @@ import {
 export class ListAutoPartsInput {
   constructor(private listAutoPartsUseCase: ListAutoPartsUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const query = context.query as Record<string, unknown>;
 
     logger.info({

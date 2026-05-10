@@ -2,7 +2,7 @@ import type { CompleteServiceItemUseCase } from '@/application/use-cases/service
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import {
   findServiceOrderItemSchema,
@@ -13,7 +13,7 @@ import { ServiceItemPresenter } from '@/adapters/output/service-order/service-it
 export class CompleteServiceItemInput {
   constructor(private completeServiceItemUseCase: CompleteServiceItemUseCase) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({

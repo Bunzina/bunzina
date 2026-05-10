@@ -3,7 +3,7 @@ import { UpdateServiceUseCase } from '@/application/use-cases/service/update';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { ServiceRepository } from '@/infrastructure/repositories/service/service-repository';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 let serviceRepository: ServiceRepository;
 let updateServiceUseCase: UpdateServiceUseCase;
@@ -16,7 +16,7 @@ const setDependencies = () => {
 };
 
 export const updateServiceHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
