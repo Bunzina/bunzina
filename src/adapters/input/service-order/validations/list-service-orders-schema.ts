@@ -5,10 +5,7 @@ export const listServiceOrdersSchema = z
   .object({
     page: z.coerce.number().int().min(1),
     limit: z.coerce.number().int().min(1).max(100),
-    customerId: z
-      .string()
-      .uuid('Customer ID must be a valid UUID')
-      .optional(),
+    customerId: z.string().uuid('Customer ID must be a valid UUID').optional(),
     vehicleId: z.string().uuid('Vehicle ID must be a valid UUID').optional(),
     status: z.nativeEnum(ServiceOrderStatus).optional(),
     startCreatedAt: z
