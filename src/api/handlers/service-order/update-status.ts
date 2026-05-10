@@ -4,7 +4,7 @@ import { FindServiceOrderByIdUseCase } from '@/application/use-cases/service-ord
 import { ServiceOrderRepository } from '@/infrastructure/repositories/service-order/service-order-repository';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import logger from '@lucas-pmelo/logger';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 
 let serviceOrderRepository: ServiceOrderRepository;
 let findServiceOrderByIdUseCase: FindServiceOrderByIdUseCase;
@@ -26,7 +26,7 @@ const setDependencies = () => {
 };
 
 export const updateServiceOrderStatusHandler = async (
-  context: Context,
+  context: HandlerContext,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

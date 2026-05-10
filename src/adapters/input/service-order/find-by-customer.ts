@@ -3,7 +3,7 @@ import type { FindServiceOrdersByCustomerUseCase } from '@/application/use-cases
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { Context } from 'elysia';
+import type { HandlerContext } from '@/api/handler-context';
 import { StatusCodes } from 'http-status-codes';
 import { findCustomerSchema } from '@/adapters/input/customer/validations/find-customer-schema';
 
@@ -12,7 +12,7 @@ export class FindServiceOrdersByCustomerInput {
     private findServiceOrdersByCustomerUseCase: FindServiceOrdersByCustomerUseCase,
   ) {}
 
-  async execute(context: Context): Promise<Response> {
+  async execute(context: HandlerContext): Promise<Response> {
     const { documentNumber } = context.params as { documentNumber: string };
 
     logger.info({
