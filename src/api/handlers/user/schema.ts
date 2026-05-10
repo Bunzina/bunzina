@@ -1,25 +1,5 @@
 import { t } from 'elysia';
 
-const userRoleSchema = t.Union([
-  t.Literal('ADMIN'),
-  t.Literal('MECHANIC'),
-  t.Literal('CUSTOMER'),
-]);
-
-const userResponseSchema = t.Object({
-  id: t.String({ format: 'uuid' }),
-  name: t.String(),
-  email: t.String({ format: 'email' }),
-  role: userRoleSchema,
-  isActive: t.Boolean(),
-  createdAt: t.String({ format: 'date' }),
-  updatedAt: t.String({ format: 'date' }),
-});
-
-const loginResponseSchema = t.Object({
-  token: t.String(),
-});
-
 export const loginSchema = {
   detail: {
     tags: ['Auth'],
@@ -36,9 +16,6 @@ export const loginSchema = {
     email: t.String({ format: 'email', examples: ['admin@bunzina.com'] }),
     password: t.String({ examples: ['senha123'] }),
   }),
-  response: {
-    200: loginResponseSchema,
-  },
 };
 
 export const createUserSchema = {
@@ -70,9 +47,6 @@ export const createUserSchema = {
       examples: ['MECHANIC'],
     }),
   }),
-  response: {
-    201: userResponseSchema,
-  },
 };
 
 export const findUserSchema = {
@@ -92,9 +66,6 @@ export const findUserSchema = {
       examples: ['550e8400-e29b-41d4-a716-446655440000'],
     }),
   }),
-  response: {
-    200: userResponseSchema,
-  },
 };
 
 export const updateUserSchema = {
@@ -124,9 +95,6 @@ export const updateUserSchema = {
     }),
     isActive: t.Boolean({ examples: [true] }),
   }),
-  response: {
-    200: userResponseSchema,
-  },
 };
 
 export const deleteUserSchema = {

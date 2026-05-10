@@ -2,14 +2,14 @@ import type { DeleteServiceOrderUseCase } from '@/application/use-cases/service-
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import { deleteServiceOrderSchema } from './validations/delete-service-order-schema';
 
 export class DeleteServiceOrderInput {
   constructor(private deleteServiceOrderUseCase: DeleteServiceOrderUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({

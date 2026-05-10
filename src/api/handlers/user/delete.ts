@@ -3,7 +3,7 @@ import { DeleteUserUseCase } from '@/application/use-cases/user/delete';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { UserRepository } from '@/infrastructure/repositories/user/user-repository';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 let userRepository: UserRepository;
 let deleteUserUseCase: DeleteUserUseCase;
@@ -16,7 +16,7 @@ const setDependencies = () => {
 };
 
 export const deleteUserHandler = async (
-  context: HandlerContext,
+  context: Context,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

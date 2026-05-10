@@ -6,7 +6,7 @@ import {
 } from '@/infrastructure/configs/email-transporter';
 import { NotificationService } from '@/infrastructure/services/notification';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 let notificationService: NotificationService;
 let sendNotificationUseCase: SendNotificationUseCase;
@@ -24,8 +24,8 @@ const setDependencies = () => {
 };
 
 export const sendNotificationHandler = async (
-  context: HandlerContext,
-): Promise<Response> => {
+  context: Context,
+): Promise<Response | undefined> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',

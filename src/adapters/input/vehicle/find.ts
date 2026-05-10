@@ -3,14 +3,14 @@ import type { FindVehicleByIdUseCase } from '@/application/use-cases/vehicle/fin
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import { findVehicleSchema } from './validations/find-vehicle-schema';
 
 export class FindVehicleByIdInput {
   constructor(private findVehicleByIdUseCase: FindVehicleByIdUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({

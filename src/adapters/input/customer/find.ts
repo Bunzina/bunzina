@@ -3,14 +3,14 @@ import type { FindCustomerUseCase } from '@/application/use-cases/customer/find'
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import { findCustomerSchema } from './validations/find-customer-schema';
 
 export class FindCustomerInput {
   constructor(private findCustomerUseCase: FindCustomerUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { documentNumber } = context.params as { documentNumber: string };
 
     logger.info({

@@ -1,10 +1,10 @@
 import { verifyJwt } from '@/infrastructure/services/jwt';
 import { createResponse } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 export const authMiddleware = async (
-  context: HandlerContext,
+  context: Context,
 ): Promise<Response | undefined> => {
   const authorization = context.request.headers.get('Authorization');
 

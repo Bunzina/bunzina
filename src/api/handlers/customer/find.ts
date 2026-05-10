@@ -3,7 +3,7 @@ import { FindCustomerUseCase } from '@/application/use-cases/customer/find';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { CustomerRepository } from '@/infrastructure/repositories/customer/customer-repository';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 let customerRepository: CustomerRepository;
 let findCustomerUseCase: FindCustomerUseCase;
@@ -16,7 +16,7 @@ const setDependencies = () => {
 };
 
 export const findCustomerHandler = async (
-  context: HandlerContext,
+  context: Context,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

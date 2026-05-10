@@ -3,7 +3,7 @@ import { CreateServiceUseCase } from '@/application/use-cases/service/create';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { ServiceRepository } from '@/infrastructure/repositories/service/service-repository';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 let createServiceUseCase: CreateServiceUseCase;
 let serviceRepository: ServiceRepository;
@@ -16,7 +16,7 @@ const setDependencies = () => {
 };
 
 export const createServiceHandler = async (
-  context: HandlerContext,
+  context: Context,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

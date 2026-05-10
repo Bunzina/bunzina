@@ -4,7 +4,7 @@ import { ServiceOrderRepository } from '@/infrastructure/repositories/service-or
 import { ServiceRepository } from '@/infrastructure/repositories/service/service-repository';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 let serviceOrderRepository: ServiceOrderRepository;
 let serviceRepository: ServiceRepository;
@@ -24,7 +24,7 @@ const setDependencies = () => {
 };
 
 export const completeServiceItemHandler = async (
-  context: HandlerContext,
+  context: Context,
 ): Promise<Response> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({

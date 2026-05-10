@@ -3,7 +3,7 @@ import type { ListVehiclesUseCase } from '@/application/use-cases/vehicle/list';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
   listVehicleSchema,
@@ -13,7 +13,7 @@ import {
 export class ListVehiclesInput {
   constructor(private listVehiclesUseCase: ListVehiclesUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const query = context.query as Record<string, unknown>;
 
     logger.info({

@@ -1,40 +1,5 @@
 import { t } from 'elysia';
 
-const autoPartResponseSchema = t.Object({
-  id: t.String({ format: 'uuid' }),
-  name: t.String(),
-  description: t.String(),
-  price: t.Number(),
-  stock: t.Number(),
-  createdAt: t.String({ format: 'date-time' }),
-  updatedAt: t.String({ format: 'date-time' }),
-});
-
-const autoPartsListResponseSchema = t.Object({
-  data: t.Array(autoPartResponseSchema),
-  pagination: t.Object({
-    page: t.Number(),
-    limit: t.Number(),
-  }),
-});
-
-const stockMovementResponseSchema = t.Object({
-  id: t.String({ format: 'uuid' }),
-  autoPartId: t.String({ format: 'uuid' }),
-  quantity: t.Number(),
-  type: t.Union([t.Literal('IN'), t.Literal('OUT')]),
-  serviceOrderId: t.Optional(t.String({ format: 'uuid' })),
-  createdAt: t.String({ format: 'date-time' }),
-});
-
-const stockMovementsListResponseSchema = t.Object({
-  data: t.Array(stockMovementResponseSchema),
-  pagination: t.Object({
-    page: t.Number(),
-    limit: t.Number(),
-  }),
-});
-
 export const createAutoPartSchema = {
   detail: {
     tags: ['Auto-Parts'],
@@ -77,9 +42,6 @@ export const createAutoPartSchema = {
       examples: [10],
     }),
   }),
-  response: {
-    201: autoPartResponseSchema,
-  },
 };
 
 export const listAutoPartsRouteSchema = {
@@ -112,9 +74,6 @@ export const listAutoPartsRouteSchema = {
       }),
     ),
   }),
-  response: {
-    200: autoPartsListResponseSchema,
-  },
 };
 
 export const listStockMovementsRouteSchema = {
@@ -149,9 +108,6 @@ export const listStockMovementsRouteSchema = {
       examples: ['20'],
     }),
   }),
-  response: {
-    200: stockMovementsListResponseSchema,
-  },
 };
 
 export const updateAutoPartRouteSchema = {
@@ -186,9 +142,6 @@ export const updateAutoPartRouteSchema = {
       description: 'Quantidade em estoque',
     }),
   }),
-  response: {
-    200: autoPartResponseSchema,
-  },
 };
 
 export const findAutoPartRouteSchema = {
@@ -209,9 +162,6 @@ export const findAutoPartRouteSchema = {
       format: 'uuid',
     }),
   }),
-  response: {
-    200: autoPartResponseSchema,
-  },
 };
 
 export const deleteAutoPartRouteSchema = {

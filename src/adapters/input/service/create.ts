@@ -3,7 +3,7 @@ import type { CreateServiceUseCase } from '@/application/use-cases/service/creat
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
   createServiceSchema,
@@ -13,7 +13,7 @@ import {
 export class CreateServiceInput {
   constructor(private createServiceUseCase: CreateServiceUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { body } = context;
 
     logger.info({

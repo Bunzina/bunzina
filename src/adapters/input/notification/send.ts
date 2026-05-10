@@ -1,6 +1,6 @@
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import {
   sendNotificationSchema,
   type SendNotificationInferredInput,
@@ -11,7 +11,7 @@ import type { SendNotificationUseCase } from '@/application/use-cases/notificati
 export class SendNotificationInput {
   constructor(private sendNotificationUseCase: SendNotificationUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response | undefined> {
     const { body } = context;
 
     logger.info({

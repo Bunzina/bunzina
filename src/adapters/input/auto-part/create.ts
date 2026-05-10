@@ -3,7 +3,7 @@ import { CreateAutoPartUseCase } from '@/application/use-cases/auto-part/create'
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
   createAutoPartSchema,
@@ -13,7 +13,7 @@ import {
 export class CreateAutoPartInput {
   constructor(private createAutoPartUseCase: CreateAutoPartUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response | undefined> {
     const { body } = context;
 
     logger.info({

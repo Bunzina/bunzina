@@ -3,7 +3,7 @@ import type { UpdateServiceUseCase } from '@/application/use-cases/service/updat
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
   updateServiceSchema,
@@ -13,7 +13,7 @@ import {
 export class UpdateServiceInput {
   constructor(private updateServiceUseCase: UpdateServiceUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { body } = context;
     const { id } = context.params;
 

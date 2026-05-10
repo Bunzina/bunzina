@@ -3,7 +3,7 @@ import type { CreateCustomerUseCase } from '@/application/use-cases/customer/cre
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import {
   type CreateCustomerInput as CreateCustomerHttpInput,
@@ -13,7 +13,7 @@ import {
 export class CreateCustomerInput {
   constructor(private createCustomerUseCase: CreateCustomerUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response | undefined> {
     const { body } = context;
 
     logger.info({

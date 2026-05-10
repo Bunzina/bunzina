@@ -1,4 +1,4 @@
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { CreateAutoPartUseCase } from '@/application/use-cases/auto-part/create';
 import { CreateAutoPartInput } from '@/adapters/input/auto-part/create';
 import { AutoPartRepository } from '@/infrastructure/repositories/auto-part/auto-part-repository';
@@ -16,8 +16,8 @@ const setDependencies = () => {
 };
 
 export const createAutoPartHandler = async (
-  context: HandlerContext,
-): Promise<Response> => {
+  context: Context,
+): Promise<Response | undefined> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',

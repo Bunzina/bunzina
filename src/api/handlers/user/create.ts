@@ -3,7 +3,7 @@ import { CreateUserUseCase } from '@/application/use-cases/user/create';
 import { db as dbInstance } from '@/infrastructure/configs/database';
 import { UserRepository } from '@/infrastructure/repositories/user/user-repository';
 import logger from '@lucas-pmelo/logger';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 
 let createUserUseCase: CreateUserUseCase;
 let userRepository: UserRepository;
@@ -16,8 +16,8 @@ const setDependencies = () => {
 };
 
 export const createUserHandler = async (
-  context: HandlerContext,
-): Promise<Response> => {
+  context: Context,
+): Promise<Response | undefined> => {
   logger.setEvent('bunzina', context.request);
   logger.debug({
     message: 'Event received',

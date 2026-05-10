@@ -3,7 +3,7 @@ import type { ListStockMovementsUseCase } from '@/application/use-cases/auto-par
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import {
   listStockMovementsSchema,
   type ListStockMovementsInput as ListStockMovementsInputType,
@@ -12,7 +12,7 @@ import {
 export class ListStockMovementsInput {
   constructor(private listStockMovementsUseCase: ListStockMovementsUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const query = context.query as Record<string, unknown>;
     const { id } = context.params as { id: string };
 

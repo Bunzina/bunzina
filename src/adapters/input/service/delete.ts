@@ -2,14 +2,14 @@ import type { DeleteServiceUseCase } from '@/application/use-cases/service/delet
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import { deleteServiceSchema } from './validations/delete-service-schema';
 
 export class DeleteServiceInput {
   constructor(private deleteServiceUseCase: DeleteServiceUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { id } = context.params;
 
     logger.info({

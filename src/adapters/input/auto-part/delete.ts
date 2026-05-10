@@ -2,14 +2,14 @@ import type { DeleteAutoPartUseCase } from '@/application/use-cases/auto-part/de
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import { deleteAutoPartSchema } from './validations/delete-auto-part-schema';
 
 export class DeleteAutoPartInput {
   constructor(private deleteAutoPartUseCase: DeleteAutoPartUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({

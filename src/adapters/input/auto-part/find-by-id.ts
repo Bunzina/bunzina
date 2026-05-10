@@ -3,14 +3,14 @@ import type { FindAutoPartByIdUseCase } from '@/application/use-cases/auto-part/
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import { validateSchemaZod } from '@lucas-pmelo/validator';
-import type { HandlerContext } from '@/api/handler-context';
+import type { Context } from 'elysia';
 import { StatusCodes } from 'http-status-codes';
 import { findAutoPartSchema } from './validations/find-auto-part-schema';
 
 export class FindAutoPartByIdInput {
   constructor(private findAutoPartByIdUseCase: FindAutoPartByIdUseCase) {}
 
-  async execute(context: HandlerContext): Promise<Response> {
+  async execute(context: Context): Promise<Response> {
     const { id } = context.params as { id: string };
 
     logger.info({
