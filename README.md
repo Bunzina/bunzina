@@ -13,7 +13,7 @@ O Bunzina tem como objetivo digitalizar e centralizar os processos operacionais 
 - Controle de **serviços** prestados e **peças** utilizadas
 - Gestão de **estoque de autopeças** com rastreamento de movimentações
 - Geração de **orçamentos** automatizados a partir dos serviços e peças da OS
-- Gerenciamento de **usuários** internos com controle de acesso por papel (admin, mecânico)
+- Gerenciamento de **usuários** internos com controle de acesso por papel (`ADMIN`, `MECHANIC`, `CUSTOMER`)
 
 ---
 
@@ -154,9 +154,22 @@ Isso permite validar rapidamente o fluxo de notificação sem depender de creden
 
 ## Migrations
 
-As migrations ficam em `migrations/` e devem ser executadas em ordem numérica.
+As migrations ficam em `migrations/` e são executadas em ordem numérica. O projeto possui um engine de migrations próprio em `migrations/engine/` que controla quais migrations já foram aplicadas via uma tabela `migrations` no schema `bunzina`.
 
-### Rodando via Docker (sem cliente PostgreSQL instalado localmente)
+### Usando o engine integrado (recomendado)
+
+```bash
+# Roda apenas as migrations pendentes contra o banco apontado em DATABASE_URL
+bun run migration
+```
+
+O script `start:with-migrations` (executado pelo container `app` no `bun dev`) roda as migrations automaticamente antes de subir a API:
+
+```bash
+bun run start:with-migrations
+```
+
+### Rodando manualmente via Docker (sem cliente PostgreSQL local)
 
 ```bash
 # Sobe apenas o banco
@@ -192,6 +205,8 @@ bun test src/adapters/input/customer/create.test.ts
 ```
 
 ## Testes de integração
+
+Os testes de integração usam um banco PostgreSQL dedicado (`db_test`) na porta `5433`, isolado do banco de desenvolvimento. O script abaixo sobe o container, executa os testes em `src/test/integration/` com o `bunfig.integration.toml` e derruba o container ao final via `posttest:integration`.
 
 ```bash
 # Executar testes de integração
@@ -251,23 +266,83 @@ As análises de segurança são feitas com **GitHub CodeQL** (Code scanning), us
 
 ## Endpoints
 
+A documentação interativa completa (request/response schemas, exemplos e tags) fica em [`/swagger`](http://localhost:3000/swagger). A raiz `/` redireciona para lá.
+
 ### Rotas públicas
 
-| Método | Rota           | Descrição          |
-| ------ | -------------- | ------------------ |
-| GET    | `/health`      | Healthcheck da API |
-| POST   | `/auth/login`  | Autenticação JWT   |
+| Método | Rota          | Descrição                                  |
+| ------ | ------------- | ------------------------------------------ |
+| GET    | `/health`     | Healthcheck da API                         |
+| POST   | `/auth/login` | Autenticação JWT                           |
+| POST   | `/users`      | Cadastro público (apenas role `CUSTOMER`)  |
+| GET    | `/service-orders/customer/:documentNumber` | Consulta de OS de um cliente pelo documento |
 
 ### Rotas protegidas (requerem JWT)
 
-| Método | Rota                          | Descrição             |
-| ------ | ----------------------------- | --------------------- |
-| POST   | `/customers`                  | Criar novo cliente    |
-| GET    | `/customers/:documentNumber`  | Buscar cliente        |
-| PUT    | `/customers/:documentNumber`  | Atualizar cliente     |
-| DELETE | `/customers/:documentNumber`  | Excluir cliente       |
-| POST   | `/vehicles`                   | Criar novo veículo    |
-| POST   | `/notifications`              | Enviar notificação    |
+#### Customers
+
+| Método | Rota                         | Descrição          |
+| ------ | ---------------------------- | ------------------ |
+| POST   | `/customers`                 | Criar novo cliente |
+| GET    | `/customers/:documentNumber` | Buscar cliente     |
+| PUT    | `/customers/:documentNumber` | Atualizar cliente  |
+| DELETE | `/customers/:documentNumber` | Excluir cliente    |
+
+#### Vehicles
+
+| Método | Rota            | Descrição          |
+| ------ | --------------- | ------------------ |
+| POST   | `/vehicles`     | Criar novo veículo |
+| GET    | `/vehicles`     | Listar veículos    |
+| GET    | `/vehicles/:id` | Buscar veículo     |
+| PUT    | `/vehicles/:id` | Atualizar veículo  |
+| DELETE | `/vehicles/:id` | Excluir veículo    |
+
+#### Users
+
+| Método | Rota         | Descrição                                  |
+| ------ | ------------ | ------------------------------------------ |
+| GET    | `/users/:id` | Buscar usuário                             |
+| PUT    | `/users/:id` | Atualizar usuário                          |
+| DELETE | `/users/:id` | Excluir usuário                            |
+
+#### Services
+
+| Método | Rota            | Descrição          |
+| ------ | --------------- | ------------------ |
+| POST   | `/services`     | Criar serviço      |
+| GET    | `/services/:id` | Buscar serviço     |
+| PUT    | `/services/:id` | Atualizar serviço  |
+| DELETE | `/services/:id` | Excluir serviço    |
+
+#### Auto-Parts
+
+| Método | Rota                              | Descrição                                |
+| ------ | --------------------------------- | ---------------------------------------- |
+| POST   | `/auto-parts`                     | Cadastrar peça                           |
+| GET    | `/auto-parts`                     | Listar peças                             |
+| GET    | `/auto-parts/:id`                 | Buscar peça                              |
+| PUT    | `/auto-parts/:id`                 | Atualizar peça                           |
+| DELETE | `/auto-parts/:id`                 | Excluir peça                             |
+| GET    | `/auto-parts/:id/stock-movements` | Histórico de movimentações de estoque    |
+
+#### Service Orders
+
+| Método | Rota                                       | Descrição                          |
+| ------ | ------------------------------------------ | ---------------------------------- |
+| POST   | `/service-orders`                          | Criar ordem de serviço             |
+| GET    | `/service-orders`                          | Listar ordens de serviço           |
+| GET    | `/service-orders/:id`                      | Buscar ordem de serviço            |
+| PUT    | `/service-orders/:id`                      | Atualizar ordem de serviço         |
+| DELETE | `/service-orders/:id`                      | Excluir ordem de serviço           |
+| PATCH  | `/service-orders/:id/status`               | Atualizar status da ordem          |
+| PATCH  | `/service-orders/services/:id/complete`    | Marcar item de serviço como concluído |
+
+#### Notifications
+
+| Método | Rota             | Descrição          |
+| ------ | ---------------- | ------------------ |
+| POST   | `/notifications` | Enviar notificação |
 
 ---
 
@@ -280,6 +355,8 @@ A API utiliza autenticação via **JSON Web Token (JWT)** com HMAC-SHA256 para p
 1. O usuário faz login via `POST /auth/login` com email e senha
 2. A API valida as credenciais e retorna um token JWT
 3. O token deve ser enviado no header `Authorization` das requisições às rotas protegidas
+
+> **Exceção:** o cadastro público de usuários com role `CUSTOMER` via `POST /users` não exige autenticação. Criar usuários com roles `ADMIN` ou `MECHANIC` requer um token válido.
 
 ### Login
 
