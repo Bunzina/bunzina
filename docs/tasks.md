@@ -25,12 +25,10 @@
 ## Diagramas DDD
 
 - [x] **Bounded Contexts**
-- [ ] **Context Map**
 - [x] **Agregados**
 - [x] **Entidades**
 - [x] **Value Objects**
 - [x] **Domain Events**
-- [ ] **Application Services**
 
 ## Linguagem Ubíqua
 
