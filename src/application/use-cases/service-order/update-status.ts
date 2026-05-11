@@ -41,20 +41,6 @@ export class UpdateServiceOrderStatusUseCase {
       throw new ForbiddenError(message);
     }
 
-    if (targetStatus === ServiceOrderStatus.AWAITING_APPROVAL) {
-      const customer = await this.findCustomerByIdUseCase.execute({
-        id: serviceOrder.customerId,
-      });
-
-      await this.notificationService.sendEmail({
-        message: `Segue orçamento da Ordem de Serviço para validação: 
-        Total em peças: R$${Number(serviceOrder.quote.autoPartsTotal)},00 
-        Total em serviço: R$${Number(serviceOrder.quote.servicesTotal)},00 
-        Total: R$${Number(serviceOrder.quote.total)},00`,
-        to: customer.email.value,
-        subject: 'Orçamento de Ordem de Serviço',
-      });
-    }
     if (targetStatus === ServiceOrderStatus.COMPLETED) {
       const allCompleted = serviceOrder.serviceItems.every(
         (item) => item.isCompleted === true,
@@ -106,6 +92,21 @@ export class UpdateServiceOrderStatusUseCase {
     });
 
     await this.serviceOrderRepository.update(updatedServiceOrder);
+
+    if (targetStatus === ServiceOrderStatus.AWAITING_APPROVAL) {
+      const customer = await this.findCustomerByIdUseCase.execute({
+        id: serviceOrder.customerId,
+      });
+
+      await this.notificationService.sendEmail({
+        message: `Segue orçamento da Ordem de Serviço para validação: 
+        Total em peças: R$${Number(serviceOrder.quote.autoPartsTotal)},00 
+        Total em serviço: R$${Number(serviceOrder.quote.servicesTotal)},00 
+        Total: R$${Number(serviceOrder.quote.total)},00`,
+        to: customer.email.value,
+        subject: 'Orçamento de Ordem de Serviço',
+      });
+    }
 
     return updatedServiceOrder;
   }
