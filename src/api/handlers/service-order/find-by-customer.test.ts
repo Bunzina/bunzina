@@ -21,9 +21,12 @@ describe('find service orders by customer handler', () => {
     const createdAt = new Date('2026-04-01T10:00:00.000Z');
     const updatedAt = new Date('2026-04-02T10:00:00.000Z');
 
-    mockDb
-      .mockImplementationOnce(() =>
-        Promise.resolve([
+    mockDb.mockImplementation((...args: unknown[]) => {
+      const [strings] = args as [TemplateStringsArray];
+      const query = strings.join('');
+
+      if (query.includes('FROM bunzina.customers')) {
+        return Promise.resolve([
           {
             id: customerId,
             name: 'John Doe',
@@ -41,13 +44,11 @@ describe('find service orders by customer handler', () => {
             created_at: createdAt,
             updated_at: updatedAt,
           },
-        ] as unknown[]),
-      )
-      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
-      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
-      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
-      .mockImplementationOnce(() =>
-        Promise.resolve([
+        ] as unknown[]);
+      }
+
+      if (query.includes('FROM bunzina.service_orders')) {
+        return Promise.resolve([
           {
             id: serviceOrderId,
             customer_id: customerId,
@@ -63,10 +64,11 @@ describe('find service orders by customer handler', () => {
             completed_at: null,
             delivered_at: null,
           },
-        ] as unknown[]),
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve([
+        ] as unknown[]);
+      }
+
+      if (query.includes('FROM bunzina.service_order_service_items')) {
+        return Promise.resolve([
           {
             id: 'service-item-1',
             service_order_id: serviceOrderId,
@@ -74,10 +76,11 @@ describe('find service orders by customer handler', () => {
             price: 120,
             description: 'Brake check',
           },
-        ] as unknown[]),
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve([
+        ] as unknown[]);
+      }
+
+      if (query.includes('FROM bunzina.service_order_auto_part_items')) {
+        return Promise.resolve([
           {
             id: 'auto-part-item-1',
             service_order_id: serviceOrderId,
@@ -87,8 +90,11 @@ describe('find service orders by customer handler', () => {
             total_price: 80,
             description: 'Brake pad',
           },
-        ] as unknown[]),
-      );
+        ] as unknown[]);
+      }
+
+      return Promise.resolve([] as unknown[]);
+    });
 
     const ctx = {
       request: { method: 'GET' },

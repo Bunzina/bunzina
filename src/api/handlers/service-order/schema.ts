@@ -3,6 +3,7 @@ import { findCustomerSchema } from '@/adapters/input/customer/validations/find-c
 import { deleteServiceOrderSchema } from '@/adapters/input/service-order/validations/delete-service-order-schema';
 import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
 import { findServiceOrderItemSchema } from '@/adapters/input/service-order/validations/find-service-order-item-schema';
+import { listServiceOrdersSchema } from '@/adapters/input/service-order/validations/list-service-orders-schema';
 import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
 import { updateServiceOrderBodySchema } from '@/adapters/input/service-order/validations/update-service-order-schema';
 import { t } from 'elysia';
@@ -145,6 +146,25 @@ export const findServiceOrdersByCustomerRouteSchema = {
   params: findCustomerSchema,
   response: {
     200: t.Array(serviceOrderPublicResponseSchema),
+  },
+};
+
+export const listServiceOrdersRouteSchema = {
+  detail: {
+    tags: ['Service-Orders'],
+    summary: 'List service orders',
+    description:
+      'List service orders with pagination and optional filters by customer, vehicle, status and created_at range.',
+    responses: {
+      '200': { description: 'Service orders listed successfully' },
+      '400': { description: 'Invalid data' },
+      '401': { description: 'Missing or invalid token' },
+      '500': { description: 'Internal server error' },
+    },
+  },
+  query: listServiceOrdersSchema,
+  response: {
+    200: t.Array(serviceOrderResponseSchema),
   },
 };
 

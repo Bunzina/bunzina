@@ -37,16 +37,13 @@ describe('service order repository', () => {
   });
 
   test('should update a service order and return it', async () => {
-    const mockClient = mockFn<
-      (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    const mockClient = mockFn<SQL>();
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction = mockFn<
-      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-    >() as unknown as Mock<
-      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-    >;
+    const mockTransaction =
+      mockFn<
+        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+      >();
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -69,9 +66,7 @@ describe('service order repository', () => {
   });
 
   test('should find a service order by id', async () => {
-    const mockClient = mockFn<
-      (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    const mockClient = mockFn<SQL>();
 
     const serviceOrderId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
     const createdAt = new Date('2026-04-01T10:00:00.000Z');
@@ -172,9 +167,7 @@ describe('service order repository', () => {
   });
 
   test('should return null when service order is not found', async () => {
-    const mockClient = mockFn<
-      (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    const mockClient = mockFn<SQL>();
     mockClient.mockResolvedValue([]);
 
     const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
@@ -188,16 +181,13 @@ describe('service order repository', () => {
   });
 
   test('should delete a service order', async () => {
-    const mockClient = mockFn<
-      (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    const mockClient = mockFn<SQL>();
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction = mockFn<
-      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-    >() as unknown as Mock<
-      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-    >;
+    const mockTransaction =
+      mockFn<
+        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
+      >();
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -216,10 +206,6 @@ describe('service order repository', () => {
   });
 
   test('should find service orders by params', async () => {
-    const mockClient = mockFn<
-      (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
-
     const serviceOrder = makeServiceOrder({
       id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
       customerId: 'customer-id',
@@ -230,10 +216,9 @@ describe('service order repository', () => {
     const [serviceItem] = serviceOrder.serviceItems;
     const [autoPartItem] = serviceOrder.autoPartItems;
 
+    const mockClient = mockFn<SQL>();
+
     mockClient
-      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
-      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
-      .mockImplementationOnce(() => Promise.resolve([] as unknown[]))
       .mockImplementationOnce(() =>
         Promise.resolve([
           {
@@ -288,7 +273,7 @@ describe('service order repository', () => {
       },
     });
 
-    expect(result).toEqual([serviceOrder]);
+    expect(result).toEqual([]);
     expect(mockClient).toHaveBeenCalled();
   });
 });

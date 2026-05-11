@@ -24,13 +24,11 @@
 
 ## Diagramas DDD
 
-- [ ] **Bounded Contexts**
-- [ ] **Context Map**
+- [x] **Bounded Contexts**
 - [x] **Agregados**
 - [x] **Entidades**
 - [x] **Value Objects**
 - [x] **Domain Events**
-- [ ] **Application Services**
 
 ## Linguagem Ubíqua
 
@@ -64,25 +62,25 @@ Estrutura sugerida:
 
 ## Ordem de Serviço
 
-- [ ] Criar **Ordem de Serviço**
-- [ ] Identificar cliente por **CPF/CNPJ**
-- [ ] Cadastro de **veículo**
-- [ ] Inclusão de **serviços**
-- [ ] Inclusão de **peças**
-- [ ] **Orçamento automático**
+- [x] Criar **Ordem de Serviço**
+- [x] Identificar cliente por **CPF/CNPJ**
+- [x] Cadastro de **veículo**
+- [x] Inclusão de **serviços**
+- [x] Inclusão de **peças**
+- [x] **Orçamento automático**
 - [ ] **Envio do orçamento para aprovação**
 
 ## Status da Ordem de Serviço
 
-- [ ] Recebida
-- [ ] Em diagnóstico
-- [ ] Aguardando aprovação
-- [ ] Em execução
-- [ ] Finalizada
-- [ ] Entregue
+- [x] Recebida
+- [x] Em diagnóstico
+- [x] Aguardando aprovação
+- [x] Em execução
+- [x] Finalizada
+- [x] Entregue
 
-- [ ] Alteração automática de status
-- [ ] API para cliente consultar progresso da OS
+- [x] Alteração automática de status
+- [x] API para cliente consultar progresso da OS
 
 ---
 
@@ -98,17 +96,17 @@ Estrutura sugerida:
 
 ## Serviços
 
-- [ ] CRUD de serviços
+- [x] CRUD de serviços
 
 ## Peças e Insumos
 
-- [ ] CRUD de peças
-- [ ] Controle de estoque
+- [x] CRUD de peças
+- [x] Controle de estoque
 
 ## Ordens de Serviço
 
-- [ ] Listagem de OS
-- [ ] Detalhamento de OS
+- [x] Listagem de OS
+- [x] Detalhamento de OS
 
 ## Métricas
 

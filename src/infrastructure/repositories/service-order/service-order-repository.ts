@@ -26,13 +26,25 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     const customerIdFilter = filters.customerId
       ? this.client`AND customer_id = ${filters.customerId}`
       : this.client``;
+    const vehicleIdFilter = filters.vehicleId
+      ? this.client`AND vehicle_id = ${filters.vehicleId}`
+      : this.client``;
     const statusFilter = filters.status
       ? this.client`AND status = ${filters.status}`
+      : this.client``;
+    const startCreatedAtFilter = filters.startCreatedAt
+      ? this.client`AND created_at >= ${filters.startCreatedAt}`
+      : this.client``;
+    const endCreatedAtFilter = filters.endCreatedAt
+      ? this.client`AND created_at <= ${filters.endCreatedAt}`
       : this.client``;
 
     return this.client`
       ${customerIdFilter}
+      ${vehicleIdFilter}
       ${statusFilter}
+      ${startCreatedAtFilter}
+      ${endCreatedAtFilter}
     `;
   }
 
@@ -147,6 +159,8 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     `;
 
     const serviceOrders: ServiceOrder[] = [];
+
+    if (!records || records.length === 0) return [];
 
     for (const record of records) {
       const serviceItems = await this.client<ServiceOrderServiceItemDbSchema[]>`
