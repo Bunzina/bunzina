@@ -163,6 +163,9 @@ export const listServiceOrdersRouteSchema = {
     },
   },
   query: listServiceOrdersSchema,
+  response: {
+    200: t.Array(serviceOrderResponseSchema),
+  },
 };
 
 export const updateServiceOrderRouteSchema = {
