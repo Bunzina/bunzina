@@ -206,7 +206,7 @@ export const createAutoPart = async (token: string) => {
       body: JSON.stringify({
         name: 'Oil Filter',
         description: 'Standard oil filter',
-        price: 4500,
+        price: 4500.77,
         stock: 10,
       }),
     }),

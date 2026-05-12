@@ -5,6 +5,6 @@ export class Price {
     if (value < 0) {
       throw new Error('Price cannot be negative');
     }
-    this.value = value;
+    this.value = Number(value);
   }
 }
