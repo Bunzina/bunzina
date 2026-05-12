@@ -1,25 +1,35 @@
 import type { FindServiceOrderByIdUseCase } from '@/application/use-cases/service-order/find-by-id';
+import type { FindCustomerByIdUseCase } from '@/application/use-cases/customer/find-by-id';
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
+import type { NotificationService } from '@/domain/notification/services/notification';
 import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
 import { makeServiceOrder } from '@/test/factories/make-service-order';
+import { makeServiceItem } from '@/test/factories/make-service-item';
+import { makeCustomer } from '@/test/factories/make-customer';
 import { ForbiddenError, NotFoundError } from '@lucas-pmelo/handlers';
 import { mock, type MockProxy } from 'bun-mock-extended';
 import { beforeEach, describe, expect, test } from 'bun:test';
 import { UpdateServiceOrderStatusUseCase } from './update-status';
-import { makeServiceItem } from '@/test/factories/make-service-item';
 import { StatusDirection } from '@/domain/service-order/state-machines/status-machine';
+import { makeEmail } from '@/test/factories/make-email';
 
 describe('update service order status use case', () => {
   let serviceOrderRepository: MockProxy<ServiceOrderRepository>;
   let findServiceOrderByIdUseCase: MockProxy<FindServiceOrderByIdUseCase>;
+  let findCustomerByIdUseCase: MockProxy<FindCustomerByIdUseCase>;
+  let notificationService: MockProxy<NotificationService>;
   let updateServiceOrderStatusUseCase: UpdateServiceOrderStatusUseCase;
 
   beforeEach(() => {
     serviceOrderRepository = mock();
     findServiceOrderByIdUseCase = mock();
+    findCustomerByIdUseCase = mock();
+    notificationService = mock();
     updateServiceOrderStatusUseCase = new UpdateServiceOrderStatusUseCase(
       serviceOrderRepository,
       findServiceOrderByIdUseCase,
+      findCustomerByIdUseCase,
+      notificationService,
     );
   });
 
@@ -188,5 +198,60 @@ describe('update service order status use case', () => {
     ).rejects.toThrow(NotFoundError);
 
     expect(serviceOrderRepository.update).not.toHaveBeenCalled();
+  });
+
+  test('should send email to customer when moving to AWAITING_APPROVAL', async () => {
+    const id = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    const customerId = 'customer-id-123';
+    const customerEmail = 'customer@bunzina.com';
+    const serviceOrder = makeServiceOrder({
+      id,
+      customerId,
+      status: ServiceOrderStatus.IN_DIAGNOSTIC,
+    });
+    const customer = makeCustomer({
+      id: customerId,
+      email: makeEmail(customerEmail),
+    });
+
+    findServiceOrderByIdUseCase.execute.mockResolvedValue(serviceOrder);
+    findCustomerByIdUseCase.execute.mockResolvedValue(customer);
+    notificationService.sendEmail.mockResolvedValue(undefined);
+
+    const result = await updateServiceOrderStatusUseCase.execute({
+      id,
+      direction: StatusDirection.NEXT,
+    });
+
+    expect(findCustomerByIdUseCase.execute).toHaveBeenNthCalledWith(1, {
+      id: customerId,
+    });
+    expect(notificationService.sendEmail).toHaveBeenNthCalledWith(1, {
+      message: `Segue orçamento da Ordem de Serviço para validação: 
+        Total em peças: R$200,00 
+        Total em serviço: R$300,00 
+        Total: R$500,00`,
+      to: customerEmail,
+      subject: 'Orçamento de Ordem de Serviço',
+    });
+    expect(result.status).toBe(ServiceOrderStatus.AWAITING_APPROVAL);
+  });
+
+  test('should not send email when moving to other statuses', async () => {
+    const id = '11111111-1111-4111-8111-111111111111';
+    const serviceOrder = makeServiceOrder({
+      id,
+      status: ServiceOrderStatus.AWAITING_APPROVAL,
+    });
+
+    findServiceOrderByIdUseCase.execute.mockResolvedValue(serviceOrder);
+
+    await updateServiceOrderStatusUseCase.execute({
+      id,
+      direction: StatusDirection.NEXT,
+    });
+
+    expect(findCustomerByIdUseCase.execute).not.toHaveBeenCalled();
+    expect(notificationService.sendEmail).not.toHaveBeenCalled();
   });
 });
