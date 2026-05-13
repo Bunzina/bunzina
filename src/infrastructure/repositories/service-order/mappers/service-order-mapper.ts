@@ -19,13 +19,16 @@ export const ServiceOrderServiceItemMapper = {
       id: serviceItem.id!,
       service_order_id: serviceOrderId,
       service_id: serviceItem.serviceId,
-      price: serviceItem.price.value,
+      price: Number(serviceItem.price.value),
       description: serviceItem.description ?? null,
       created_at: serviceItem.createdAt,
       updated_at: serviceItem.updatedAt,
       is_completed: serviceItem.isCompleted ?? false,
       finished_at: serviceItem.finishedAt ?? null,
-      execution_time_ms: serviceItem.executionTimeMs ?? null,
+      execution_time_ms:
+        serviceItem.executionTimeMs !== undefined
+          ? Number(serviceItem.executionTimeMs)
+          : null,
     };
   },
 
@@ -56,8 +59,11 @@ export const ServiceOrderAutoPartItemMapper = {
       service_order_id: serviceOrderId,
       auto_part_id: autoPartItem.autoPartId,
       quantity: autoPartItem.quantity,
-      unit_price: autoPartItem.unitPrice.value,
-      total_price: autoPartItem.totalPrice?.value ?? null,
+      unit_price: Number(autoPartItem.unitPrice.value),
+      total_price:
+        autoPartItem.totalPrice?.value !== undefined
+          ? Number(autoPartItem.totalPrice.value)
+          : null,
       description: autoPartItem.description ?? null,
     };
   },
@@ -82,9 +88,9 @@ export const ServiceOrderMapper = {
       customer_id: serviceOrder.customerId,
       vehicle_id: serviceOrder.vehicleId,
       status: serviceOrder.status,
-      quote_services_total: serviceOrder.quote.servicesTotal,
-      quote_auto_parts_total: serviceOrder.quote.autoPartsTotal,
-      quote_total: serviceOrder.quote.total,
+      quote_services_total: Number(serviceOrder.quote.servicesTotal),
+      quote_auto_parts_total: Number(serviceOrder.quote.autoPartsTotal),
+      quote_total: Number(serviceOrder.quote.total),
       created_at: serviceOrder.createdAt,
       updated_at: serviceOrder.updatedAt,
       approved_at: serviceOrder.approvedAt ?? null,
