@@ -36,3 +36,18 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 .vscode
+
+# Kubernetes secrets reais (use os *.example.yaml como base)
+k8s/secret.yaml
+k8s/postgres-secret.yaml
+
+# Terraform
+infra/.terraform/
+infra/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+infra/terraform.tfvars
+crash.log
+*.tfvars
+.terraform/
+terraform.tfstate*
