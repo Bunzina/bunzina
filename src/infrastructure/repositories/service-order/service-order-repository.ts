@@ -1,21 +1,21 @@
-import type { SQL } from 'bun';
-import logger from '@lucas-pmelo/logger';
+import type { ServiceItem } from '@/domain/service-order/entities/service-item';
+import type { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type {
   FindServiceOrdersParams,
   ServiceOrderRepository as IServiceOrderRepository,
 } from '@/domain/service-order/repositories/service-order-repository';
-import type { ServiceOrder } from '@/domain/service-order/entities/service-order';
-import {
-  ServiceOrderAutoPartItemMapper,
-  ServiceOrderMapper,
-  ServiceOrderServiceItemMapper,
-} from './mappers/service-order-mapper';
+import logger from '@lucas-pmelo/logger';
+import type { SQL } from 'bun';
 import type {
   ServiceOrderAutoPartItemDbSchema,
   ServiceOrderDbSchema,
   ServiceOrderServiceItemDbSchema,
 } from './dtos/service-order-db-schema';
-import type { ServiceItem } from '@/domain/service-order/entities/service-item';
+import {
+  ServiceOrderAutoPartItemMapper,
+  ServiceOrderMapper,
+  ServiceOrderServiceItemMapper,
+} from './mappers/service-order-mapper';
 
 export class ServiceOrderRepository implements IServiceOrderRepository {
   constructor(private client: SQL) {}
@@ -150,9 +150,9 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
 
     const records = await this.client<ServiceOrderDbSchema[]>`
       SELECT *
-      FROM bunzina.service_orders
+        FROM bunzina.service_orders
       WHERE 1 = 1
-      ${filtersSql}
+        ${filtersSql}
       ORDER BY created_at DESC
       LIMIT ${params.limit}
       OFFSET ${offset}
