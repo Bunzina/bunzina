@@ -26,22 +26,16 @@ import {
 } from './handlers/customer/schema';
 import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
-import { createServiceHandler } from './handlers/service/create';
-import { deleteServiceHandler } from './handlers/service/delete';
-import { findServiceByIdHandler } from './handlers/service/find-by-id';
-import {
-  createServiceRouteSchema,
-  deleteServiceRouteSchema,
-  findServiceByIdRouteSchema,
-  updateServiceRouteSchema,
-} from './handlers/service/schema';
-import { updateServiceHandler } from './handlers/service/update';
+import { notificationSchema } from './handlers/notification/schema';
+import { sendNotificationHandler } from './handlers/notification/send';
+import { completeServiceItemHandler } from './handlers/service-order/complete-service-item';
 import { createServiceOrderHandler } from './handlers/service-order/create';
 import { deleteServiceOrderHandler } from './handlers/service-order/delete';
 import { findServiceOrderHandler } from './handlers/service-order/find';
 import { findServiceOrdersByCustomerHandler } from './handlers/service-order/find-by-customer';
 import { listServiceOrdersHandler } from './handlers/service-order/list';
 import {
+  completeServiceOrderItemRouteSchema,
   createServiceOrderRouteSchema,
   deleteServiceOrderRouteSchema,
   findServiceOrderRouteSchema,
@@ -49,11 +43,21 @@ import {
   listServiceOrdersRouteSchema,
   updateServiceOrderRouteSchema,
   updateServiceOrderStatusRouteSchema,
-  completeServiceOrderItemRouteSchema,
 } from './handlers/service-order/schema';
 import { updateServiceOrderHandler } from './handlers/service-order/update';
 import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
-import { completeServiceItemHandler } from './handlers/service-order/complete-service-item';
+import { createServiceHandler } from './handlers/service/create';
+import { deleteServiceHandler } from './handlers/service/delete';
+import { findServiceByIdHandler } from './handlers/service/find-by-id';
+import { listServicesHandler } from './handlers/service/list';
+import {
+  createServiceRouteSchema,
+  deleteServiceRouteSchema,
+  findServiceByIdRouteSchema,
+  listServicesRouteSchema,
+  updateServiceRouteSchema,
+} from './handlers/service/schema';
+import { updateServiceHandler } from './handlers/service/update';
 import { createUserHandler } from './handlers/user/create';
 import { deleteUserHandler } from './handlers/user/delete';
 import { findUserHandler } from './handlers/user/find';
@@ -77,8 +81,6 @@ import {
   listVehicleSchema,
   updateVehicleSchema,
 } from './handlers/vehicle/schema';
-import { sendNotificationHandler } from './handlers/notification/send';
-import { notificationSchema } from './handlers/notification/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 
@@ -319,6 +321,11 @@ app.guard(
       '/services/:id',
       async (context) => deleteServiceHandler(context),
       deleteServiceRouteSchema,
+    );
+    app.get(
+      '/services',
+      async (context) => listServicesHandler(context),
+      listServicesRouteSchema,
     );
 
     return app;
