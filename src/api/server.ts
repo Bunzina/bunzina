@@ -50,6 +50,7 @@ import {
   updateServiceOrderRouteSchema,
   updateServiceOrderStatusRouteSchema,
   completeServiceOrderItemRouteSchema,
+  validateQuoteConfirmationRouteSchema,
 } from './handlers/service-order/schema';
 import { updateServiceOrderHandler } from './handlers/service-order/update';
 import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
@@ -81,6 +82,7 @@ import { sendNotificationHandler } from './handlers/notification/send';
 import { notificationSchema } from './handlers/notification/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
+import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 
 export const app = new Elysia();
 
@@ -371,6 +373,10 @@ app.guard(
       '/service-orders/services/:id/complete',
       async (context) => completeServiceItemHandler(context),
       completeServiceOrderItemRouteSchema,
+    );
+    app.post('/service-orders/:id/quote/confirm', async (context) =>
+      validateQuoteConfirmationHandler(context),
+      validateQuoteConfirmationRouteSchema,
     );
 
     return app;
