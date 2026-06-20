@@ -1,4 +1,5 @@
-import { afterAll, beforeEach, describe, expect, mock, test } from 'bun:test';
+import { afterAll, describe, expect, mock, test } from 'bun:test';
+import { verifyApiKey } from './api-key';
 
 mock.module('@lucas-pmelo/logger', () => ({
   default: {
@@ -8,14 +9,6 @@ mock.module('@lucas-pmelo/logger', () => ({
 
 const originalApiKey = process.env.API_KEY;
 process.env.API_KEY = 'test-api-key';
-
-let verifyApiKey: typeof import('./api-key').verifyApiKey;
-
-beforeEach(async () => {
-  if (!verifyApiKey) {
-    ({ verifyApiKey } = await import('./api-key'));
-  }
-});
 
 afterAll(() => {
   if (originalApiKey === undefined) {
