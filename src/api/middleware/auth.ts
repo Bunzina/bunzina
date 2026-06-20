@@ -2,38 +2,51 @@ import { verifyJwt } from '@/infrastructure/services/jwt';
 import { createResponse } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 import type { HandlerContext } from '@/api/handler-context';
+import { verifyApiKey } from '@/infrastructure/services/api-key';
 
 export const authMiddleware = async (
   context: HandlerContext,
 ): Promise<Response | undefined> => {
   const authorization = context.request.headers.get('Authorization');
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  const apiKey = context.request.headers.get('Api-Key');
+
+  if (!apiKey || !authorization || !authorization.startsWith('Bearer ')) {
+    const message = 'Missing or invalid authorization header';
+
     logger.warn({
-      message: 'Missing or invalid authorization header',
+      message,
     });
 
     return createResponse({
       status: 401,
-      data: { reason: 'Missing or invalid authorization header' },
+      data: { reason: message },
     });
   }
 
   const token = authorization.slice(7);
 
   try {
-    const payload = await verifyJwt(token);
+    if (token) {
+      const payload = await verifyJwt(token);
 
-    context.store = { ...context.store, user: payload };
+      context.store = { ...context.store, user: payload };
+    }
+
+    if (apiKey) {
+      verifyApiKey(apiKey);
+    }
   } catch (error) {
+    const message = 'Invalid or expired token';
+
     logger.warn({
-      message: 'Invalid or expired token',
+      message,
       data: { error: (error as Error).message },
     });
 
     return createResponse({
       status: 401,
-      data: { reason: 'Invalid or expired token' },
+      data: { reason: message },
     });
   }
 };
