@@ -19,6 +19,35 @@ describe('auth middleware', () => {
     });
   });
 
+  test('should pass when api key is present but authorization is missing', async () => {
+    const context = {
+      request: {
+        headers: new Headers({ 'Api-Key': 'test-api-key' }),
+      },
+      store: {},
+    } as unknown as Context;
+
+    const result = await authMiddleware(context);
+
+    expect(result).toBeUndefined();
+  });
+
+  test('should pass when api key is present and authorization is invalid', async () => {
+    const context = {
+      request: {
+        headers: new Headers({
+          Authorization: 'Basic abc',
+          'Api-Key': 'test-api-key',
+        }),
+      },
+      store: {},
+    } as unknown as Context;
+
+    const result = await authMiddleware(context);
+
+    expect(result).toBeUndefined();
+  });
+
   test('should return 401 when authorization header does not start with Bearer', async () => {
     const context = {
       request: {
@@ -73,5 +102,28 @@ describe('auth middleware', () => {
       email: 'admin@bunzina.com',
       role: 'ADMIN',
     });
+  });
+
+  test('should ignore an invalid api key when authorization is valid', async () => {
+    const token = await signJwt({
+      sub: '123',
+      email: 'admin@bunzina.com',
+      role: 'ADMIN',
+    });
+
+    const context = {
+      request: {
+        headers: new Headers({
+          Authorization: `Bearer ${token}`,
+          'Api-Key': 'invalid-api-key',
+        }),
+      },
+      store: {},
+    } as unknown as Context;
+
+    const result = await authMiddleware(context);
+
+    expect(result).toBeUndefined();
+    expect(context.store).toEqual({});
   });
 });

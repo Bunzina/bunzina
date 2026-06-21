@@ -1,11 +1,5 @@
-import { afterAll, describe, expect, mock, test } from 'bun:test';
+import { afterAll, describe, expect, test } from 'bun:test';
 import { verifyApiKey } from './api-key';
-
-mock.module('@lucas-pmelo/logger', () => ({
-  default: {
-    warn: mock(),
-  },
-}));
 
 const originalApiKey = process.env.API_KEY;
 process.env.API_KEY = 'test-api-key';

@@ -4,14 +4,11 @@ import logger from '@lucas-pmelo/logger';
 import type { HandlerContext } from '@/api/handler-context';
 import { verifyApiKey } from '@/infrastructure/services/api-key';
 
-export const authMiddleware = async (
+async function validateAuthorization(
   context: HandlerContext,
-): Promise<Response | undefined> => {
-  const authorization = context.request.headers.get('Authorization');
-
-  const apiKey = context.request.headers.get('Api-Key');
-
-  if (!apiKey || !authorization || !authorization.startsWith('Bearer ')) {
+  authorization: string,
+): Promise<Response | undefined> {
+  if (!authorization.startsWith('Bearer ')) {
     const message = 'Missing or invalid authorization header';
 
     logger.warn({
@@ -32,10 +29,6 @@ export const authMiddleware = async (
 
       context.store = { ...context.store, user: payload };
     }
-
-    if (apiKey) {
-      verifyApiKey(apiKey);
-    }
   } catch (error) {
     const message = 'Invalid or expired token';
 
@@ -49,4 +42,59 @@ export const authMiddleware = async (
       data: { reason: message },
     });
   }
+
+  return;
+}
+
+function validateApiKey(apiKey: string): void {
+  try {
+    verifyApiKey(apiKey);
+  } catch (error) {
+    logger.warn({
+      message: 'Invalid api key',
+      data: { error: (error as Error).message },
+    });
+  }
+}
+
+export const authMiddleware = async (
+  context: HandlerContext,
+): Promise<Response | undefined> => {
+  const authorization = context.request.headers.get('Authorization');
+
+  const apiKey = context.request.headers.get('Api-Key');
+
+  if (!authorization && !apiKey) {
+    const message = 'Missing or invalid authorization header';
+
+    logger.warn({
+      message,
+    });
+
+    return createResponse({
+      status: 401,
+      data: { reason: message },
+    });
+  }
+
+  if (apiKey) {
+    validateApiKey(apiKey);
+
+    return;
+  }
+
+  if (!authorization) {
+    const message = 'Missing or invalid authorization header';
+
+    logger.warn({
+      message,
+    });
+
+    return createResponse({
+      status: 401,
+      data: { reason: message },
+    });
+  }
+
+  return validateAuthorization(context, authorization);
 };
