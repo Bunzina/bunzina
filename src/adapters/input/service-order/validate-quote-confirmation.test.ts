@@ -50,7 +50,9 @@ describe('validate quote confirmation input', () => {
     expect(result.status).toBe(200);
     expect(result.headers.get('Content-Type')).toBe('application/json');
     expect(await result.json()).toEqual(
-      JSON.parse(JSON.stringify(ServiceOrderPublicPresenter.toHttp(serviceOrder))),
+      JSON.parse(
+        JSON.stringify(ServiceOrderPublicPresenter.toHttp(serviceOrder)),
+      ),
     );
     expect(validateQuoteConfirmationUseCase.execute).toHaveBeenCalledWith({
       id,
