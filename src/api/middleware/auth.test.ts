@@ -19,7 +19,7 @@ describe('auth middleware', () => {
     });
   });
 
-  test('should pass when api key is present but authorization is missing', async () => {
+  test('should return 401 when api key is present but authorization is missing', async () => {
     const context = {
       request: {
         headers: new Headers({ 'Api-Key': 'test-api-key' }),
@@ -29,10 +29,13 @@ describe('auth middleware', () => {
 
     const result = await authMiddleware(context);
 
-    expect(result).toBeUndefined();
+    expect(result?.status).toBe(401);
+    expect(await result?.json()).toEqual({
+      reason: 'Invalid or expired token',
+    });
   });
 
-  test('should pass when api key is present and authorization is invalid', async () => {
+  test('should return 401 when api key is present and authorization is invalid', async () => {
     const context = {
       request: {
         headers: new Headers({
@@ -45,7 +48,10 @@ describe('auth middleware', () => {
 
     const result = await authMiddleware(context);
 
-    expect(result).toBeUndefined();
+    expect(result?.status).toBe(401);
+    expect(await result?.json()).toEqual({
+      reason: 'Invalid or expired token',
+    });
   });
 
   test('should return 401 when authorization header does not start with Bearer', async () => {
@@ -104,7 +110,7 @@ describe('auth middleware', () => {
     });
   });
 
-  test('should ignore an invalid api key when authorization is valid', async () => {
+  test('should return 401 when api key is invalid even if authorization is valid', async () => {
     const token = await signJwt({
       sub: '123',
       email: 'admin@bunzina.com',
@@ -123,7 +129,9 @@ describe('auth middleware', () => {
 
     const result = await authMiddleware(context);
 
-    expect(result).toBeUndefined();
-    expect(context.store).toEqual({});
+    expect(result?.status).toBe(401);
+    expect(await result?.json()).toEqual({
+      reason: 'Invalid or expired token',
+    });
   });
 });
