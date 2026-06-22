@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, mock, test, type Mock } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  mock,
+  test,
+  type Mock,
+} from 'bun:test';
 import { mockFn } from 'bun-mock-extended';
 import type { Context } from 'elysia';
 
@@ -12,7 +20,9 @@ mock.module('@lucas-pmelo/logger', () => ({
   },
 }));
 
-const mockDb = mockFn<(..._args: unknown[]) => Promise<unknown[]>>() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+const mockDb = mockFn<
+  (..._args: unknown[]) => Promise<unknown[]>
+>() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
 mockDb.mockImplementation(() => Promise.resolve([]));
 const mockTransaction =
   mockFn<(callback: (sql: typeof mockDb) => Promise<void>) => Promise<void>>();
@@ -38,7 +48,6 @@ describe('validate quote confirmation handler', () => {
   test('should validate and update a quote confirmation', async () => {
     const serviceOrderId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
     const customerId = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
-    const vehicleId = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
     const createdAt = new Date('2026-04-01T10:00:00.000Z');
     const updatedAt = new Date('2026-04-02T10:00:00.000Z');
 
