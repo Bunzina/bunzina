@@ -39,6 +39,38 @@ export const createServiceRouteSchema = {
   },
 };
 
+export const listServicesRouteSchema = {
+  detail: {
+    tags: ['Services'],
+    summary: 'Listar serviços',
+    description:
+      'Retorna uma lista de serviços, podendo ser filtrada por nome.',
+    responses: {
+      '200': { description: 'Serviços listados com sucesso' },
+      '400': { description: 'Parâmetros de consulta inválidos' },
+      '401': { description: 'Token ausente ou inválido' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  query: t.Object({
+    name: t.Optional(
+      t.String({ description: 'Filtra serviços pelo nome (busca parcial)' }),
+    ),
+    page: t.String({
+      description: 'Número da página',
+      minimum: '1',
+    }),
+    limit: t.String({
+      description: 'Quantidade de itens (máximo: 100)',
+      minimum: '1',
+      maximum: '100',
+    }),
+  }),
+  response: {
+    200: t.Array(serviceResponseSchema),
+  },
+};
+
 export const findServiceByIdRouteSchema = {
   detail: {
     tags: ['Services'],
