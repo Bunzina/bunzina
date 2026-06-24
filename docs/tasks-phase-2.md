@@ -29,6 +29,14 @@ Checklist de implementação para evoluir o projeto da Fase 1 à Fase 2.
   - O vídeo deve mostrar deploy, execução do CI/CD, consumo das APIs principais e escalabilidade automática com HPA; na parte de deploy e de CI/CD, pode ser mostrada uma execução bem-sucedida com explicação rápida das etapas.
   - Se sobrar tempo, incluir arquitetura, Clean Architecture/Hexagonal, testes, Terraform e observabilidade.
 
+## Prioridade: Muito Baixa
+Esses itens são melhorias em relação à fase 1, baseadas no feedback do professor, e só entram se houver tempo para refinamento.
+- [ ] Evoluir o Dockerfile para multi-stage.
+- [ ] Rodar a aplicação com usuário não root.
+- [ ] Adicionar um `.dockerignore`.
+- [ ] Aprofundar o relatório de vulnerabilidades, mostrando as findings analisadas e não apenas o link.
+- [x] Verificar se o Domain Storytelling já está devidamente adicionado; se já estiver, considerar esse ponto fechado.
+
 ## Notas
 - Os pontos levantados na apresentação reforçam que a entrega precisa deixar claro onde estão os diagramas, como executar a aplicação e como testar as APIs sem depender só da collection.
 - Conferir se nossa abordagem de Clean Architecture está bem purista, já que o professor frisou que precisa ser uma abordagem bem acadêmica.
