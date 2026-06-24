@@ -25,9 +25,10 @@ Checklist de implementação para evoluir o projeto da Fase 1 à Fase 2.
 - [ ] Adaptar pipeline CI/CD (GitHub Actions) para: build → testes → build imagem → push → deploy em Kubernetes (aplicar manifestos). Atualizar `.github/workflows` ou criar novo workflow `deploy-k8s.yml`.
 - [ ] Atualizar `README.md` com arquitetura da fase 2, instruções de deploy local/K8s e uso dos scripts Terraform.
 - [ ] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
-- [ ] Produzir vídeo demonstrativo (~15 minutos) mostrando deploy, CI/CD e escalabilidade e gerar PDF final de entrega.
+- [ ] Produzir vídeo demonstrativo de no máximo 15 minutos mostrando deploy, CI/CD, consumo das APIs principais e escalabilidade.
   - O vídeo deve mostrar deploy, execução do CI/CD, consumo das APIs principais e escalabilidade automática com HPA; na parte de deploy e de CI/CD, pode ser mostrada uma execução bem-sucedida com explicação rápida das etapas.
   - Se sobrar tempo, incluir arquitetura, Clean Architecture/Hexagonal, testes, Terraform e observabilidade.
+- [ ] Criar PDF final de entrega.
 
 ## Prioridade: Muito Baixa
 Esses itens são melhorias em relação à fase 1, baseadas no feedback do professor, e só entram se houver tempo para refinamento.
