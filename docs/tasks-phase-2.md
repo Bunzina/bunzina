@@ -5,7 +5,7 @@ Checklist de implementação para evoluir o projeto da Fase 1 à Fase 2.
 ## Prioridade: Alta
 - [ ] Ajustar listagem de Ordens de Serviço: ordenar por status (Em Execução > Aguardando Aprovação > Diagnóstico > Recebida) e, dentro do mesmo status, mais antigas primeiro. Excluir logicamente OS com status `COMPLETED` ou `DELIVERED` da listagem pública.
   - Arquivos relacionados: `src/infrastructure/repositories/service-order/service-order-repository.ts`, `src/application/use-cases/service-order/list.ts`, `src/adapters/input/service-order/list.ts`.
-- [ ] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição.
+- [x] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição. (FEITO NA FASE 1)
   - A OS deve nascer com status inicial `RECEIVED`.
   - Ponto de atenção: a API de abertura já existe e hoje recebe os IDs de referência das entidades; se isso já atender ao que foi pedido, não precisa modificar nada nesse ponto.
 - [ ] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
@@ -14,8 +14,7 @@ Checklist de implementação para evoluir o projeto da Fase 1 à Fase 2.
   - Informar no README como acessar o Swagger localmente e onde está a collection completa das APIs.
 
 ## Prioridade: Média
-- [ ] Implementar processamento de inbound email para atualizar status (se exigido). Alternativa: usar um serviço que converta email em webhook.
-  - Arquivos/áreas: infra / integração com provider (ex.: Mailgun, SendGrid) ou criar worker que conecta IMAP.
+- [x] Implementar processamento de inbound email para atualizar status (se exigido). Alternativa: usar um serviço que converta email em webhook. (FEITO NA FASE 1)
 - [ ] Criar manifestos Kubernetes mínimos em `/k8s`: `deployment.yaml`, `service.yaml`, `configmap.yaml`, `secret.yaml` (exemplo), `hpa.yaml`.
 - [ ] Adicionar scripts Terraform em `/infra` para provisionar cluster (local/cloud) e banco de dados; documentar recursos criados.
 - [ ] Disponibilizar os diagramas de arquitetura no repositório, preferencialmente em `docs/arch/` como PNG.
