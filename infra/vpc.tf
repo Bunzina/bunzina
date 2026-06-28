@@ -1,9 +1,5 @@
-data "aws_availability_zones" "available" {
-  state = "available"
-}
-
 locals {
-  azs = slice(data.aws_availability_zones.available.names, 0, 2)
+  azs = ["${var.aws_region}a", "${var.aws_region}b"]
 }
 
 module "vpc" {

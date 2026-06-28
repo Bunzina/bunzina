@@ -1,7 +1,7 @@
 variable "aws_region" {
-  description = "AWS region to deploy resources in"
+  description = "AWS region to deploy resources in. NOTE: the AWS Academy Learner Lab only permits us-east-1 (and a few US/EU regions); sa-east-1 is denied."
   type        = string
-  default     = "sa-east-1"
+  default     = "us-east-1"
 }
 
 variable "project_name" {
@@ -13,7 +13,7 @@ variable "project_name" {
 variable "cluster_version" {
   description = "Kubernetes version for the EKS cluster"
   type        = string
-  default     = "1.36"
+  default     = "1.32"
 }
 
 variable "vpc_cidr" {

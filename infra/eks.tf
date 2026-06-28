@@ -1,31 +1,87 @@
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.37"
+data "aws_caller_identity" "current" {}
 
-  cluster_name    = "${var.project_name}-eks"
-  cluster_version = var.cluster_version
+locals {
+  lab_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/LabRole"
+  voclabs_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/voclabs"
+}
 
-  cluster_endpoint_public_access           = true
-  enable_cluster_creator_admin_permissions = true
+resource "aws_eks_cluster" "this" {
+  name     = "${var.project_name}-eks"
+  version  = var.cluster_version
+  role_arn = local.lab_role_arn
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-
-  cluster_addons = {
-    coredns            = {}
-    kube-proxy         = {}
-    vpc-cni            = {}
-    aws-ebs-csi-driver = {}
+  vpc_config {
+    subnet_ids              = module.vpc.private_subnets
+    endpoint_public_access  = true
+    endpoint_private_access = true
   }
 
-  eks_managed_node_groups = {
-    default = {
-      instance_types = var.node_instance_types
-      desired_size   = var.node_desired_size
-      min_size       = var.node_min_size
-      max_size       = var.node_max_size
-    }
+  access_config {
+    authentication_mode                         = "API"
+    bootstrap_cluster_creator_admin_permissions = false
   }
+}
+
+resource "aws_eks_access_entry" "voclabs" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = local.voclabs_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "voclabs_admin" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = local.voclabs_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.voclabs]
+}
+
+resource "aws_eks_node_group" "default" {
+  cluster_name    = aws_eks_cluster.this.name
+  node_group_name = "default"
+  node_role_arn   = local.lab_role_arn
+  subnet_ids      = module.vpc.private_subnets
+  instance_types  = var.node_instance_types
+
+  scaling_config {
+    desired_size = var.node_desired_size
+    min_size     = var.node_min_size
+    max_size     = var.node_max_size
+  }
+
+  depends_on = [aws_eks_access_policy_association.voclabs_admin]
+}
+
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name                = aws_eks_cluster.this.name
+  addon_name                  = "vpc-cni"
+  resolve_conflicts_on_create = "OVERWRITE"
+}
+
+resource "aws_eks_addon" "kube_proxy" {
+  cluster_name                = aws_eks_cluster.this.name
+  addon_name                  = "kube-proxy"
+  resolve_conflicts_on_create = "OVERWRITE"
+}
+
+resource "aws_eks_addon" "coredns" {
+  cluster_name                = aws_eks_cluster.this.name
+  addon_name                  = "coredns"
+  resolve_conflicts_on_create = "OVERWRITE"
+
+  depends_on = [aws_eks_node_group.default]
+}
+
+resource "aws_eks_addon" "ebs_csi" {
+  cluster_name                = aws_eks_cluster.this.name
+  addon_name                  = "aws-ebs-csi-driver"
+  resolve_conflicts_on_create = "OVERWRITE"
+
+  depends_on = [aws_eks_node_group.default]
 }
 
 resource "kubernetes_storage_class" "gp3" {
@@ -42,5 +98,5 @@ resource "kubernetes_storage_class" "gp3" {
     type = "gp3"
   }
 
-  depends_on = [module.eks]
+  depends_on = [aws_eks_addon.ebs_csi]
 }

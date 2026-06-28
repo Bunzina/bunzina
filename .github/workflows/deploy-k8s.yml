@@ -1,4 +1,4 @@
-name: Deploy to AWS Lambda
+name: Deploy to Kubernetes (EKS)
 
 on:
   push:
@@ -10,9 +10,10 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  AWS_REGION: sa-east-1
+  AWS_REGION: us-east-1
   ECR_REPOSITORY: bunzina
-  LAMBDA_FUNCTION_NAME: bunzina
+  EKS_CLUSTER_NAME: bunzina-eks
+  K8S_NAMESPACE: bunzina
 
 permissions:
   contents: read
@@ -136,14 +137,36 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Run migrations against production database
-        run: bun run migration
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Run migrations via port-forward to in-cluster Postgres
         env:
           APP_ENV: prod
-          PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+        run: |
+          # O Postgres é interno ao cluster; abrimos um túnel para rodar a migration no runner.
+          kubectl port-forward -n "$K8S_NAMESPACE" svc/postgres 5432:5432 &
+          PF_PID=$!
+          trap 'kill $PF_PID' EXIT
+
+          # Aguarda o túnel ficar disponível.
+          for i in $(seq 1 30); do
+            if (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+
+          export PROD_DATABASE_URL="postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1:5432/bunzina"
+          bun run migration
 
   deploy:
-    name: Build & Deploy
+    name: Build & Deploy to EKS
     runs-on: ubuntu-latest
     needs:
       - test
@@ -173,11 +196,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Create ECR repository if not exists
-        run: |
-          aws ecr describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION || \
-          aws ecr create-repository --repository-name $ECR_REPOSITORY --region $AWS_REGION
-
       - name: Build, tag and push image to ECR
         id: build-image
         env:
@@ -189,37 +207,24 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      - name: Deploy to Lambda
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Apply manifests
+        run: |
+          # Recursos versionados (não inclui os Secrets, que são gerenciados fora do git).
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/configmap.yaml
+          kubectl apply -f k8s/postgres-service.yaml
+          kubectl apply -f k8s/postgres-statefulset.yaml
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl apply -f k8s/ingress.yaml
+          kubectl apply -f k8s/hpa.yaml
+
+      - name: Set new image and wait for rollout
         env:
           IMAGE_URI: ${{ steps.build-image.outputs.image }}
         run: |
-          if aws lambda get-function --function-name $LAMBDA_FUNCTION_NAME --region $AWS_REGION > /dev/null 2>&1; then
-            aws lambda update-function-code \
-              --function-name $LAMBDA_FUNCTION_NAME \
-              --image-uri $IMAGE_URI \
-              --region $AWS_REGION
-
-            aws lambda wait function-updated \
-              --function-name $LAMBDA_FUNCTION_NAME \
-              --region $AWS_REGION
-          else
-            aws lambda create-function \
-              --function-name $LAMBDA_FUNCTION_NAME \
-              --package-type Image \
-              --code ImageUri=$IMAGE_URI \
-              --role ${{ secrets.LAMBDA_EXECUTION_ROLE_ARN }} \
-              --region $AWS_REGION
-
-            aws lambda wait function-active \
-              --function-name $LAMBDA_FUNCTION_NAME \
-              --region $AWS_REGION
-          fi
-
-      - name: Update Lambda configuration
-        run: |
-          aws lambda update-function-configuration \
-            --function-name $LAMBDA_FUNCTION_NAME \
-            --timeout 30 \
-            --memory-size 512 \
-            --environment "Variables={APP_ENV=prod,PROD_DATABASE_URL=${{ secrets.PROD_DATABASE_URL }}}" \
-            --region $AWS_REGION
+          kubectl set image deployment/bunzina bunzina="$IMAGE_URI" -n "$K8S_NAMESPACE"
+          kubectl rollout status deployment/bunzina -n "$K8S_NAMESPACE" --timeout=180s
