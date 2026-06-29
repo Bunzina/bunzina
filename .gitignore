@@ -53,3 +53,9 @@ crash.log
 terraform.tfstate*
 tfplan
 *.tfplan
+
+# Helm
+values.secret.yaml
+charts/**/charts/
+charts/**/*.tgz
+charts/**/Chart.lock

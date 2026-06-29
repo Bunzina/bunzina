@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "bunzina" {
 }
 
 resource "aws_ecr_repository" "bunzina_chart" {
-  name                 = "${var.project_name}-chart"
+  name                 = "app-chart"
   image_tag_mutability = "MUTABLE"
   force_delete         = true
 }

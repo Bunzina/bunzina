@@ -1,0 +1,69 @@
+# Valores do Bunzina. Tudo fica aninhado sob "app-chart" (nome do subchart);
+# o Helm repassa este bloco para o app-chart, que lê .Values.app / .Values.database.
+#
+# 🔐 Segredos NÃO ficam aqui. Os mapas `app.secret` e `database.secret` vêm de
+# `values.secret.yaml` (no .gitignore) — copie de `values.secret.example.yaml`.
+# Instale/atualize com:  helm ... -f values.secret.yaml
+app-chart:
+  namespace: bunzina
+
+  app:
+    name: bunzina
+    image:
+      repository: 955971900480.dkr.ecr.us-east-1.amazonaws.com/bunzina
+      tag: ""
+      pullPolicy: IfNotPresent
+    replicaCount: 2
+    containerPort: 3000
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: true
+      className: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/healthcheck-path: /health
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPU: 70
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+    probes:
+      path: /health
+    config:
+      APP_ENV: "prod"
+      PROD_DB_HOST: "postgres"
+      PROD_DB_PORT: "5432"
+      PROD_DB_NAME: "bunzina"
+      EMAIL_SMTP_HOST: "mailcatcher"
+      EMAIL_SMTP_PORT: "1025"
+      EMAIL: "no-reply@bunzina.local"
+      JWT_EXPIRES_IN: "1d"
+    # secret: definido em values.secret.yaml
+
+  database:
+    enabled: true
+    name: postgres
+    image: postgres:15
+    port: 5432
+    persistence:
+      storage: 10Gi
+      storageClassName: gp3
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+    # secret: definido em values.secret.yaml
