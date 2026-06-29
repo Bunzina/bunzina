@@ -17,4 +17,8 @@ export class Document {
 
     this.value = cleanedValue;
   }
+
+  isEqual(document: Document): boolean {
+    return this.value === document.value;
+  }
 }
