@@ -1,16 +1,25 @@
-FROM public.ecr.aws/awsgithubtools/lambda-web-adapter:latest AS lambda-adapter
-
-FROM oven/bun:latest AS base
+FROM oven/bun:1.2 AS base
 
 WORKDIR /app
+ENV NODE_ENV=production
 
-COPY --from=lambda-adapter /lambda-web-adapter /opt/extensions/lambda-web-adapter
+FROM base AS deps
 
 COPY bun.lock package.json bunfig.toml tsconfig.json ./
+RUN bun install --frozen-lockfile --production
 
-RUN bun install --production
+FROM base AS runner
 
-COPY . .
+RUN addgroup --system bunzina \
+	&& adduser --system --ingroup bunzina bunzina
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --chown=bunzina:bunzina package.json bunfig.toml tsconfig.json ./
+COPY --chown=bunzina:bunzina src ./src
+COPY --chown=bunzina:bunzina migrations ./migrations
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.0.0 /lambda-adapter /opt/extensions/lambda-adapter
+
+USER bunzina
 
 EXPOSE 3000
 

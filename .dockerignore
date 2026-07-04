@@ -1,0 +1,14 @@
+.git
+.github
+.vscode
+coverage
+docs
+scripts
+README.md
+**/*.test.ts
+src/test/
+migrations/engine/
+node_modules
+.env
+.env.*
+*.log
