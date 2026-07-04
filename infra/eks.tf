@@ -40,12 +40,27 @@ resource "aws_eks_access_policy_association" "voclabs_admin" {
   depends_on = [aws_eks_access_entry.voclabs]
 }
 
+resource "aws_launch_template" "node" {
+  name_prefix = "${var.project_name}-node-"
+
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+}
+
 resource "aws_eks_node_group" "default" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "default"
   node_role_arn   = local.lab_role_arn
   subnet_ids      = module.vpc.private_subnets
   instance_types  = var.node_instance_types
+
+  launch_template {
+    id      = aws_launch_template.node.id
+    version = aws_launch_template.node.latest_version
+  }
 
   scaling_config {
     desired_size = var.node_desired_size
