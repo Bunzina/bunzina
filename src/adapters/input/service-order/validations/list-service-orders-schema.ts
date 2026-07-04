@@ -5,16 +5,14 @@ export const listServiceOrdersSchema = z
   .object({
     page: z.coerce.number().int().min(1),
     limit: z.coerce.number().int().min(1).max(100),
-    customerId: z.string().uuid('Customer ID must be a valid UUID').optional(),
-    vehicleId: z.string().uuid('Vehicle ID must be a valid UUID').optional(),
-    status: z.nativeEnum(ServiceOrderStatus).optional(),
-    startCreatedAt: z
-      .string()
+    customerId: z.uuid('Customer ID must be a valid UUID').optional(),
+    vehicleId: z.uuid('Vehicle ID must be a valid UUID').optional(),
+    status: z.enum(ServiceOrderStatus).optional(),
+    startCreatedAt: z.iso
       .datetime()
       .optional()
       .transform((value) => (value ? new Date(value) : undefined)),
-    endCreatedAt: z
-      .string()
+    endCreatedAt: z.iso
       .datetime()
       .optional()
       .transform((value) => (value ? new Date(value) : undefined)),

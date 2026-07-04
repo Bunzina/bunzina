@@ -1,11 +1,27 @@
 import type { Service } from '@/domain/service/entities/service';
-import type { ServiceRepository as IServiceRepository } from '@/domain/service/repositories/service-repository';
+import type {
+  FindServicesParams,
+  ServiceRepository as IServiceRepository,
+} from '@/domain/service/repositories/service-repository';
 import logger from '@lucas-pmelo/logger';
 import type { SQL } from 'bun';
+import type { ServiceDbSchema } from './dtos/service-db-schema';
 import { ServiceMapper } from './mappers/service-mappers';
 
 export class ServiceRepository implements IServiceRepository {
   constructor(private client: SQL) {}
+
+  private buildFindByParamsFiltersSql(
+    filters: NonNullable<FindServicesParams['filters']>,
+  ) {
+    const nameFilter = filters.name
+      ? this.client`AND name ILIKE ${`%${filters.name}%`}`
+      : this.client``;
+
+    return this.client`
+      ${nameFilter}
+    `;
+  }
 
   async findById(id: string): Promise<Service | null> {
     logger.debug({
@@ -22,6 +38,56 @@ export class ServiceRepository implements IServiceRepository {
     }
 
     return ServiceMapper.toDomain(result[0]);
+  }
+
+  async findByParams(params: FindServicesParams): Promise<Service[]> {
+    const filters = params.filters ?? {};
+    const filtersSql = this.buildFindByParamsFiltersSql(filters);
+    const offset = (params.page - 1) * params.limit;
+
+    logger.debug({
+      message: 'Finding paginated services',
+      data: {
+        page: params.page,
+        limit: params.limit,
+        filters,
+      },
+    });
+
+    const records = await this.client<ServiceDbSchema[]>`
+      SELECT *
+      FROM bunzina.services
+      WHERE is_active = true
+      ${filtersSql}
+      ORDER BY created_at DESC
+      LIMIT ${params.limit}
+      OFFSET ${offset}
+    `;
+
+    if (!records.length) {
+      logger.debug({
+        message: 'No services found for given params',
+        data: {
+          page: params.page,
+          limit: params.limit,
+          filters,
+        },
+      });
+      return [];
+    }
+
+    const data = records.map((record) => ServiceMapper.toDomain(record));
+
+    logger.debug({
+      message: 'Paginated services found',
+      data: {
+        count: data.length,
+        page: params.page,
+        limit: params.limit,
+      },
+    });
+
+    return data;
   }
 
   async update(service: Service): Promise<Service> {
