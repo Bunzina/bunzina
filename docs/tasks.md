@@ -1,36 +1,194 @@
-# 📋 Tasks — Fase 2 (14SOAT)
+# ✅ Checklist – Tech Challenge Fase 1
 
-Checklist de implementação para evoluir o projeto da Fase 1 à Fase 2.
+## 🎥 1. Vídeo de apresentação
 
-## Prioridade: Alta
-- [ ] Ajustar listagem de Ordens de Serviço: ordenar por status (Em Execução > Aguardando Aprovação > Diagnóstico > Recebida) e, dentro do mesmo status, mais antigas primeiro. Excluir logicamente OS com status `COMPLETED` ou `DELIVERED` da listagem pública.
-  - Arquivos relacionados: `src/infrastructure/repositories/service-order/service-order-repository.ts`, `src/application/use-cases/service-order/list.ts`, `src/adapters/input/service-order/list.ts`.
-- [ ] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
-  - Ponto de partida: `src/api/handlers/service-order/update.ts` e `src/api/handlers/service-order/schema.ts`.
+- [ ] Vídeo com até **15 minutos**
+- [ ] Demonstração do **sistema funcionando**
+- [ ] Explicação da **arquitetura utilizada**
+- [ ] Demonstração das **principais APIs**
+- [ ] Demonstração do **fluxo de Ordem de Serviço**
+- [ ] Explicação da **modelagem DDD**
+- [ ] Demonstração dos **testes automatizados**
+- [ ] Demonstração do **Docker rodando o projeto**
+- [ ] Apresentação da **documentação (DDD + Swagger)**
 
-## Prioridade: Média
-- [ ] Implementar processamento de inbound email para atualizar status (se exigido). Alternativa: usar um serviço que converta email em webhook.
-  - Arquivos/áreas: infra / integração com provider (ex.: Mailgun, SendGrid) ou criar worker que conecta IMAP.
-- [ ] Criar manifestos Kubernetes mínimos em `/k8s`: `deployment.yaml`, `service.yaml`, `configmap.yaml`, `secret.yaml` (exemplo), `hpa.yaml`.
-- [ ] Adicionar scripts Terraform em `/infra` para provisionar cluster (local/cloud) e banco de dados; documentar recursos criados.
+---
 
-## Prioridade: Baixa / Finalização
-- [ ] Adaptar pipeline CI/CD (GitHub Actions) para: build → testes → build imagem → push → deploy em Kubernetes (aplicar manifestos). Atualizar `.github/workflows` ou criar novo workflow `deploy-k8s.yml`.
-- [ ] Atualizar `README.md` com arquitetura da fase 2, instruções de deploy local/K8s e uso dos scripts Terraform.
-- [ ] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
-- [ ] Produzir vídeo demonstrativo (~15 minutos) mostrando deploy, CI/CD e escalabilidade e gerar PDF final de entrega.
+# 📚 2. Documentação DDD
 
-## Notas
-- Comece pelo item de alta prioridade para alinhar com requisitos de listagem/fluxo de aprovação.
-- Posso abrir PRs com mudanças incrementais (ex.: PR só para alteração da query de listagem) para revisão.
+## Event Storming
 
-## README — conteúdo obrigatório / README — required content
+- [x] Event Storming do fluxo **Criação da Ordem de Serviço**
+- [x] Event Storming do fluxo **Acompanhamento da Ordem de Serviço**
+- [x] Event Storming do fluxo **Gestão de peças e insumos**
 
-Português:
-- [ ] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
-- [ ] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
-- [ ] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
-- [ ] Desenho da arquitetura com:
-  - Componentes da aplicação (API, workers, DB, serviços externos).
-  - Infraestrutura provisionada (K8s cluster, DB, storage, secrets management).
-  - Fluxo de deploy (build → tests → image push → apply manifests / terraform apply).
+## Diagramas DDD
+
+- [x] **Bounded Contexts**
+- [x] **Agregados**
+- [x] **Entidades**
+- [x] **Value Objects**
+- [x] **Domain Events**
+
+## Linguagem Ubíqua
+
+- [x] Definição da **Linguagem Ubíqua**
+
+---
+
+# 💻 3. Código-fonte
+
+## Repositório
+
+- [ ] Repositório **privado**
+- [ ] Acesso concedido para **soat-architecture**
+
+## Estrutura do projeto
+
+- [x] Arquitetura em **camadas**
+- [x] Organização clara do código
+
+Estrutura sugerida:
+
+    src
+    ├── domain
+    ├── application
+    ├── infrastructure
+    └── api
+
+---
+
+# ⚙️ 4. Funcionalidades obrigatórias
+
+## Ordem de Serviço
+
+- [x] Criar **Ordem de Serviço**
+- [x] Identificar cliente por **CPF/CNPJ**
+- [x] Cadastro de **veículo**
+- [x] Inclusão de **serviços**
+- [x] Inclusão de **peças**
+- [x] **Orçamento automático**
+- [ ] **Envio do orçamento para aprovação**
+
+## Status da Ordem de Serviço
+
+- [x] Recebida
+- [x] Em diagnóstico
+- [x] Aguardando aprovação
+- [x] Em execução
+- [x] Finalizada
+- [x] Entregue
+
+- [x] Alteração automática de status
+- [x] API para cliente consultar progresso da OS
+
+---
+
+# 🗂️ 5. Gestão administrativa
+
+## Clientes
+
+- [x] CRUD de clientes
+
+## Veículos
+
+- [x] CRUD de veículos
+
+## Serviços
+
+- [x] CRUD de serviços
+
+## Peças e Insumos
+
+- [x] CRUD de peças
+- [x] Controle de estoque
+
+## Ordens de Serviço
+
+- [x] Listagem de OS
+- [x] Detalhamento de OS
+
+## Métricas
+
+- [x] Monitoramento do **tempo médio de execução dos serviços**
+
+---
+
+# 🔐 6. Segurança
+
+- [x] Implementação de **autenticação JWT**
+- [x] Proteção das **APIs administrativas**
+- [x] Validação de **CPF/CNPJ**
+- [x] Validação de **placa de veículo**
+
+---
+
+# 🧪 7. Testes
+
+- [x] Testes **unitários**
+- [x] Testes **de integração**
+- [x] Cobertura mínima de **80% nos domínios críticos**
+
+---
+
+# 🐳 8. Docker
+
+- [x] **Dockerfile**
+- [x] **docker-compose.yml**
+- [x] Aplicação sobe com **um único comando**
+- [x] Banco de dados sobe automaticamente
+
+---
+
+# 📖 9. Documentação da API
+
+- [x] **Swagger / OpenAPI**
+- [x] Endpoints documentados
+- [x] Documentação acessível via endpoint
+
+---
+
+# 📄 10. README.md
+
+- [x] Descrição do projeto
+- [x] Objetivo do sistema
+- [x] Tecnologias utilizadas
+- [x] Justificativa do banco de dados escolhido
+- [x] Como rodar com **Docker**
+- [x] Como rodar **localmente**
+- [x] Como executar **testes**
+
+---
+
+# 🛡️ 11. Relatório de vulnerabilidades
+
+- [x] Scan de segurança no código
+- [x] Ferramenta utilizada documentada
+- [ ] Vulnerabilidades encontradas
+- [ ] Correções aplicadas ou justificativas
+
+---
+
+# 📑 12. Documento final de entrega (PDF)
+
+Deve conter:
+
+- [x] **Nome do grupo**
+- [x] **Participantes**
+- [x] **Usernames no Discord**
+- [x] **Link da documentação DDD**
+- [x] **Link do repositório**
+- [ ] **Relatório de vulnerabilidades**
+
+---
+
+# ⭐ Checklist final antes da entrega
+
+- [x] Sistema roda com `docker-compose up`
+- [x] Swagger funcionando
+- [x] APIs funcionando
+- [x] Testes passando
+- [x] Cobertura ≥ **80%**
+- [x] Documentação DDD pronta
+- [ ] Vídeo gravado
+- [ ] PDF final pronto
