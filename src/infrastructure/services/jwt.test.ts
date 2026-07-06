@@ -58,7 +58,7 @@ describe('jwt service', () => {
     const data = `${header}.${payload}`;
     const key = await crypto.subtle.importKey(
       'raw',
-      encoder.encode('bunzina-jwt-secret'),
+      encoder.encode(process.env.JWT_SECRET as string),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],
@@ -90,7 +90,7 @@ describe('jwt service', () => {
     const data = `${header}.${payload}`;
     const key = await crypto.subtle.importKey(
       'raw',
-      encoder.encode('bunzina-jwt-secret'),
+      encoder.encode(process.env.JWT_SECRET as string),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],
@@ -130,7 +130,7 @@ describe('jwt service', () => {
     const data = `${header}.${payload}`;
     const key = await crypto.subtle.importKey(
       'raw',
-      encoder.encode('bunzina-jwt-secret'),
+      encoder.encode(process.env.JWT_SECRET as string),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],
@@ -170,7 +170,7 @@ describe('jwt service', () => {
     const data = `${header}.${payload}`;
     const key = await crypto.subtle.importKey(
       'raw',
-      encoder.encode('bunzina-jwt-secret'),
+      encoder.encode(process.env.JWT_SECRET as string),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],
@@ -210,7 +210,7 @@ describe('jwt service', () => {
     const data = `${header}.${payload}`;
     const key = await crypto.subtle.importKey(
       'raw',
-      encoder.encode('bunzina-jwt-secret'),
+      encoder.encode(process.env.JWT_SECRET as string),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign'],

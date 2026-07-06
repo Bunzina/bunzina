@@ -46,9 +46,23 @@ async function validateAuthorization(
   return;
 }
 
-function validateApiKey(apiKey: string): Response | undefined {
+function validateApiKey(
+  context: HandlerContext,
+  apiKey: string,
+): Response | undefined {
   try {
     verifyApiKey(apiKey);
+
+    context.store = {
+      ...context.store,
+      user: {
+        sub: 'service:internal',
+        email: 'service@bunzina.internal',
+        role: 'SERVICE',
+        iat: 0,
+        exp: 0,
+      },
+    };
   } catch (error) {
     logger.warn({
       message: 'Invalid api key',
@@ -83,7 +97,7 @@ export const authMiddleware = async (
   }
 
   if (apiKey) {
-    return validateApiKey(apiKey);
+    return validateApiKey(context, apiKey);
   }
 
   if (!authorization) {

@@ -17,14 +17,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --chown=bunzina:bunzina package.json bunfig.toml tsconfig.json ./
 COPY --chown=bunzina:bunzina src ./src
 COPY --chown=bunzina:bunzina migrations ./migrations
-COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.0.0 /lambda-adapter /opt/extensions/lambda-adapter
 
 USER bunzina
 
 EXPOSE 3000
 
 ENV PORT=3000
-ENV AWS_LWA_PORT=3000
-ENV AWS_LWA_READINESS_CHECK_PATH=/health
 
 CMD ["bun", "run", "start"]

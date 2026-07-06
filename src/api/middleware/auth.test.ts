@@ -110,6 +110,32 @@ describe('auth middleware', () => {
     });
   });
 
+  test('should set a service principal in store when api key is valid', async () => {
+    const original = process.env.API_KEY;
+    process.env.API_KEY = 'valid-service-key';
+
+    const context = {
+      request: {
+        headers: new Headers({ 'Api-Key': 'valid-service-key' }),
+      },
+      store: {},
+    } as unknown as Context;
+
+    const result = await authMiddleware(context);
+
+    expect(result).toBeUndefined();
+    expect((context.store as Record<string, unknown>).user).toMatchObject({
+      sub: 'service:internal',
+      role: 'SERVICE',
+    });
+
+    if (original === undefined) {
+      delete process.env.API_KEY;
+    } else {
+      process.env.API_KEY = original;
+    }
+  });
+
   test('should return 401 when api key is invalid even if authorization is valid', async () => {
     const token = await signJwt({
       sub: '123',
