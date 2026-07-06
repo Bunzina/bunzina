@@ -1,9 +1,3 @@
-# Valores do Bunzina. Tudo fica aninhado sob "app-chart" (nome do subchart);
-# o Helm repassa este bloco para o app-chart, que lê .Values.app / .Values.database.
-#
-# 🔐 Segredos NÃO ficam aqui. Os mapas `app.secret` e `database.secret` vêm de
-# `values.secret.yaml` (no .gitignore) — copie de `values.secret.example.yaml`.
-# Instale/atualize com:  helm ... -f values.secret.yaml
 app-chart:
   namespace: bunzina
 
@@ -49,7 +43,6 @@ app-chart:
       EMAIL_SMTP_PORT: "1025"
       EMAIL: "no-reply@bunzina.local"
       JWT_EXPIRES_IN: "1d"
-    # secret: definido em values.secret.yaml
 
   database:
     enabled: true
@@ -66,4 +59,3 @@ app-chart:
       limits:
         cpu: "500m"
         memory: "512Mi"
-    # secret: definido em values.secret.yaml

@@ -151,12 +151,10 @@ jobs:
         env:
           APP_ENV: prod
         run: |
-          # O Postgres é interno ao cluster; abrimos um túnel para rodar a migration no runner.
           kubectl port-forward -n "$K8S_NAMESPACE" svc/postgres 5432:5432 &
           PF_PID=$!
           trap 'kill $PF_PID' EXIT
 
-          # Aguarda o túnel ficar disponível.
           for i in $(seq 1 30); do
             if (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; then break; fi
             sleep 1
@@ -212,7 +210,6 @@ jobs:
 
       - name: Apply manifests
         run: |
-          # Recursos versionados (não inclui os Secrets, que são gerenciados fora do git).
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/configmap.yaml
           kubectl apply -f k8s/postgres-service.yaml
