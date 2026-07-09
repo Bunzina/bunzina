@@ -191,31 +191,13 @@ A partir da Fase 2, a aplicação roda em **Kubernetes (AWS EKS)** em vez de AWS
 
 ### Arquitetura
 
-```
-                         Internet
-                            │
-                    ┌───────▼────────┐
-                    │  Ingress (ALB) │
-                    └───────┬────────┘
-                            │
-                  ┌─────────▼─────────┐         ┌──────────────────┐
-                  │ Service (ClusterIP)│        │ HPA (CPU 70%)    │
-                  └─────────┬─────────┘         │ 2 → 10 réplicas  │
-                            │                    └────────┬─────────┘
-                  ┌─────────▼──────────────────────────────▼───┐
-                  │ Deployment: bunzina (API Bun/Elysia :3000)  │
-                  │   readiness/liveness → GET /health          │
-                  │   envFrom: ConfigMap + Secret               │
-                  └─────────┬───────────────────────────────────┘
-                            │ PROD_DB_HOST=postgres
-                  ┌─────────▼─────────┐
-                  │ StatefulSet:       │
-                  │ postgres:15 + PVC  │ (EBS gp3, 10Gi)
-                  └────────────────────┘
+Os diagramas da Fase 2 estão em [docs/arch](docs/arch):
 
-Fluxo de deploy (CI/CD — .github/workflows/deploy-k8s.yml):
-  test → migrate-prod (port-forward + bun run migration) → build/push ECR → kubectl apply → rollout
-```
+- [docs/arch/application-components.png](docs/arch/application-components.png) — componentes da aplicação (API, workers, DB e serviços externos)
+- [docs/arch/infrastructure-provisioning.png](docs/arch/infrastructure-provisioning.png) — infraestrutura provisionada (cluster, banco, storage e secrets)
+- [docs/arch/deploy.png](docs/arch/deploy.png) — fluxo de deploy (build, testes, push de imagem e deploy)
+
+
 
 | Componente | Recurso |
 | --- | --- |
