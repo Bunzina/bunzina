@@ -1,0 +1,12 @@
+[test]
+root = "."
+preload = ["./src/test/setup.ts"]
+coverage = false
+testTimeout = 60000
+pathIgnorePatterns = [
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/coverage/**",
+  "**/src/test/**",
+  "**/infrastructure/configs/**",
+]
