@@ -5,18 +5,21 @@ import { mockFn } from 'bun-mock-extended';
 import { describe, expect, test, type Mock } from 'bun:test';
 import { ServiceOrderRepository } from './service-order-repository';
 
+type SqlQueryMock = Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+type TransactionMock = Mock<
+  (callback: (sql: SqlQueryMock) => Promise<void>) => Promise<void>
+>;
+
 describe('service order repository', () => {
   test('should create a service order and return it', async () => {
     const mockClient = mockFn<
       (..._args: unknown[]) => Promise<unknown[]>
-    >() as unknown as Mock<(..._args: unknown[]) => Promise<unknown[]>>;
+    >() as unknown as SqlQueryMock;
     mockClient.mockResolvedValue([]);
 
     const mockTransaction = mockFn<
-      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-    >() as unknown as Mock<
-      (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-    >;
+      (callback: (sql: SqlQueryMock) => Promise<void>) => Promise<void>
+    >() as unknown as TransactionMock;
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -37,13 +40,14 @@ describe('service order repository', () => {
   });
 
   test('should update a service order and return it', async () => {
-    const mockClient = mockFn<SQL>();
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as SqlQueryMock;
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction =
-      mockFn<
-        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-      >();
+    const mockTransaction = mockFn<
+      (callback: (sql: SqlQueryMock) => Promise<void>) => Promise<void>
+    >() as unknown as TransactionMock;
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -66,7 +70,9 @@ describe('service order repository', () => {
   });
 
   test('should find a service order by id', async () => {
-    const mockClient = mockFn<SQL>();
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as SqlQueryMock;
 
     const serviceOrderId = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
     const createdAt = new Date('2026-04-01T10:00:00.000Z');
@@ -167,7 +173,9 @@ describe('service order repository', () => {
   });
 
   test('should return null when service order is not found', async () => {
-    const mockClient = mockFn<SQL>();
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as SqlQueryMock;
     mockClient.mockResolvedValue([]);
 
     const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
@@ -181,13 +189,14 @@ describe('service order repository', () => {
   });
 
   test('should delete a service order', async () => {
-    const mockClient = mockFn<SQL>();
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as SqlQueryMock;
     mockClient.mockResolvedValue([]);
 
-    const mockTransaction =
-      mockFn<
-        (callback: (sql: typeof mockClient) => Promise<void>) => Promise<void>
-      >();
+    const mockTransaction = mockFn<
+      (callback: (sql: SqlQueryMock) => Promise<void>) => Promise<void>
+    >() as unknown as TransactionMock;
 
     (
       mockClient as unknown as { transaction: typeof mockTransaction }
@@ -206,74 +215,47 @@ describe('service order repository', () => {
   });
 
   test('should find service orders by params', async () => {
-    const serviceOrder = makeServiceOrder({
-      id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
-      customerId: 'customer-id',
-      vehicleId: 'vehicle-id',
-      createdAt: new Date('2026-04-01T10:00:00.000Z'),
-      updatedAt: new Date('2026-04-02T10:00:00.000Z'),
+    const mockClient = mockFn<
+      (..._args: unknown[]) => Promise<unknown[]>
+    >() as unknown as SqlQueryMock;
+    const queries: string[] = [];
+
+    mockClient.mockImplementation((...args: unknown[]) => {
+      const [strings] = args as [TemplateStringsArray];
+
+      queries.push(strings.join(' '));
+      return Promise.resolve([]);
     });
-    const [serviceItem] = serviceOrder.serviceItems;
-    const [autoPartItem] = serviceOrder.autoPartItems;
-
-    const mockClient = mockFn<SQL>();
-
-    mockClient
-      .mockImplementationOnce(() =>
-        Promise.resolve([
-          {
-            id: serviceOrder.id,
-            customer_id: serviceOrder.customerId,
-            vehicle_id: serviceOrder.vehicleId,
-            status: serviceOrder.status,
-            quote_services_total: serviceOrder.quote.servicesTotal,
-            quote_auto_parts_total: serviceOrder.quote.autoPartsTotal,
-            quote_total: serviceOrder.quote.total,
-            created_at: serviceOrder.createdAt,
-            updated_at: serviceOrder.updatedAt,
-            approved_at: null,
-            started_at: null,
-            completed_at: null,
-            delivered_at: null,
-          },
-        ] as unknown[]),
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve([
-          {
-            id: serviceItem!.id,
-            service_order_id: serviceOrder.id,
-            service_id: serviceItem!.serviceId,
-            price: serviceItem!.price.value,
-            description: serviceItem!.description,
-          },
-        ] as unknown[]),
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve([
-          {
-            id: autoPartItem!.id,
-            service_order_id: serviceOrder.id,
-            auto_part_id: autoPartItem!.autoPartId,
-            quantity: autoPartItem!.quantity,
-            unit_price: autoPartItem!.unitPrice.value,
-            total_price: autoPartItem!.totalPrice?.value,
-            description: autoPartItem!.description,
-          },
-        ] as unknown[]),
-      );
 
     const repository = new ServiceOrderRepository(mockClient as unknown as SQL);
 
     const result = await repository.findByParams({
       page: 1,
       limit: 10,
-      filters: {
-        customerId: 'customer-id',
-      },
+      customerId: 'customer-id',
+      status: ServiceOrderStatus.IN_EXECUTION,
     });
 
     expect(result).toEqual([]);
+    expect(
+      queries.some((query) => query.includes('FROM bunzina.service_orders')),
+    ).toBe(true);
+    expect(
+      queries.some((query) =>
+        query
+          .replace(/\s+/g, ' ')
+          .includes(
+            "CASE status WHEN 'IN_EXECUTION' THEN 1 WHEN 'AWAITING_APPROVAL' THEN 2 WHEN 'IN_DIAGNOSTIC' THEN 3 WHEN 'RECEIVED' THEN 4 ELSE 5 END, created_at ASC",
+          ),
+      ),
+    ).toBe(true);
+    expect(
+      queries.some((query) =>
+        query
+          .replace(/\s+/g, ' ')
+          .includes("status NOT IN ('COMPLETED', 'DELIVERED')"),
+      ),
+    ).toBe(true);
     expect(mockClient).toHaveBeenCalled();
   });
 });

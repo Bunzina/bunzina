@@ -106,8 +106,8 @@ export const ServiceOrderMapper = {
     autoPartItems: ServiceOrderAutoPartItemDbSchema[],
   ): ServiceOrder {
     const quote = new Quote({
-      servicesTotal: record.quote_services_total,
-      autoPartsTotal: record.quote_auto_parts_total,
+      servicesTotal: Number(record.quote_services_total),
+      autoPartsTotal: Number(record.quote_auto_parts_total),
     });
 
     return new ServiceOrder({

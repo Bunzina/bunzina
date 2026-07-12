@@ -1,11 +1,11 @@
-import { createServiceOrderSchema } from '@/adapters/input/service-order/validations/create-service-order-schema';
 import { findCustomerSchema } from '@/adapters/input/customer/validations/find-customer-schema';
+import { createServiceOrderSchema } from '@/adapters/input/service-order/validations/create-service-order-schema';
 import { deleteServiceOrderSchema } from '@/adapters/input/service-order/validations/delete-service-order-schema';
-import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
 import { findServiceOrderItemSchema } from '@/adapters/input/service-order/validations/find-service-order-item-schema';
-import { listServiceOrdersSchema } from '@/adapters/input/service-order/validations/list-service-orders-schema';
-import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
+import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
+
 import { updateServiceOrderBodySchema } from '@/adapters/input/service-order/validations/update-service-order-schema';
+import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
 import { validateQuoteConfirmationSchema } from '@/adapters/input/service-order/validations/validate-quote-confirmation-schema';
 import { t } from 'elysia';
 
@@ -163,7 +163,15 @@ export const listServiceOrdersRouteSchema = {
       '500': { description: 'Internal server error' },
     },
   },
-  query: listServiceOrdersSchema,
+  query: t.Object({
+    page: t.String(),
+    limit: t.String(),
+    customerId: t.Optional(t.String({ format: 'uuid' })),
+    vehicleId: t.Optional(t.String({ format: 'uuid' })),
+    status: t.Optional(serviceOrderStatusSchema),
+    startCreatedAt: t.Optional(t.String({ format: 'date-time' })),
+    endCreatedAt: t.Optional(t.String({ format: 'date-time' })),
+  }),
   response: {
     200: t.Array(serviceOrderResponseSchema),
   },

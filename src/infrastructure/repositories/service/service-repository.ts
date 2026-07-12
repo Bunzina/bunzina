@@ -76,7 +76,7 @@ export class ServiceRepository implements IServiceRepository {
       return [];
     }
 
-    const data = records.map((record) => ServiceMapper.toDomain(record));
+    const data = records.map(ServiceMapper.toDomain);
 
     logger.debug({
       message: 'Paginated services found',

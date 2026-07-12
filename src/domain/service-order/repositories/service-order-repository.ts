@@ -1,19 +1,15 @@
-import type { ServiceOrder } from '../entities/service-order';
 import type { ServiceItem } from '../entities/service-item';
+import type { ServiceOrder } from '../entities/service-order';
 import type { ServiceOrderStatus } from '../types/service-order-status';
 
-export interface FindServiceOrdersFilters {
+export interface FindServiceOrdersParams {
+  page: number;
+  limit: number;
   customerId?: string;
   vehicleId?: string;
   status?: ServiceOrderStatus;
   startCreatedAt?: Date;
   endCreatedAt?: Date;
-}
-
-export interface FindServiceOrdersParams {
-  page: number;
-  limit: number;
-  filters?: FindServiceOrdersFilters;
 }
 
 export interface ServiceOrderRepository {
