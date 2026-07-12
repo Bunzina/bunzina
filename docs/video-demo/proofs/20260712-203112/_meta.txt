@@ -1,0 +1,2 @@
+Coletado em 2026-07-12T20:31:22-03:00
+ALB: http://k8s-bunzina-bunzina-5a6831c175-1132803300.us-east-1.elb.amazonaws.com
