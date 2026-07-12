@@ -21,4 +21,5 @@ if (appEnv === 'prod') {
     process.env.DATABASE_URL || 'postgres://bun:bun@db:5432/bunzina';
 }
 
-export const db = new SQL(connectionString);
+// prepare:false -> compatível com o transaction-mode pooler do Supabase (porta 6543).
+export const db = new SQL(connectionString, { prepare: false });
