@@ -3,8 +3,8 @@ name: Terraform
 on:
   pull_request:
     paths:
-      - "infra/**"
-      - ".github/workflows/terraform.yml"
+      - 'infra/**'
+      - '.github/workflows/terraform.yml'
   workflow_dispatch:
 
 concurrency:
@@ -42,7 +42,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.11.4"
+          terraform_version: '1.11.4'
 
       - name: Bootstrap state bucket
         working-directory: .
@@ -116,7 +116,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.11.4"
+          terraform_version: '1.11.4'
 
       - name: Bootstrap state bucket
         working-directory: .
