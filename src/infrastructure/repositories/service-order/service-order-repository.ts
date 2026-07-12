@@ -34,7 +34,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
   }
 
   private buildFindByParamsFiltersSql(
-    filters: NonNullable<FindServiceOrdersParams['filters']>,
+    filters: NonNullable<Omit<FindServiceOrdersParams, 'page' | 'limit'>>,
   ) {
     const customerIdFilter = filters.customerId
       ? this.client`AND customer_id = ${filters.customerId}`
@@ -152,7 +152,13 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
   }
 
   async findByParams(params: FindServiceOrdersParams): Promise<ServiceOrder[]> {
-    const filters = params.filters ?? {};
+    const filters = {
+      customerId: params.customerId,
+      vehicleId: params.vehicleId,
+      status: params.status,
+      startCreatedAt: params.startCreatedAt,
+      endCreatedAt: params.endCreatedAt,
+    };
     const filtersSql = this.buildFindByParamsFiltersSql(filters);
     const offset = (params.page - 1) * params.limit;
 

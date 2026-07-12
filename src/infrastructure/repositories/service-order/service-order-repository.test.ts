@@ -232,10 +232,8 @@ describe('service order repository', () => {
     const result = await repository.findByParams({
       page: 1,
       limit: 10,
-      filters: {
-        customerId: 'customer-id',
-        status: ServiceOrderStatus.IN_EXECUTION,
-      },
+      customerId: 'customer-id',
+      status: ServiceOrderStatus.IN_EXECUTION,
     });
 
     expect(result).toEqual([]);
