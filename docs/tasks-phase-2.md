@@ -30,12 +30,12 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
 ## Prioridade: Alta
 - [ ] Ajustar listagem de Ordens de Serviço: ordenar por status (Em Execução > Aguardando Aprovação > Diagnóstico > Recebida) e, dentro do mesmo status, mais antigas primeiro. Excluir logicamente OS com status `COMPLETED` ou `DELIVERED` da listagem pública.
   - Arquivos relacionados: `src/infrastructure/repositories/service-order/service-order-repository.ts`, `src/application/use-cases/service-order/list.ts`, `src/adapters/input/service-order/list.ts`.
-- [x] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição.
+- [x] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição (FEITO NA FASE 1).
   - A OS deve nascer com status inicial `RECEIVED`.
   - Ponto de atenção: a API de abertura já existe e hoje recebe os IDs de referência das entidades; se isso já atender ao que foi pedido, não precisa modificar nada nesse ponto.
-- [ ] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
+- [x] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
   - Ponto de partida: `src/api/handlers/service-order/update.ts` e `src/api/handlers/service-order/schema.ts`.
-  - Nota: já existe `src/adapters/input/service-order/validate-quote-confirmation.ts` (veio do main) — validar se cobre o requisito.
+  - Nota: já existe `src/adapters/input/service-order/validate-quote-confirmation.ts` (FEITO NA FASE 1).
 - [ ] Garantir que a documentação da API permita validar rapidamente os endpoints novos e alterados durante a avaliação.
   - Informar no README como acessar o Swagger localmente e onde está a collection completa das APIs.
 
@@ -44,7 +44,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   - Arquivos/áreas: infra / integração com provider (ex.: Mailgun, SendGrid) ou criar worker que conecta IMAP.
 - [x] ~~Criar manifestos Kubernetes mínimos em `/k8s`~~ → **substituído por Helm**: o app é empacotado num chart genérico (`app-chart`) + umbrella (`charts/bunzina-chart`), com Deployment, Service, Ingress (ALB), HPA, ConfigMap, Secret e Postgres (StatefulSet + PVC). Ver [docs/guia-eks-helm/03](guia-eks-helm/03-helm-chart.md).
 - [x] Adicionar scripts Terraform em `/infra` para provisionar cluster e banco de dados; documentar recursos criados. (VPC + EKS + node group + addons + ECR + StorageClass; documentado nas partes [00](guia-eks-helm/00-pre-requisitos.md)/[01](guia-eks-helm/01-infra-terraform.md).)
-- [ ] Disponibilizar os diagramas de arquitetura no repositório, preferencialmente em `docs/arch/` como PNG.
+- [x] Disponibilizar os diagramas de arquitetura no repositório, preferencialmente em `docs/arch/` como PNG.
   - Pode ser um diagrama único ou vários diagramas por contexto.
   - Parcial: há Domain Storytelling em `docs/domain-storytelling/*.egn` e um diagrama ASCII de arquitetura no README (seção "Deploy em Kubernetes"). Falta o PNG em `docs/arch/`.
 
@@ -78,9 +78,9 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 Português:
 - [x] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
 - [ ] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
+- [x] Desenho da arquitetura com:
 - [x] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
-- [ ] Desenho da arquitetura com:
   - Componentes da aplicação (API, workers, DB, serviços externos).
   - Infraestrutura provisionada (K8s cluster, DB, storage, secrets management).
   - Fluxo de deploy (build → tests → image push → apply manifests / terraform apply).
-- [ ] Seção indicando onde ficam os diagramas, por exemplo: `docs/arch`.
+- [x] Seção indicando onde ficam os diagramas, por exemplo: `docs/arch`.
