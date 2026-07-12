@@ -30,7 +30,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
 ## Prioridade: Alta
 - [ ] Ajustar listagem de Ordens de Serviço: ordenar por status (Em Execução > Aguardando Aprovação > Diagnóstico > Recebida) e, dentro do mesmo status, mais antigas primeiro. Excluir logicamente OS com status `COMPLETED` ou `DELIVERED` da listagem pública.
   - Arquivos relacionados: `src/infrastructure/repositories/service-order/service-order-repository.ts`, `src/application/use-cases/service-order/list.ts`, `src/adapters/input/service-order/list.ts`.
-- [ ] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição.
+- [x] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição.
   - A OS deve nascer com status inicial `RECEIVED`.
   - Ponto de atenção: a API de abertura já existe e hoje recebe os IDs de referência das entidades; se isso já atender ao que foi pedido, não precisa modificar nada nesse ponto.
 - [ ] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
@@ -76,9 +76,9 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 ## README — conteúdo obrigatório / README — required content
 
 Português:
-- [ ] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
+- [x] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
 - [ ] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
-- [ ] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
+- [x] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
 - [ ] Desenho da arquitetura com:
   - Componentes da aplicação (API, workers, DB, serviços externos).
   - Infraestrutura provisionada (K8s cluster, DB, storage, secrets management).

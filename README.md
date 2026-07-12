@@ -185,6 +185,28 @@ done
 
 ---
 
+## Pipeline de Terraform (infra/)
+
+O workflow `.github/workflows/terraform.yml` roda o Terraform de `infra/`:
+
+- **Plan** automático em PRs que tocam `infra/**`; o resultado é comentado no PR.
+- **Apply** manual: aba **Actions → Terraform → Run workflow**. Requer aprovação
+  no environment `production`.
+
+**Secrets necessários** (Settings → Secrets and variables → Actions) — credenciais
+temporárias do AWS Academy Learner Lab, **reatualize a cada reset do lab**:
+
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_SESSION_TOKEN`
+
+O state fica em S3 (`bunzina-tfstate-<ACCOUNT_ID>`, key `infra/terraform.tfstate`),
+com lock nativo do S3 (sem DynamoDB). O bucket é criado automaticamente no primeiro
+run. Se a infra já foi aplicada localmente, rode `terraform state push` uma vez
+antes do primeiro apply no CI.
+
+---
+
 ## Deploy em Kubernetes (Fase 2)
 
 A partir da Fase 2, a aplicação roda em **Kubernetes (AWS EKS)** em vez de AWS Lambda. A infraestrutura é provisionada com **Terraform** (`infra/`) e os recursos do cluster são descritos em manifests (`k8s/`).
