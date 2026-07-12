@@ -1,27 +1,40 @@
-import type { SQL } from 'bun';
-import logger from '@lucas-pmelo/logger';
+import type { ServiceItem } from '@/domain/service-order/entities/service-item';
+import type { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type {
   FindServiceOrdersParams,
   ServiceOrderRepository as IServiceOrderRepository,
 } from '@/domain/service-order/repositories/service-order-repository';
-import type { ServiceOrder } from '@/domain/service-order/entities/service-order';
-import {
-  ServiceOrderAutoPartItemMapper,
-  ServiceOrderMapper,
-  ServiceOrderServiceItemMapper,
-} from './mappers/service-order-mapper';
+import logger from '@lucas-pmelo/logger';
+import type { SQL } from 'bun';
 import type {
   ServiceOrderAutoPartItemDbSchema,
   ServiceOrderDbSchema,
   ServiceOrderServiceItemDbSchema,
 } from './dtos/service-order-db-schema';
-import type { ServiceItem } from '@/domain/service-order/entities/service-item';
+import {
+  ServiceOrderAutoPartItemMapper,
+  ServiceOrderMapper,
+  ServiceOrderServiceItemMapper,
+} from './mappers/service-order-mapper';
 
 export class ServiceOrderRepository implements IServiceOrderRepository {
   constructor(private client: SQL) {}
 
+  private buildFindByParamsOrderSql() {
+    return this.client`
+      CASE status
+        WHEN 'IN_EXECUTION' THEN 1
+        WHEN 'AWAITING_APPROVAL' THEN 2
+        WHEN 'IN_DIAGNOSTIC' THEN 3
+        WHEN 'RECEIVED' THEN 4
+        ELSE 5
+      END,
+      created_at ASC
+    `;
+  }
+
   private buildFindByParamsFiltersSql(
-    filters: NonNullable<FindServiceOrdersParams['filters']>,
+    filters: NonNullable<Omit<FindServiceOrdersParams, 'page' | 'limit'>>,
   ) {
     const customerIdFilter = filters.customerId
       ? this.client`AND customer_id = ${filters.customerId}`
@@ -32,6 +45,9 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     const statusFilter = filters.status
       ? this.client`AND status = ${filters.status}`
       : this.client``;
+    const excludedStatusesFilter = this.client`
+      AND status NOT IN ('COMPLETED', 'DELIVERED')
+    `;
     const startCreatedAtFilter = filters.startCreatedAt
       ? this.client`AND created_at >= ${filters.startCreatedAt}`
       : this.client``;
@@ -43,6 +59,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
       ${customerIdFilter}
       ${vehicleIdFilter}
       ${statusFilter}
+      ${excludedStatusesFilter}
       ${startCreatedAtFilter}
       ${endCreatedAtFilter}
     `;
@@ -135,7 +152,13 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
   }
 
   async findByParams(params: FindServiceOrdersParams): Promise<ServiceOrder[]> {
-    const filters = params.filters ?? {};
+    const filters = {
+      customerId: params.customerId,
+      vehicleId: params.vehicleId,
+      status: params.status,
+      startCreatedAt: params.startCreatedAt,
+      endCreatedAt: params.endCreatedAt,
+    };
     const filtersSql = this.buildFindByParamsFiltersSql(filters);
     const offset = (params.page - 1) * params.limit;
 
@@ -150,10 +173,10 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
 
     const records = await this.client<ServiceOrderDbSchema[]>`
       SELECT *
-      FROM bunzina.service_orders
+        FROM bunzina.service_orders
       WHERE 1 = 1
-      ${filtersSql}
-      ORDER BY created_at DESC
+        ${filtersSql}
+      ORDER BY ${this.buildFindByParamsOrderSql()}
       LIMIT ${params.limit}
       OFFSET ${offset}
     `;

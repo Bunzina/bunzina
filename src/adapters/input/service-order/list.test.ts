@@ -2,7 +2,7 @@ import type { ListServiceOrdersUseCase } from '@/application/use-cases/service-o
 import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
 import { makeServiceOrder } from '@/test/factories/make-service-order';
 import { mock, type MockProxy } from 'bun-mock-extended';
-import { describe, expect, test, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, test } from 'bun:test';
 import type { Context } from 'elysia';
 import { ListServiceOrdersInput } from './list';
 
@@ -94,13 +94,11 @@ describe('list service orders input adapter', () => {
     expect(listServiceOrdersUseCase.execute).toHaveBeenCalledWith({
       page: 1,
       limit: 10,
-      filters: {
-        customerId,
-        vehicleId: undefined,
-        status: undefined,
-        startCreatedAt: undefined,
-        endCreatedAt: undefined,
-      },
+      customerId,
+      vehicleId: undefined,
+      status: undefined,
+      startCreatedAt: undefined,
+      endCreatedAt: undefined,
     });
   });
 
@@ -126,13 +124,11 @@ describe('list service orders input adapter', () => {
     expect(listServiceOrdersUseCase.execute).toHaveBeenCalledWith({
       page: 1,
       limit: 10,
-      filters: {
-        customerId: undefined,
-        vehicleId,
-        status: undefined,
-        startCreatedAt: undefined,
-        endCreatedAt: undefined,
-      },
+      customerId: undefined,
+      vehicleId,
+      status: undefined,
+      startCreatedAt: undefined,
+      endCreatedAt: undefined,
     });
   });
 
@@ -158,13 +154,11 @@ describe('list service orders input adapter', () => {
     expect(listServiceOrdersUseCase.execute).toHaveBeenCalledWith({
       page: 1,
       limit: 10,
-      filters: {
-        customerId: undefined,
-        vehicleId: undefined,
-        status,
-        startCreatedAt: undefined,
-        endCreatedAt: undefined,
-      },
+      customerId: undefined,
+      vehicleId: undefined,
+      status,
+      startCreatedAt: undefined,
+      endCreatedAt: undefined,
     });
   });
 
@@ -192,13 +186,11 @@ describe('list service orders input adapter', () => {
     expect(listServiceOrdersUseCase.execute).toHaveBeenCalledWith({
       page: 1,
       limit: 10,
-      filters: {
-        customerId: undefined,
-        vehicleId: undefined,
-        status: undefined,
-        startCreatedAt: new Date(startCreatedAt),
-        endCreatedAt: new Date(endCreatedAt),
-      },
+      customerId: undefined,
+      vehicleId: undefined,
+      status: undefined,
+      startCreatedAt: new Date(startCreatedAt),
+      endCreatedAt: new Date(endCreatedAt),
     });
   });
 

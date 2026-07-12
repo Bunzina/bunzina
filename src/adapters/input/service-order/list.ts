@@ -1,4 +1,5 @@
 import { ServiceOrdersListPresenter } from '@/adapters/output/service-order/service-orders-list-presenter';
+import type { HandlerContext } from '@/api/handler-context';
 import type { ListServiceOrdersUseCase } from '@/application/use-cases/service-order/list';
 import { createResponse, withErrorHandler } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
@@ -8,7 +9,6 @@ import {
   listServiceOrdersSchema,
   type ListServiceOrdersInput as ListServiceOrdersInputType,
 } from './validations/list-service-orders-schema';
-import type { HandlerContext } from '@/api/handler-context';
 
 export class ListServiceOrdersInput {
   constructor(private listServiceOrdersUseCase: ListServiceOrdersUseCase) {}
@@ -36,6 +36,7 @@ export class ListServiceOrdersInput {
     }
 
     return withErrorHandler(async () => {
+      console.log({ data });
       const result = await this.listServiceOrdersUseCase.execute(
         data! as ListServiceOrdersInputType,
       );

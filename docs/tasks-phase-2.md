@@ -28,7 +28,8 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   via `Api-Key` (evita bypass silencioso de checagens por usuário).
 
 ## Prioridade: Alta
-- [ ] Ajustar listagem de Ordens de Serviço: ordenar por status (Em Execução > Aguardando Aprovação > Diagnóstico > Recebida) e, dentro do mesmo status, mais antigas primeiro. Excluir logicamente OS com status `COMPLETED` ou `DELIVERED` da listagem pública.
+
+- [X] Ajustar listagem de Ordens de Serviço: ordenar por status (Em Execução > Aguardando Aprovação > Diagnóstico > Recebida) e, dentro do mesmo status, mais antigas primeiro. Excluir logicamente OS com status `COMPLETED` ou `DELIVERED` da listagem pública.
   - Arquivos relacionados: `src/infrastructure/repositories/service-order/service-order-repository.ts`, `src/application/use-cases/service-order/list.ts`, `src/adapters/input/service-order/list.ts`.
 - [x] Implementar endpoint de abertura de Ordem de Serviço que receba cliente, veículo, serviços e peças em uma única requisição (FEITO NA FASE 1).
   - A OS deve nascer com status inicial `RECEIVED`.
@@ -40,6 +41,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   - Informar no README como acessar o Swagger localmente e onde está a collection completa das APIs.
 
 ## Prioridade: Média
+
 - [ ] Implementar processamento de inbound email para atualizar status (se exigido). Alternativa: usar um serviço que converta email em webhook.
   - Arquivos/áreas: infra / integração com provider (ex.: Mailgun, SendGrid) ou criar worker que conecta IMAP.
 - [x] ~~Criar manifestos Kubernetes mínimos em `/k8s`~~ → **substituído por Helm**: o app é empacotado num chart genérico (`app-chart`) + umbrella (`charts/bunzina-chart`), com Deployment, Service, Ingress (ALB), HPA, ConfigMap, Secret e Postgres (StatefulSet + PVC). Ver [docs/guia-eks-helm/03](guia-eks-helm/03-helm-chart.md).
@@ -49,6 +51,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   - Parcial: há Domain Storytelling em `docs/domain-storytelling/*.egn` e um diagrama ASCII de arquitetura no README (seção "Deploy em Kubernetes"). Falta o PNG em `docs/arch/`.
 
 ## Prioridade: Baixa / Finalização
+
 - [ ] Adaptar pipeline CI/CD (GitHub Actions) para: build → testes → build imagem → push → deploy em Kubernetes.
   - Estado: `.github/workflows/deploy-k8s.yml` existe (jobs de test/migração/build/push OK, região corrigida para `us-east-1`), mas o job `deploy` **ainda usa `kubectl apply -f k8s/*`** (pasta removida na migração). Falta trocar por `helm upgrade --install` puxando o `app-chart` do OCI — passo a passo documentado na [Parte 06](guia-eks-helm/06-cicd-bunzina.md). Requer publicar o `app-chart` no ECR ([Parte 04](guia-eks-helm/04-publicar-chart.md)).
 - [ ] Atualizar `README.md` com arquitetura da fase 2, instruções de deploy local/K8s e uso dos scripts Terraform.
@@ -60,7 +63,9 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
 - [ ] Criar PDF final de entrega.
 
 ## Prioridade: Muito Baixa
+
 Esses itens são melhorias em relação à fase 1, baseadas no feedback do professor, e só entram se houver tempo para refinamento.
+
 - [x] Evoluir o Dockerfile para multi-stage. (base → deps → runner.)
 - [x] Rodar a aplicação com usuário não root. (`USER bunzina`.)
 - [x] Adicionar um `.dockerignore`.
@@ -69,6 +74,7 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 - [x] Verificar se o Domain Storytelling já está devidamente adicionado; se já estiver, considerar esse ponto fechado. (`docs/domain-storytelling/*.egn`.)
 
 ## Notas
+
 - Os pontos levantados na apresentação reforçam que a entrega precisa deixar claro onde estão os diagramas, como executar a aplicação e como testar as APIs sem depender só da collection.
 - Conferir se nossa abordagem de Clean Architecture está bem purista, já que o professor frisou que precisa ser uma abordagem bem acadêmica.
 - **Pegadinhas do Learner Lab já resolvidas** (documentadas no guia): região só `us-east-1`; `LabRole`/`voclabs` em vez de IAM próprio; sem IRSA (ALB controller e EBS CSI usam a role do nó); IMDS hop-limit 2 obrigatório; o chart **não** cria o Namespace (usar `--create-namespace`).
@@ -76,6 +82,7 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 ## README — conteúdo obrigatório / README — required content
 
 Português:
+
 - [x] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
 - [x] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
 - [x] Desenho da arquitetura com:
