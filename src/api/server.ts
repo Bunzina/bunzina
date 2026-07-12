@@ -395,6 +395,7 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
   detail: { hide: true },
 });
 
+/* c8 ignore next */
 if (import.meta.main) {
   app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000/swagger');
