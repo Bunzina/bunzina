@@ -2,62 +2,6 @@
 
 API REST para gerenciamento de uma oficina mecânica, desenvolvida com **Bun**, **Elysia** e **PostgreSQL**, seguindo os princípios de **Clean Architecture**.
 
-> Observação para a correção: se o professor quiser ir mais direto ao ponto na avaliação da Fase 2, vale consultar o arquivo [docs/READMEs/phase-2.md](docs/READMEs/phase-2.md), que concentra a documentação específica dessa etapa.
-
----
-
-## Objetivo do sistema
-
-O Bunzina tem como objetivo digitalizar e centralizar os processos operacionais de uma oficina mecânica, permitindo:
-
-- Cadastro e gerenciamento de **clientes** e seus **veículos**
-- Criação e acompanhamento de **ordens de serviço**, do diagnóstico à entrega
-- Controle de **serviços** prestados e **peças** utilizadas
-- Gestão de **estoque de autopeças** com rastreamento de movimentações
-- Geração de **orçamentos** automatizados a partir dos serviços e peças da OS
-- Gerenciamento de **usuários** internos com controle de acesso por papel (`ADMIN`, `MECHANIC`, `CUSTOMER`)
-
----
-
-## Tecnologias
-
-- [Bun](https://bun.sh) — runtime, test runner e gerenciador de pacotes
-- [Elysia](https://elysiajs.com) — framework HTTP
-- [PostgreSQL](https://www.postgresql.org) — banco de dados
-- [Nodemailer](https://nodemailer.com) — envio de notificações por e-mail via SMTP
-- [MailCatcher](https://mailcatcher.me) — captura de e-mails em ambiente local para testes
-- [Zod](https://zod.dev) — validação de dados
-- [Day.js](https://day.js.org) — formatação de datas
-- [oxlint](https://oxc.rs/docs/guide/usage/linter) + [oxfmt](https://github.com/nicolo-ribaudo/oxfmt) — lint e formatação
-
----
-
-## Justificativa do banco de dados
-
-O **PostgreSQL** foi escolhido pelos seguintes motivos:
-
-- **Relacional e consistente** — o domínio da oficina possui relacionamentos bem definidos (cliente → veículo → ordem de serviço → itens), que se beneficiam de chaves estrangeiras e transações ACID
-- **Tipos nativos** — suporte a `UUID`, `ENUM`, `NUMERIC` e `TIMESTAMPTZ`, que mapeiam diretamente para os value objects do domínio
-- **Schemas** — permite isolar as tabelas do projeto no schema `bunzina`, facilitando a organização em ambiente compartilhado
-- **Maturidade e ecossistema** — solução amplamente adotada, com excelente suporte no Bun via `bun:sql`
-- **Escalabilidade** — suporta índices avançados, particionamento e extensões (como `uuid-ossp`) para crescimento futuro do sistema
-
----
-
-## Estrutura de pastas
-
-```
-src/
-  adapters/         # Entrada (input) e saída (output) — camada de apresentação
-  api/              # Servidor Elysia, handlers e schemas de documentação
-  application/      # Casos de uso
-  domain/           # Entidades, value objects, tipos e repositórios (interfaces)
-  infrastructure/   # Implementações concretas (banco de dados, repositórios)
-  test/             # Factories para testes
-  utils/            # Helpers de validação
-migrations/         # Migrations SQL em ordem de execução
-```
-
 ---
 
 ## Pré-requisitos
@@ -124,65 +68,54 @@ O Docker Compose também sobe o MailCatcher para testes locais de e-mail:
 - SMTP local: `localhost:1025`
 - UI web para visualizar e-mails enviados: `http://localhost:1080`
 
-### Localmente (sem Docker)
-
-Sobe apenas o banco via Docker e roda a API com hot reload:
-
-```bash
-docker compose up db mailcatcher -d
-bun --hot run src/api/server.ts
-```
-
 A API estará disponível em `http://localhost:3000`.  
 Documentação Swagger em `http://localhost:3000/swagger`.
 
-Com o MailCatcher rodando, os e-mails disparados pelo serviço de notificação podem ser visualizados em `http://localhost:1080`.
+> Observação: ao executar `bun dev`, sobem a aplicação, o banco e as migrations automaticamente.
 
 ---
 
-## Serviço de notificação (Nodemailer + MailCatcher)
+## Autenticação JWT
 
-Notificações por e-mail usam Nodemailer com transporte SMTP configurável por variáveis de ambiente.
+A API utiliza autenticação via **JSON Web Token (JWT)** com HMAC-SHA256 para proteger as rotas administrativas.
 
-Em desenvolvimento local com Docker Compose, a API aponta para o serviço `mailcatcher` (porta `1025`): os e-mails não saem para provedores reais, ficam capturados e podem ser inspecionados no painel web em `http://localhost:1080`. Isso valida o fluxo sem depender de credenciais externas.
+### Como funciona
 
----
+1. O usuário faz login via `POST /auth/login` com email e senha
+2. A API valida as credenciais e retorna um token JWT
+3. O token deve ser enviado no header `Authorization` das requisições às rotas protegidas
 
-## Migrations
+> **Exceção:** o cadastro público de usuários com role `CUSTOMER` via `POST /users` não exige autenticação. Criar usuários com roles `ADMIN` ou `MECHANIC` requer um token válido.
 
-As migrations ficam em `migrations/` e são executadas em ordem numérica. O projeto possui um engine de migrations próprio em `migrations/engine/` que controla quais migrations já foram aplicadas via uma tabela `migrations` no schema `bunzina`.
+### Exemplo de criação de usuário
 
-### Usando o engine integrado (recomendado)
+O cadastro público de usuário aceita apenas a role `CUSTOMER`.
 
 ```bash
-# Roda apenas as migrations pendentes contra o banco apontado em DATABASE_URL
-bun run migration
+curl -X POST http://localhost:3000/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Usuário Exemplo","email":"usuario@bunzina.com","password":"sua-senha","role":"CUSTOMER"}'
 ```
 
-O script `start:with-migrations` (executado pelo container `app` no `bun dev`) roda as migrations automaticamente antes de subir a API:
+### Login
 
 ```bash
-bun run start:with-migrations
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@bunzina.com", "password": "sua-senha"}'
 ```
 
-### Rodando manualmente via Docker (sem cliente PostgreSQL local)
+Resposta:
 
-```bash
-# Sobe apenas o banco
-docker compose up db -d
-
-# Executa todas as migrations
-for f in migrations/*.sql; do
-  docker compose exec -T db psql -U bun -d bunzina -f - < "$f"
-done
+```json
+{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
 ```
 
-### Rodando com cliente PostgreSQL instalado localmente
+### Acessando rotas protegidas
 
 ```bash
-for f in migrations/*.sql; do
-  psql "postgres://bun:bun@localhost:5432/bunzina" -f "$f"
-done
+curl http://localhost:3000/customers/12345678909 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
 ---
@@ -313,64 +246,6 @@ kubectl get pods -n bunzina -w
 
 Os manifests são genéricos. Em kind/minikube, remova `storageClassName: gp3` do `k8s/postgres-statefulset.yaml` (usa o StorageClass default) e troque o `Ingress` por um `Service` tipo `LoadBalancer` ou use `port-forward`.
 
----
-
-## Testes
-
-```bash
-# Roda todos os testes
-bun test
-
-# Roda com cobertura
-bun test --coverage
-
-# Roda um arquivo específico
-bun test src/adapters/input/customer/create.test.ts
-```
-
-## Testes de integração
-
-Usam um Postgres dedicado (`db_test`, porta `5433`) isolado do banco de dev. O script sobe o container, roda os testes de `src/test/integration/` com `bunfig.integration.toml` e derruba o container ao final (`posttest:integration`).
-
-```bash
-# Executar testes de integração
-bun run test:integration
-```
-
----
-
-## Lint e formatação
-
-```bash
-# Verifica lint
-bun lint
-
-# Corrige lint automaticamente
-bun lint:fix
-
-# Formata o código
-bun fmt
-
-# Verifica formatação sem alterar
-bun fmt:check
-```
-
----
-
-## Segurança de código (CodeQL)
-
-Análise estática de segurança com **GitHub CodeQL** (Code scanning) detecta vulnerabilidades e padrões inseguros no código versionado. O lint e a formatação em PR rodam no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml).
-
-### Consultar e triar alertas
-
-Os alertas ficam na aba **Security → Code scanning alerts** (filtre por severidade, branch e estado). Cada alerta traz a regra detectada, severidade, localização, o data flow (quando disponível) e a recomendação de correção.
-
-Triagem recomendada:
-
-1. Confirmar se é vulnerabilidade real ou falso-positivo.
-2. Corrigir primeiro os de maior severidade.
-3. Registrar no PR a justificativa de qualquer risco aceito temporariamente.
-4. Reavaliar os alertas abertos periodicamente.
 
 ---
 
@@ -386,6 +261,7 @@ A documentação interativa completa (request/response schemas, exemplos e tags)
 | POST   | `/auth/login` | Autenticação JWT                           |
 | POST   | `/users`      | Cadastro público (apenas role `CUSTOMER`)  |
 | GET    | `/service-orders/customer/:documentNumber` | Consulta de OS de um cliente pelo documento |
+
 
 ### Rotas protegidas (requerem JWT)
 
@@ -454,8 +330,6 @@ A documentação interativa completa (request/response schemas, exemplos e tags)
 | ------ | ---------------- | ------------------ |
 | POST   | `/notifications` | Enviar notificação |
 
----
-
 ## Visão geral da API
 
 De forma geral, o fluxo de uso da API segue esta ordem:
@@ -467,53 +341,3 @@ De forma geral, o fluxo de uso da API segue esta ordem:
 5. Consultar os endpoints de apoio, como notificações e histórico de estoque, conforme a necessidade do fluxo.
 
 As informações completas de request, response, exemplos e regras de cada rota estão no [Swagger](http://localhost:3000/swagger).
-
-## Autenticação JWT
-
-A API utiliza autenticação via **JSON Web Token (JWT)** com HMAC-SHA256 para proteger as rotas administrativas.
-
-### Como funciona
-
-1. O usuário faz login via `POST /auth/login` com email e senha
-2. A API valida as credenciais e retorna um token JWT
-3. O token deve ser enviado no header `Authorization` das requisições às rotas protegidas
-
-> **Exceção:** o cadastro público de usuários com role `CUSTOMER` via `POST /users` não exige autenticação. Criar usuários com roles `ADMIN` ou `MECHANIC` requer um token válido.
-
-### Login
-
-```bash
-curl -X POST http://localhost:3000/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "admin@bunzina.com", "password": "sua-senha"}'
-```
-
-Resposta:
-
-```json
-{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
-```
-
-### Acessando rotas protegidas
-
-```bash
-curl http://localhost:3000/customers/12345678909 \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-```
-
-### Payload do token
-
-| Campo   | Descrição                          |
-| ------- | ---------------------------------- |
-| `sub`   | ID do usuário                      |
-| `email` | Email do usuário                   |
-| `role`  | Papel do usuário (ADMIN, MECHANIC) |
-| `iat`   | Timestamp de emissão               |
-| `exp`   | Timestamp de expiração             |
-
-### Respostas de erro
-
-| Status | Cenário                                      |
-| ------ | -------------------------------------------- |
-| 400    | Email ou senha com formato inválido          |
-| 401    | Credenciais inválidas ou token ausente/expirado |
