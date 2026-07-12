@@ -2,8 +2,6 @@
 
 API REST para gerenciamento de uma oficina mecânica, desenvolvida com **Bun**, **Elysia** e **PostgreSQL**, seguindo os princípios de **Clean Architecture**.
 
-> Observação para a correção: se o professor quiser ir mais direto ao ponto na avaliação da Fase 2, vale consultar o arquivo [docs/READMEs/phase-2.md](docs/READMEs/phase-2.md), que concentra a documentação específica dessa etapa.
-
 ---
 
 ## Objetivo do sistema
@@ -142,9 +140,15 @@ Com o MailCatcher rodando, os e-mails disparados pelo serviço de notificação 
 
 ## Serviço de notificação (Nodemailer + MailCatcher)
 
-Notificações por e-mail usam Nodemailer com transporte SMTP configurável por variáveis de ambiente.
+O envio de notificações por e-mail foi implementado com Nodemailer usando transporte SMTP configurável por variáveis de ambiente.
 
-Em desenvolvimento local com Docker Compose, a API aponta para o serviço `mailcatcher` (porta `1025`): os e-mails não saem para provedores reais, ficam capturados e podem ser inspecionados no painel web em `http://localhost:1080`. Isso valida o fluxo sem depender de credenciais externas.
+Em desenvolvimento local com Docker Compose:
+
+1. A API usa SMTP local apontando para o serviço `mailcatcher` na porta `1025`.
+2. Os e-mails não são enviados para provedores reais; ficam capturados localmente.
+3. É possível inspecionar assunto, destinatário e conteúdo no painel web do MailCatcher em `http://localhost:1080`.
+
+Isso permite validar rapidamente o fluxo de notificação sem depender de credenciais externas.
 
 ---
 
@@ -187,143 +191,6 @@ done
 
 ---
 
-## Pipeline de Terraform (infra/)
-
-O workflow `.github/workflows/terraform.yml` roda o Terraform de `infra/`:
-
-- **Plan** automático em PRs que tocam `infra/**`; o resultado é comentado no PR.
-- **Apply** manual: aba **Actions → Terraform → Run workflow**. Requer aprovação
-  no environment `production`.
-
-**Secrets necessários** (Settings → Secrets and variables → Actions) — credenciais
-temporárias do AWS Academy Learner Lab, **reatualize a cada reset do lab**:
-
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_SESSION_TOKEN`
-
-O state fica em S3 (`bunzina-tfstate-<ACCOUNT_ID>`, key `infra/terraform.tfstate`),
-com lock nativo do S3 (sem DynamoDB). O bucket é criado automaticamente no primeiro
-run. Se a infra já foi aplicada localmente, rode `terraform state push` uma vez
-antes do primeiro apply no CI.
-
----
-
-## Deploy em Kubernetes (Fase 2)
-
-A partir da Fase 2, a aplicação roda em **Kubernetes (AWS EKS)** em vez de AWS Lambda. A infraestrutura é provisionada com **Terraform** (`infra/`).
-
-Os recursos Kubernetes da aplicação são gerenciados por meio de um **Helm Chart**, mantido em um repositório separado:
-
-- [Bunzina Helm Chart](https://github.com/Bunzina/bunzina-chart)
-
-Esse repositório contém os templates, values e configurações necessárias para realizar o deploy da aplicação no cluster Kubernetes. Portanto, para a avaliação e execução completa do projeto, devem ser considerados os dois repositórios:
-
-- [Bunzina — aplicação principal](https://github.com/Bunzina/bunzina)
-- [Bunzina Chart — Helm Chart para Kubernetes](https://github.com/Bunzina/bunzina-chart)
-
-### Arquitetura
-
-Os diagramas da Fase 2 estão em [docs/arch](docs/arch):
-
-- [docs/arch/application-components.png](docs/arch/application-components.png) — componentes da aplicação (API, workers, DB e serviços externos)
-- [docs/arch/infrastructure-provisioning.png](docs/arch/infrastructure-provisioning.png) — infraestrutura provisionada (cluster, banco, storage e secrets)
-- [docs/arch/deploy.png](docs/arch/deploy.png) — fluxo de deploy (build, testes, push de imagem e deploy)
-
-
-
-| Componente | Recurso |
-| --- | --- |
-| API | `Deployment` + `Service` + `Ingress` + `HPA` |
-| Banco | `StatefulSet` Postgres com `PVC` (EBS gp3) |
-| Config não-sensível | `ConfigMap` (`k8s/configmap.yaml`) |
-| Segredos | `Secret` (a partir dos `*.example.yaml`, fora do git) |
-| Infra | VPC + EKS + node group + ECR (`infra/`) |
-
-### 1. Provisionar a infraestrutura (Terraform)
-
-```bash
-cd infra
-cp terraform.tfvars.example terraform.tfvars   # ajuste se necessário
-terraform init
-terraform plan
-terraform apply
-
-# Configurar o kubectl para o cluster criado (use o output gerado):
-aws eks update-kubeconfig --name bunzina-eks --region us-east-1
-```
-
-### 2. Criar os Secrets
-
-Os arquivos `*.example.yaml` são modelos. Copie, preencha e aplique (os reais ficam no `.gitignore`):
-
-```bash
-cp k8s/secret.example.yaml k8s/secret.yaml
-cp k8s/postgres-secret.example.yaml k8s/postgres-secret.yaml
-# edite os dois (as credenciais de banco devem bater entre eles)
-
-kubectl apply -f k8s/namespace.yaml
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/postgres-secret.yaml
-```
-
-### 3. Aplicar os manifests
-
-```bash
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/postgres-service.yaml
-kubectl apply -f k8s/postgres-statefulset.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-kubectl apply -f k8s/ingress.yaml
-kubectl apply -f k8s/hpa.yaml
-
-kubectl get pods -n bunzina -w
-```
-
-### 4. Rodar as migrations
-
-O banco é interno ao cluster, então abrimos um túnel e rodamos o engine de migrations (mesmo fluxo do CI/CD):
-
-```bash
-kubectl port-forward -n bunzina svc/postgres 5432:5432 &
-APP_ENV=prod PROD_DATABASE_URL="postgres://<user>:<pass>@127.0.0.1:5432/bunzina" bun run migration
-```
-
-### 5. Acessar e validar
-
-```bash
-# Health via port-forward
-kubectl port-forward -n bunzina svc/bunzina 8080:80
-curl http://localhost:8080/health   # {"status":"ok"}
-
-# Externamente (após o ALB provisionar):
-kubectl get ingress -n bunzina
-```
-
-### Escalabilidade (HPA)
-
-```bash
-kubectl get hpa -n bunzina
-# Gere carga e observe as réplicas subirem:
-hey -z 60s -c 50 http://<endereco>/health
-kubectl get pods -n bunzina -w
-```
-
-### Secrets necessários no GitHub Actions
-
-| Secret | Uso |
-| --- | --- |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Acesso ao ECR e ao EKS |
-| `PROD_DATABASE_URL` | Banco usado pelos testes no job `test` |
-| `DB_USER` / `DB_PASSWORD` | Credenciais do Postgres in-cluster para a migration |
-
-### Cluster local (alternativa para demo)
-
-Os manifests são genéricos. Em kind/minikube, remova `storageClassName: gp3` do `k8s/postgres-statefulset.yaml` (usa o StorageClass default) e troque o `Ingress` por um `Service` tipo `LoadBalancer` ou use `port-forward`.
-
----
-
 ## Testes
 
 ```bash
@@ -339,7 +206,7 @@ bun test src/adapters/input/customer/create.test.ts
 
 ## Testes de integração
 
-Usam um Postgres dedicado (`db_test`, porta `5433`) isolado do banco de dev. O script sobe o container, roda os testes de `src/test/integration/` com `bunfig.integration.toml` e derruba o container ao final (`posttest:integration`).
+Os testes de integração usam um banco PostgreSQL dedicado (`db_test`) na porta `5433`, isolado do banco de desenvolvimento. O script abaixo sobe o container, executa os testes em `src/test/integration/` com o `bunfig.integration.toml` e derruba o container ao final via `posttest:integration`.
 
 ```bash
 # Executar testes de integração
@@ -368,18 +235,32 @@ bun fmt:check
 
 ## Segurança de código (CodeQL)
 
-Análise estática de segurança com **GitHub CodeQL** (Code scanning) detecta vulnerabilidades e padrões inseguros no código versionado. O lint e a formatação em PR rodam no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml).
+As análises de segurança são feitas com **GitHub CodeQL** (Code scanning), usando a integração nativa do GitHub para detectar vulnerabilidades e padrões inseguros no código.
 
-### Consultar e triar alertas
+- Objetivo: identificar riscos de segurança cedo no ciclo de desenvolvimento
+- Escopo: análise estática de segurança no código versionado no repositório
+- Fluxo de qualidade em PR: validações de lint e formatação no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml)
 
-Os alertas ficam na aba **Security → Code scanning alerts** (filtre por severidade, branch e estado). Cada alerta traz a regra detectada, severidade, localização, o data flow (quando disponível) e a recomendação de correção.
+### Onde consultar os alertas
 
-Triagem recomendada:
+1. Abra a aba Security do repositório no GitHub.
+2. Entre em Code scanning alerts.
+3. Filtre por severidade, branch e estado para priorizar correções.
 
-1. Confirmar se é vulnerabilidade real ou falso-positivo.
-2. Corrigir primeiro os de maior severidade.
-3. Registrar no PR a justificativa de qualquer risco aceito temporariamente.
-4. Reavaliar os alertas abertos periodicamente.
+### Como interpretar um alerta do CodeQL
+
+- Regra: qual padrão inseguro foi detectado
+- Severidade: impacto potencial do problema
+- Localização: arquivo e linha afetados
+- Data flow: caminho de origem até o ponto vulnerável (quando disponível)
+- Recomendação: orientação sugerida para correção
+
+### Fluxo de triagem recomendado
+
+1. Validar se o alerta é vulnerabilidade real ou falso-positivo.
+2. Corrigir imediatamente alertas de maior severidade.
+3. Quando necessário, registrar justificativa técnica no PR para risco aceito temporariamente.
+4. Reavaliar alertas abertos periodicamente para reduzir backlog de segurança.
 
 ---
 
@@ -464,18 +345,6 @@ A documentação interativa completa (request/response schemas, exemplos e tags)
 | POST   | `/notifications` | Enviar notificação |
 
 ---
-
-## Visão geral da API
-
-De forma geral, o fluxo de uso da API segue esta ordem:
-
-1. Fazer o login em `POST /auth/login` e obter o token JWT.
-2. Enviar o token no header `Authorization` para acessar as rotas protegidas.
-3. Criar e manter os cadastros base, como usuários, clientes, veículos, serviços e autopeças.
-4. Criar ordens de serviço e acompanhar seus itens, status e movimentações relacionadas. Para criar uma OS, é necessário ter um veículo, um cliente e ao menos um serviço já cadastrado.
-5. Consultar os endpoints de apoio, como notificações e histórico de estoque, conforme a necessidade do fluxo.
-
-As informações completas de request, response, exemplos e regras de cada rota estão no [Swagger](http://localhost:3000/swagger).
 
 ## Autenticação JWT
 

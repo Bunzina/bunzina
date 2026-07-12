@@ -37,7 +37,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
 - [x] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
   - Ponto de partida: `src/api/handlers/service-order/update.ts` e `src/api/handlers/service-order/schema.ts`.
   - Nota: já existe `src/adapters/input/service-order/validate-quote-confirmation.ts` (FEITO NA FASE 1).
-- [ ] Garantir que a documentação da API permita validar rapidamente os endpoints novos e alterados durante a avaliação.
+- [x] Garantir que a documentação da API permita validar rapidamente os endpoints novos e alterados durante a avaliação.
   - Informar no README como acessar o Swagger localmente e onde está a collection completa das APIs.
 
 ## Prioridade: Média
@@ -51,12 +51,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   - Parcial: há Domain Storytelling em `docs/domain-storytelling/*.egn` e um diagrama ASCII de arquitetura no README (seção "Deploy em Kubernetes"). Falta o PNG em `docs/arch/`.
 
 ## Prioridade: Baixa / Finalização
-
-- [ ] Adaptar pipeline CI/CD (GitHub Actions) para: build → testes → build imagem → push → deploy em Kubernetes.
-  - Estado: `.github/workflows/deploy-k8s.yml` existe (jobs de test/migração/build/push OK, região corrigida para `us-east-1`), mas o job `deploy` **ainda usa `kubectl apply -f k8s/*`** (pasta removida na migração). Falta trocar por `helm upgrade --install` puxando o `app-chart` do OCI — passo a passo documentado na [Parte 06](guia-eks-helm/06-cicd-bunzina.md). Requer publicar o `app-chart` no ECR ([Parte 04](guia-eks-helm/04-publicar-chart.md)).
-- [ ] Atualizar `README.md` com arquitetura da fase 2, instruções de deploy local/K8s e uso dos scripts Terraform.
-  - Parcial: o README tem a seção "Deploy em Kubernetes" (com diagrama e passos), mas ainda descreve o fluxo antigo `kubectl apply -f k8s/`; atualizar para o fluxo Helm (umbrella + `helm install`).
-- [ ] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
+- [x] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
 - [ ] Produzir vídeo demonstrativo de no máximo 15 minutos mostrando deploy, CI/CD, consumo das APIs principais e escalabilidade.
   - O vídeo deve mostrar deploy, execução do CI/CD, consumo das APIs principais e escalabilidade automática com HPA; na parte de deploy e de CI/CD, pode ser mostrada uma execução bem-sucedida com explicação rápida das etapas.
   - Se sobrar tempo, incluir arquitetura, Clean Architecture/Hexagonal, testes, Terraform e observabilidade.
@@ -84,7 +79,7 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 Português:
 
 - [x] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
-- [ ] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
+- [x] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
 - [x] Desenho da arquitetura com:
 - [x] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
   - Componentes da aplicação (API, workers, DB, serviços externos).
