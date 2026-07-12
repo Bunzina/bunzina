@@ -67,8 +67,17 @@ export interface JwtPayload {
   exp: number;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'bunzina-jwt-secret';
 const JWT_EXPIRES_IN = Number(process.env.JWT_EXPIRES_IN) || 3600;
+
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+
+  if (!secret) {
+    throw new Error('JWT_SECRET must be configured');
+  }
+
+  return secret;
+}
 
 export async function signJwt(
   payload: Omit<JwtPayload, 'iat' | 'exp'>,
@@ -85,7 +94,7 @@ export async function signJwt(
   const payloadB64 = base64urlEncode(JSON.stringify(fullPayload));
   const data = `${headerB64}.${payloadB64}`;
 
-  const key = await getKey(JWT_SECRET);
+  const key = await getKey(getJwtSecret());
   const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
 
   return `${data}.${base64url(signature)}`;
@@ -100,7 +109,7 @@ export async function verifyJwt(token: string): Promise<JwtPayload> {
   const signatureB64 = parts[2]!;
   const data = `${headerB64}.${payloadB64}`;
 
-  const key = await getKey(JWT_SECRET);
+  const key = await getKey(getJwtSecret());
   const signatureBytes = Uint8Array.from(
     atob(signatureB64.replace(/-/g, '+').replace(/_/g, '/')),
     (c) => c.charCodeAt(0),

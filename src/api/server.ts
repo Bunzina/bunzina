@@ -43,6 +43,7 @@ import {
   listServiceOrdersRouteSchema,
   updateServiceOrderRouteSchema,
   updateServiceOrderStatusRouteSchema,
+  validateQuoteConfirmationRouteSchema,
 } from './handlers/service-order/schema';
 import { updateServiceOrderHandler } from './handlers/service-order/update';
 import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
@@ -83,6 +84,7 @@ import {
 } from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
+import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 
 export const app = new Elysia();
 
@@ -379,6 +381,11 @@ app.guard(
       async (context) => completeServiceItemHandler(context),
       completeServiceOrderItemRouteSchema,
     );
+    app.post(
+      '/service-orders/:id/quote/confirm',
+      async (context) => validateQuoteConfirmationHandler(context),
+      validateQuoteConfirmationRouteSchema,
+    );
 
     return app;
   },
@@ -388,6 +395,7 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
   detail: { hide: true },
 });
 
+/* c8 ignore next */
 if (import.meta.main) {
   app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000/swagger');

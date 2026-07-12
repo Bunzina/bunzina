@@ -1,0 +1,14 @@
+apiVersion: v2
+name: bunzina-chart
+description: Umbrella chart do Bunzina — consome o app-chart genérico
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+  - name: app-chart
+    version: "0.1.0"
+    # Puxado do ECR (OCI). Publique o app-chart uma vez com:
+    #   scripts/demo/demo.sh chart-publish
+    # Dev local e CI precisam de `helm registry login` no ECR antes de resolver a dependência.
+    # Se a conta AWS mudar, ajuste o host aqui e em values.yaml.
+    repository: "oci://955971900480.dkr.ecr.us-east-1.amazonaws.com"

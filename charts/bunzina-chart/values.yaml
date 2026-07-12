@@ -1,0 +1,61 @@
+app-chart:
+  namespace: bunzina
+
+  app:
+    name: bunzina
+    image:
+      repository: 955971900480.dkr.ecr.us-east-1.amazonaws.com/bunzina
+      tag: ""
+      pullPolicy: IfNotPresent
+    replicaCount: 2
+    containerPort: 3000
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: true
+      className: alb
+      annotations:
+        alb.ingress.kubernetes.io/scheme: internet-facing
+        alb.ingress.kubernetes.io/target-type: ip
+        alb.ingress.kubernetes.io/healthcheck-path: /health
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPU: 70
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+    probes:
+      path: /health
+    config:
+      APP_ENV: "prod"
+      PROD_DB_HOST: "aws-1-sa-east-1.pooler.supabase.com"
+      PROD_DB_PORT: "5432"
+      PROD_DB_NAME: "postgres"
+      EMAIL_SMTP_HOST: "mailcatcher"
+      EMAIL_SMTP_PORT: "1025"
+      EMAIL: "no-reply@bunzina.local"
+      JWT_EXPIRES_IN: "1d"
+
+  database:
+    enabled: true
+    name: postgres
+    image: postgres:15
+    port: 5432
+    persistence:
+      storage: 10Gi
+      storageClassName: gp3
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"

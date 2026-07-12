@@ -3,8 +3,10 @@ import { createServiceOrderSchema } from '@/adapters/input/service-order/validat
 import { deleteServiceOrderSchema } from '@/adapters/input/service-order/validations/delete-service-order-schema';
 import { findServiceOrderItemSchema } from '@/adapters/input/service-order/validations/find-service-order-item-schema';
 import { findServiceOrderSchema } from '@/adapters/input/service-order/validations/find-service-order-schema';
+
 import { updateServiceOrderBodySchema } from '@/adapters/input/service-order/validations/update-service-order-schema';
 import { updateServiceOrderStatusBodySchema } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
+import { validateQuoteConfirmationSchema } from '@/adapters/input/service-order/validations/validate-quote-confirmation-schema';
 import { t } from 'elysia';
 
 const serviceOrderStatusSchema = t.Union([
@@ -251,5 +253,31 @@ export const completeServiceOrderItemRouteSchema = {
   params: findServiceOrderItemSchema,
   response: {
     200: serviceItemResponseSchema,
+  },
+};
+
+export const validateQuoteConfirmationRouteSchema = {
+  detail: {
+    tags: ['Service-Orders'],
+    summary: 'Validate quote confirmation',
+    description:
+      'Confirm or reject a service-order quote by customer document and service-order id.',
+    responses: {
+      '200': { description: 'Quote confirmation validated successfully' },
+      '400': { description: 'Invalid data' },
+      '401': { description: 'Missing or invalid token' },
+      '403': {
+        description: 'Service order is not awaiting approval for quote action',
+      },
+      '404': {
+        description: 'Service order not found or customer is not the owner',
+      },
+      '500': { description: 'Internal server error' },
+    },
+  },
+  params: findServiceOrderSchema,
+  body: validateQuoteConfirmationSchema.omit({ id: true }),
+  response: {
+    200: serviceOrderPublicResponseSchema,
   },
 };
