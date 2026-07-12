@@ -341,7 +341,7 @@ De forma geral, o fluxo de uso da API segue esta ordem:
 1. Fazer o login em `POST /auth/login` e obter o token JWT.
 2. Enviar o token no header `Authorization` para acessar as rotas protegidas.
 3. Criar e manter os cadastros base, como usuários, clientes, veículos, serviços e autopeças.
-4. Criar ordens de serviço e acompanhar seus itens, status e movimentações relacionadas.
+4. Criar ordens de serviço e acompanhar seus itens, status e movimentações relacionadas. Para criar uma OS, é necessário ter um veículo, um cliente e ao menos um serviço já cadastrado.
 5. Consultar os endpoints de apoio, como notificações e histórico de estoque, conforme a necessidade do fluxo.
 
 As informações completas de request, response, exemplos e regras de cada rota estão no [Swagger](http://localhost:3000/swagger).

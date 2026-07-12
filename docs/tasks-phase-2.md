@@ -36,7 +36,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
 - [x] Implementar endpoint público seguro para receber aprovações externas (webhook) e atualizar o `approvedAt` / status da OS.
   - Ponto de partida: `src/api/handlers/service-order/update.ts` e `src/api/handlers/service-order/schema.ts`.
   - Nota: já existe `src/adapters/input/service-order/validate-quote-confirmation.ts` (FEITO NA FASE 1).
-- [ ] Garantir que a documentação da API permita validar rapidamente os endpoints novos e alterados durante a avaliação.
+- [x] Garantir que a documentação da API permita validar rapidamente os endpoints novos e alterados durante a avaliação.
   - Informar no README como acessar o Swagger localmente e onde está a collection completa das APIs.
 
 ## Prioridade: Média
@@ -77,7 +77,7 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 
 Português:
 - [x] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
-- [ ] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
+- [x] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
 - [x] Desenho da arquitetura com:
 - [x] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
   - Componentes da aplicação (API, workers, DB, serviços externos).
