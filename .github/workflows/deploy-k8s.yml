@@ -118,29 +118,6 @@ jobs:
           APP_ENV: prod
           PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
 
-  coverage:
-    name: Run Coverage
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Run coverage
-        run: bun test
-        env:
-          APP_ENV: prod
-          PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
-
   migrate-prod:
     name: Run Production Migrations
     runs-on: ubuntu-latest
