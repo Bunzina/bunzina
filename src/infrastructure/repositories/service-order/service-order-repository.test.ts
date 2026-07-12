@@ -234,6 +234,7 @@ describe('service order repository', () => {
       limit: 10,
       filters: {
         customerId: 'customer-id',
+        status: ServiceOrderStatus.IN_EXECUTION,
       },
     });
 

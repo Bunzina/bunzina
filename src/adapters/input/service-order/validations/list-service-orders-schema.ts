@@ -7,7 +7,14 @@ export const listServiceOrdersSchema = z
     limit: z.coerce.number().int().min(1).max(100),
     customerId: z.uuid('Customer ID must be a valid UUID').optional(),
     vehicleId: z.uuid('Vehicle ID must be a valid UUID').optional(),
-    status: z.enum(ServiceOrderStatus).optional(),
+    status: z
+      .enum([
+        ServiceOrderStatus.IN_EXECUTION,
+        ServiceOrderStatus.AWAITING_APPROVAL,
+        ServiceOrderStatus.IN_DIAGNOSTIC,
+        ServiceOrderStatus.RECEIVED,
+      ])
+      .optional(),
     startCreatedAt: z.iso
       .datetime()
       .optional()
