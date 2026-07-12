@@ -36,9 +36,9 @@ app-chart:
       path: /health
     config:
       APP_ENV: "prod"
-      PROD_DB_HOST: "postgres"
+      PROD_DB_HOST: "aws-1-sa-east-1.pooler.supabase.com"
       PROD_DB_PORT: "5432"
-      PROD_DB_NAME: "bunzina"
+      PROD_DB_NAME: "postgres"
       EMAIL_SMTP_HOST: "mailcatcher"
       EMAIL_SMTP_PORT: "1025"
       EMAIL: "no-reply@bunzina.local"

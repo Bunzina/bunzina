@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: deploy-prod-${{ github.ref }}
@@ -142,25 +143,54 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
 
-      - name: Run migrations via port-forward to in-cluster Postgres
+      - name: Run production migrations
         env:
           APP_ENV: prod
+          DB_HOST: ${{ vars.DB_HOST || secrets.DB_HOST }}
+          DB_PORT: ${{ vars.DB_PORT || secrets.DB_PORT }}
+          DB_NAME: ${{ vars.DB_NAME || secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_SSLMODE: ${{ vars.DB_SSLMODE || secrets.DB_SSLMODE }}
         run: |
-          kubectl port-forward -n "$K8S_NAMESPACE" svc/postgres 5432:5432 &
-          PF_PID=$!
-          trap 'kill $PF_PID' EXIT
+          if [ -n "$DB_HOST" ]; then
+            export PROD_DATABASE_URL="$(python3 - <<'PY'
+              import os
+              import urllib.parse
 
-          for i in $(seq 1 30); do
-            if (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; then break; fi
-            sleep 1
-          done
+              host = os.environ.get("DB_HOST", "")
+              port = os.environ.get("DB_PORT", "5432")
+              name = os.environ.get("DB_NAME", "postgres")
+              user = os.environ.get("DB_USER", "")
+              password = os.environ.get("DB_PASSWORD", "")
+              sslmode = os.environ.get("DB_SSLMODE", "require")
 
-          export PROD_DATABASE_URL="postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@127.0.0.1:5432/bunzina"
+              if not user or not password:
+                  raise SystemExit("DB_USER and DB_PASSWORD are required")
+
+              encoded_password = urllib.parse.quote(password, safe="")
+              print(f"postgresql://{user}:{encoded_password}@{host}:{port}/{name}?sslmode={sslmode}")
+            PY
+            )"
+          else
+            kubectl port-forward -n "$K8S_NAMESPACE" svc/postgres 5432:5432 &
+            PF_PID=$!
+            trap 'kill $PF_PID' EXIT
+
+            for i in $(seq 1 30); do
+              if (echo > /dev/tcp/127.0.0.1/5432) >/dev/null 2>&1; then break; fi
+              sleep 1
+            done
+
+            export PROD_DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@127.0.0.1:5432/bunzina"
+          fi
+
           bun run migration
 
   deploy:
@@ -188,11 +218,19 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Ensure ECR repository exists
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" --region "$AWS_REGION" >/dev/null 2>&1 || \
+          aws ecr create-repository --repository-name "$ECR_REPOSITORY" --region "$AWS_REGION" >/dev/null
 
       - name: Build, tag and push image to ECR
         id: build-image
@@ -208,20 +246,59 @@ jobs:
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
 
-      - name: Apply manifests
-        run: |
-          kubectl apply -f k8s/namespace.yaml
-          kubectl apply -f k8s/configmap.yaml
-          kubectl apply -f k8s/postgres-service.yaml
-          kubectl apply -f k8s/postgres-statefulset.yaml
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
-          kubectl apply -f k8s/ingress.yaml
-          kubectl apply -f k8s/hpa.yaml
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
 
-      - name: Set new image and wait for rollout
+      - name: Log in to ECR for Helm (OCI)
         env:
-          IMAGE_URI: ${{ steps.build-image.outputs.image }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          kubectl set image deployment/bunzina bunzina="$IMAGE_URI" -n "$K8S_NAMESPACE"
-          kubectl rollout status deployment/bunzina -n "$K8S_NAMESPACE" --timeout=180s
+          aws ecr get-login-password --region "$AWS_REGION" \
+            | helm registry login --username AWS --password-stdin "$ECR_REGISTRY"
+
+      - name: Resolve app-chart dependency from OCI
+        run: helm dependency update charts/bunzina-chart
+
+      - name: Deploy with Helm
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          DB_HOST: ${{ vars.DB_HOST || secrets.DB_HOST }}
+          DB_PORT: ${{ vars.DB_PORT || secrets.DB_PORT }}
+          DB_NAME: ${{ vars.DB_NAME || secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_SSLMODE: ${{ vars.DB_SSLMODE || secrets.DB_SSLMODE }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          DB_HOST_VALUE="${DB_HOST:-postgres}"
+          DB_PORT_VALUE="${DB_PORT:-5432}"
+          DB_NAME_VALUE="${DB_NAME:-bunzina}"
+
+          HELM_EXTRA_ARGS=()
+          if [ -n "$DB_HOST" ]; then
+            HELM_EXTRA_ARGS+=(--set app-chart.database.enabled=false)
+          fi
+
+          helm upgrade --install bunzina charts/bunzina-chart \
+            --namespace "$K8S_NAMESPACE" --create-namespace \
+            --set app-chart.app.image.repository="${ECR_REGISTRY}/${ECR_REPOSITORY}" \
+            --set app-chart.app.image.tag="$IMAGE_TAG" \
+            --set app-chart.app.config.PROD_DB_HOST="$DB_HOST_VALUE" \
+            --set app-chart.app.config.PROD_DB_PORT="$DB_PORT_VALUE" \
+            --set app-chart.app.config.PROD_DB_NAME="$DB_NAME_VALUE" \
+            --set app-chart.app.secret.PROD_DB_USER="$DB_USER" \
+            --set app-chart.app.secret.PROD_DB_PASSWORD="$DB_PASSWORD" \
+            --set app-chart.app.secret.JWT_SECRET="$JWT_SECRET" \
+            --set app-chart.app.secret.API_KEY="$API_KEY" \
+            --set app-chart.database.secret.POSTGRES_USER="$DB_USER" \
+            --set app-chart.database.secret.POSTGRES_PASSWORD="$DB_PASSWORD" \
+            --set app-chart.database.secret.POSTGRES_DB="$DB_NAME_VALUE" \
+            "${HELM_EXTRA_ARGS[@]}" \
+            --wait --timeout 10m
+
+      - name: Verify rollout
+        run: kubectl rollout status deployment/bunzina -n "$K8S_NAMESPACE" --timeout=180s
