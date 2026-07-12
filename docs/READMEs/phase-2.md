@@ -144,7 +144,16 @@ antes do primeiro apply no CI.
 
 ## Deploy em Kubernetes (Fase 2)
 
-A partir da Fase 2, a aplicação roda em **Kubernetes (AWS EKS)** em vez de AWS Lambda. A infraestrutura é provisionada com **Terraform** (`infra/`) e os recursos do cluster são descritos em manifests (`k8s/`).
+A partir da Fase 2, a aplicação roda em **Kubernetes (AWS EKS)** em vez de AWS Lambda. A infraestrutura é provisionada com **Terraform** (`infra/`).
+
+Os recursos Kubernetes da aplicação são gerenciados por meio de um **Helm Chart**, mantido em um repositório separado:
+
+- [Bunzina Helm Chart](https://github.com/Bunzina/bunzina-chart)
+
+Esse repositório contém os templates, values e configurações necessárias para realizar o deploy da aplicação no cluster Kubernetes. Portanto, para a avaliação e execução completa do projeto, devem ser considerados os dois repositórios:
+
+- [Bunzina — aplicação principal](https://github.com/Bunzina/bunzina)
+- [Bunzina Chart — Helm Chart para Kubernetes](https://github.com/Bunzina/bunzina-chart)
 
 ### Arquitetura
 
