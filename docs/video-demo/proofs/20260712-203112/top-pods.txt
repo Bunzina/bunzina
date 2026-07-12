@@ -1,7 +1,0 @@
-NAME                        CPU(cores)   MEMORY(bytes)   
-bunzina-67c79877cf-544wc    84m          62Mi            
-bunzina-67c79877cf-pz64w    84m          68Mi            
-bunzina-67c79877cf-x484p    98m          63Mi            
-hpa-load-567c9657dd-58w97   55m          11Mi            
-hpa-load-567c9657dd-742pm   52m          11Mi            
-hpa-load-567c9657dd-hlmf8   51m          10Mi            

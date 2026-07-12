@@ -1,2 +1,0 @@
-NAME      REFERENCE            TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
-bunzina   Deployment/bunzina   cpu: 80%/70%   2         10        3          157m
