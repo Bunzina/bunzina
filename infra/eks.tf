@@ -21,9 +21,6 @@ resource "aws_eks_cluster" "this" {
     bootstrap_cluster_creator_admin_permissions = false
   }
 
-  # Atributos create-only que a API do EKS não retorna; após um `terraform import`
-  # eles geram um diff falso que forçaria replace do cluster. Ignoramos para não
-  # recriar um cluster já provisionado.
   lifecycle {
     ignore_changes = [
       bootstrap_self_managed_addons,
