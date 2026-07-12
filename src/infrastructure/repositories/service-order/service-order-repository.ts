@@ -20,6 +20,19 @@ import {
 export class ServiceOrderRepository implements IServiceOrderRepository {
   constructor(private client: SQL) {}
 
+  private buildFindByParamsOrderSql() {
+    return this.client`
+      CASE status
+        WHEN 'IN_EXECUTION' THEN 1
+        WHEN 'AWAITING_APPROVAL' THEN 2
+        WHEN 'IN_DIAGNOSTIC' THEN 3
+        WHEN 'RECEIVED' THEN 4
+        ELSE 5
+      END,
+      created_at ASC
+    `;
+  }
+
   private buildFindByParamsFiltersSql(
     filters: NonNullable<FindServiceOrdersParams['filters']>,
   ) {
@@ -32,6 +45,9 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
     const statusFilter = filters.status
       ? this.client`AND status = ${filters.status}`
       : this.client``;
+    const excludedStatusesFilter = this.client`
+      AND status NOT IN ('COMPLETED', 'DELIVERED')
+    `;
     const startCreatedAtFilter = filters.startCreatedAt
       ? this.client`AND created_at >= ${filters.startCreatedAt}`
       : this.client``;
@@ -43,6 +59,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
       ${customerIdFilter}
       ${vehicleIdFilter}
       ${statusFilter}
+      ${excludedStatusesFilter}
       ${startCreatedAtFilter}
       ${endCreatedAtFilter}
     `;
@@ -153,7 +170,7 @@ export class ServiceOrderRepository implements IServiceOrderRepository {
         FROM bunzina.service_orders
       WHERE 1 = 1
         ${filtersSql}
-      ORDER BY created_at DESC
+      ORDER BY ${this.buildFindByParamsOrderSql()}
       LIMIT ${params.limit}
       OFFSET ${offset}
     `;
