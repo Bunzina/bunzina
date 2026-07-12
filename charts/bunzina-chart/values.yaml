@@ -37,7 +37,9 @@ app-chart:
     config:
       APP_ENV: "prod"
       PROD_DB_HOST: "aws-1-sa-east-1.pooler.supabase.com"
-      PROD_DB_PORT: "5432"
+      # 6543 = Supabase transaction mode (multiplexa muitos clientes; ideal p/ K8s + HPA).
+      # 5432 = session mode, limitado a pool_size=15 conexões totais (estoura com vários pods).
+      PROD_DB_PORT: "6543"
       PROD_DB_NAME: "postgres"
       EMAIL_SMTP_HOST: "mailcatcher"
       EMAIL_SMTP_PORT: "1025"
