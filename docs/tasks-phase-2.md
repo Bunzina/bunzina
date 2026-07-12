@@ -56,7 +56,7 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   - Estado: `.github/workflows/deploy-k8s.yml` existe (jobs de test/migração/build/push OK, região corrigida para `us-east-1`), mas o job `deploy` **ainda usa `kubectl apply -f k8s/*`** (pasta removida na migração). Falta trocar por `helm upgrade --install` puxando o `app-chart` do OCI — passo a passo documentado na [Parte 06](guia-eks-helm/06-cicd-bunzina.md). Requer publicar o `app-chart` no ECR ([Parte 04](guia-eks-helm/04-publicar-chart.md)).
 - [ ] Atualizar `README.md` com arquitetura da fase 2, instruções de deploy local/K8s e uso dos scripts Terraform.
   - Parcial: o README tem a seção "Deploy em Kubernetes" (com diagrama e passos), mas ainda descreve o fluxo antigo `kubectl apply -f k8s/`; atualizar para o fluxo Helm (umbrella + `helm install`).
-- [ ] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
+- [x] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
 - [ ] Produzir vídeo demonstrativo de no máximo 15 minutos mostrando deploy, CI/CD, consumo das APIs principais e escalabilidade.
   - O vídeo deve mostrar deploy, execução do CI/CD, consumo das APIs principais e escalabilidade automática com HPA; na parte de deploy e de CI/CD, pode ser mostrada uma execução bem-sucedida com explicação rápida das etapas.
   - Se sobrar tempo, incluir arquitetura, Clean Architecture/Hexagonal, testes, Terraform e observabilidade.
