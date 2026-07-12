@@ -59,3 +59,7 @@ values.secret.yaml
 charts/**/charts/
 charts/**/*.tgz
 charts/**/Chart.lock
+
+# Superpowers (scratch e specs/plans locais)
+.superpowers/
+docs/superpowers/

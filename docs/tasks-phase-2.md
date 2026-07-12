@@ -76,10 +76,10 @@ Esses itens são melhorias em relação à fase 1, baseadas no feedback do profe
 ## README — conteúdo obrigatório / README — required content
 
 Português:
-- [ ] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
+- [x] Passo a passo para executar a API localmente (`bun install`, `docker compose up` ou `bun --hot run src/api/server.ts`), como configurar variáveis de ambiente e executar migrations (`bun run migration`).
 - [ ] Passo a passo de uso da API com exemplos (`curl`) e link/arquivo da collection (Postman/Insomnia).
-- [ ] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
 - [x] Desenho da arquitetura com:
+- [x] Link ou instruções para acessar a documentação Swagger/OpenAPI localmente (ex.: `http://localhost:3000/docs` ou `http://localhost:3000/swagger`).
   - Componentes da aplicação (API, workers, DB, serviços externos).
   - Infraestrutura provisionada (K8s cluster, DB, storage, secrets management).
   - Fluxo de deploy (build → tests → image push → apply manifests / terraform apply).
