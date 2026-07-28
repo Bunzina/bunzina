@@ -526,5 +526,3 @@ curl http://localhost:3000/customers/12345678909 \
 | ------ | -------------------------------------------- |
 | 400    | Email ou senha com formato inválido          |
 | 401    | Credenciais inválidas ou token ausente/expirado |
-
-TESTE PUSH

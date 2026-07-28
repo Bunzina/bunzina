@@ -38,7 +38,7 @@
 - [ ] Implementar CI/CD nos quatro repositórios.
   - O PDF permite utilizar GitHub Actions, GitLab CI ou outra ferramenta equivalente.
   - O deploy deve ser automático para a nuvem.
-- [ ] Configurar proteção da branch principal e uso de Pull Requests.
+- [x] Configurar proteção da branch principal e uso de Pull Requests.
   - O PDF exige que a branch `main` ou `master` seja protegida, sem commits diretos.
   - O uso de Pull Requests para merge é obrigatório.
   - O PDF menciona deploy automático para homologação e produção, mas, conforme explicado pelo professor, não precisa criar ambiente nem branch de homologação.
