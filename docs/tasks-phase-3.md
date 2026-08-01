@@ -1,19 +1,33 @@
 # Tasks — Fase 3 do Tech Challenge
-
 # Autenticação e API Gateway
+- [ ] Implementar o fluxo de autenticação do cliente.
+  - O mais importante é atender ao requisito de identificação do cliente.
+  - O CPF deve fazer parte do fluxo de autenticação, ser validado e estar corretamente associado ao usuário.
+  - Podemos continuar utilizando e-mail e senha como credenciais de acesso, desde que o CPF também seja validado e associado ao usuário.
+- [ ] Criar uma Function Serverless para autenticação.
+  - A Function Serverless deve contemplar o fluxo completo solicitado:
+    - Validar o CPF do cliente;
+    - Consultar se o cliente existe e qual é o seu status na base de dados;
+    - Gerar e devolver um token JWT válido para acesso às APIs protegidas.
+  - Não devemos escolher apenas uma das três funcionalidades.
+  - A mesma Function Serverless deve executar as três etapas.
+  - Internamente, as responsabilidades podem ser separadas em serviços ou funções auxiliares para manter uma boa organização do código.
 - [ ] Implementar um API Gateway.
   - O PDF permite utilizar AWS API Gateway, Kong, Traefik ou outra solução equivalente.
-- [ ] Proteger as rotas sensíveis da aplicação com autenticação via CPF.
-- [ ] Criar uma Function Serverless para autenticação.
-  - Não precisa implementar as três responsabilidades na mesma Function Serverless.
-  - Pode ser implementada apenas uma das responsabilidades na Function Serverless.
-  - As outras responsabilidades precisam estar implementadas em algum lugar, podendo ficar no pod da aplicação ou em outra Lambda.
-  - As responsabilidades apresentadas no requisito são:
-    - Validar o CPF do cliente;
-    - Consultar a existência e o status do cliente na base de dados;
-    - Gerar e devolver um JWT válido para consumo das APIs protegidas.
-- [ ] Definir como será implementado o fluxo de autenticação e API Gateway.
-  - Estamos aguardando o professor responder uma dúvida no canal do Discord para realmente iniciarmos essa implementação.
+  - O API Gateway deve funcionar como a porta de entrada das APIs da solução.
+  - Ele pode centralizar:
+    - Roteamento das requisições;
+    - Validação do token;
+    - Controle de acesso;
+    - Aplicação de políticas;
+    - Limitação de chamadas;
+    - Direcionamento para os respectivos serviços.
+- [ ] Validar o JWT no API Gateway.
+  - A validação no API Gateway deve impedir que requisições sem autorização cheguem aos serviços internos.
+  - Mesmo com essa validação, a aplicação pode manter uma segunda validação do JWT como camada adicional de segurança.
+  - A aplicação também deve continuar responsável por validar permissões e regras específicas de negócio.
+- [ ] Validar o desenho da solução em uma mentoria antes da implementação definitiva.
+  - Podemos levar o desenho da arquitetura, o fluxo de autenticação ou uma proposta de solução para o mentor revisar antes de avançarmos.
 ---
 
 # Estrutura de Repositórios e CI/CD
@@ -165,3 +179,4 @@
   - Segundo o PDF, o documento deve reunir os links dos quatro repositórios, do vídeo e das documentações.
   - Não é necessária a confirmação do usuário `soat-architecture`, pois os repositórios são públicos.
 - [ ] Destruir os recursos da AWS após a gravação e validação do vídeo.
+---
