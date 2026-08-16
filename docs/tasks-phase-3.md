@@ -23,13 +23,13 @@
   - O deploy para a Lambda pode ser realizado utilizando Terraform ou Serverless Framework.
   - O API Gateway pode ficar no repositório da Lambda ou no repositório de infraestrutura Kubernetes.
   - O deploy deve ser automático para a nuvem.
-- [ ] Criar o repositório de infraestrutura Kubernetes.
+- [x] Criar o repositório de infraestrutura Kubernetes.
   - O deploy deve ser automático para a nuvem.
-- [ ] Criar o repositório de infraestrutura do banco de dados gerenciado.
+- [x] Criar o repositório de infraestrutura do banco de dados gerenciado.
   - As migrations podem ficar no repositório da infraestrutura do banco ou no repositório da aplicação.
   - Podemos continuar mantendo as migrations no repositório da aplicação, como já ocorre atualmente.
   - O deploy deve ser automático para a nuvem.
-- [ ] Manter e adaptar o repositório da aplicação principal.
+- [x] Manter e adaptar o repositório da aplicação principal.
 - [x] Configurar proteção da branch principal e uso de Pull Requests.
   - O PDF exige que a branch `main` ou `master` seja protegida, sem commits diretos.
   - O uso de Pull Requests para merge é obrigatório.
@@ -50,7 +50,7 @@
     - `https://github.com/dougls/terraform-academy`
     - `https://github.com/dougls/terraform-soat`
     - `https://github.com/dougls/opentelemetry`
-- [ ] Preparar o ambiente de produção para a demonstração.
+- [x] Preparar o ambiente de produção para a demonstração.
   - A aplicação não precisa permanecer rodando em produção.
   - Os recursos precisam estar ativos apenas durante a gravação do vídeo.
   - Depois da gravação, podemos destruir os recursos.
