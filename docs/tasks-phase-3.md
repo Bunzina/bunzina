@@ -17,27 +17,19 @@
 ---
 
 # Estrutura de Repositórios e CI/CD
-- [ ] Organizar o projeto em quatro repositórios separados.
-  - Os quatro repositórios precisam possuir CI/CD.
-  - Os repositórios necessários são:
-    1. Lambda;
-    2. Infraestrutura Kubernetes;
-    3. Infraestrutura do banco de dados gerenciado;
-    4. Aplicação principal executando no Kubernetes.
-  - Podemos continuar utilizando o repositório `bunzina-chart` para o Helm Chart.
 - [ ] Criar o repositório da Lambda.
   - Esse repositório precisa conter o código da Lambda.
   - Conforme o PDF, esse repositório representa a Function Serverless.
   - O deploy para a Lambda pode ser realizado utilizando Terraform ou Serverless Framework.
   - O API Gateway pode ficar no repositório da Lambda ou no repositório de infraestrutura Kubernetes.
+  - O deploy deve ser automático para a nuvem.
 - [ ] Criar o repositório de infraestrutura Kubernetes.
+  - O deploy deve ser automático para a nuvem.
 - [ ] Criar o repositório de infraestrutura do banco de dados gerenciado.
   - As migrations podem ficar no repositório da infraestrutura do banco ou no repositório da aplicação.
   - Podemos continuar mantendo as migrations no repositório da aplicação, como já ocorre atualmente.
-- [ ] Manter e adaptar o repositório da aplicação principal.
-- [ ] Implementar CI/CD nos quatro repositórios.
-  - O PDF permite utilizar GitHub Actions, GitLab CI ou outra ferramenta equivalente.
   - O deploy deve ser automático para a nuvem.
+- [ ] Manter e adaptar o repositório da aplicação principal.
 - [ ] Configurar proteção da branch principal e uso de Pull Requests.
   - O PDF exige que a branch `main` ou `master` seja protegida, sem commits diretos.
   - O uso de Pull Requests para merge é obrigatório.
