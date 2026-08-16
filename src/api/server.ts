@@ -340,6 +340,12 @@ app.get(
   findServiceOrdersByCustomerRouteSchema,
 );
 
+app.post(
+  '/service-orders/:id/quote/confirm',
+  async (context) => validateQuoteConfirmationHandler(context),
+  validateQuoteConfirmationRouteSchema,
+);
+
 app.guard(
   {
     beforeHandle: async (context) => authMiddleware(context),
@@ -381,12 +387,6 @@ app.guard(
       async (context) => completeServiceItemHandler(context),
       completeServiceOrderItemRouteSchema,
     );
-    app.post(
-      '/service-orders/:id/quote/confirm',
-      async (context) => validateQuoteConfirmationHandler(context),
-      validateQuoteConfirmationRouteSchema,
-    );
-
     return app;
   },
 );

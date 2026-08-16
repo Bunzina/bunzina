@@ -12,6 +12,7 @@ import { beforeEach, describe, expect, test } from 'bun:test';
 import { UpdateServiceOrderStatusUseCase } from './update-status';
 import { StatusDirection } from '@/domain/service-order/state-machines/status-machine';
 import { makeEmail } from '@/test/factories/make-email';
+import { makeDocument } from '@/test/factories/make-document';
 
 describe('update service order status use case', () => {
   let serviceOrderRepository: MockProxy<ServiceOrderRepository>;
@@ -201,9 +202,13 @@ describe('update service order status use case', () => {
   });
 
   test('should send email to customer when moving to AWAITING_APPROVAL', async () => {
+    const previousPublicApiUrl = process.env.PUBLIC_API_URL;
+    process.env.PUBLIC_API_URL = 'https://api.bunzina.com';
+
     const id = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
     const customerId = 'customer-id-123';
     const customerEmail = 'customer@bunzina.com';
+    const customerDocumentNumber = '12345678909';
     const serviceOrder = makeServiceOrder({
       id,
       customerId,
@@ -212,6 +217,7 @@ describe('update service order status use case', () => {
     const customer = makeCustomer({
       id: customerId,
       email: makeEmail(customerEmail),
+      document: makeDocument(customerDocumentNumber),
     });
 
     findServiceOrderByIdUseCase.execute.mockResolvedValue(serviceOrder);
@@ -231,10 +237,19 @@ describe('update service order status use case', () => {
         Total em peças: R$200,00 
         Total em serviço: R$300,00 
         Total: R$500,00`,
+      html: expect.stringContaining(
+        `action="https://api.bunzina.com/service-orders/${id}/quote/confirm"`,
+      ),
       to: customerEmail,
       subject: 'Orçamento de Ordem de Serviço',
     });
     expect(result.status).toBe(ServiceOrderStatus.AWAITING_APPROVAL);
+
+    if (previousPublicApiUrl === undefined) {
+      delete process.env.PUBLIC_API_URL;
+    } else {
+      process.env.PUBLIC_API_URL = previousPublicApiUrl;
+    }
   });
 
   test('should not send email when moving to other statuses', async () => {

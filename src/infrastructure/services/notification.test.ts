@@ -48,6 +48,7 @@ describe('notification infrastructure service', () => {
       from: 'email',
       to: notification.to,
       text: notification.message,
+      html: notification.html,
       subject: notification.subject,
     });
   });

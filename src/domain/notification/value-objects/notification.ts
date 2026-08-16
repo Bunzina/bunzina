@@ -5,6 +5,7 @@ export class Notification {
   to: string;
   deliveryChannel: DeliveryChannel;
   subject?: string;
+  html?: string;
 
   constructor(input: Notification) {
     Object.assign(this, input);

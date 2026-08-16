@@ -17,8 +17,14 @@ export class ValidateQuoteConfirmationInput {
     const { id } = context.params as { id: string };
     const { documentNumber, isConfirmed } = context.body as {
       documentNumber: string;
-      isConfirmed: boolean;
+      isConfirmed: boolean | string;
     };
+    const normalizedIsConfirmed =
+      isConfirmed === 'true'
+        ? true
+        : isConfirmed === 'false'
+          ? false
+          : isConfirmed;
 
     logger.info({
       message: 'Validate confirmation quote request',
@@ -30,7 +36,7 @@ export class ValidateQuoteConfirmationInput {
       {
         id,
         documentNumber,
-        isConfirmed,
+        isConfirmed: normalizedIsConfirmed,
       },
     );
 

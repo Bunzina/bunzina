@@ -113,4 +113,29 @@ describe('validate quote confirmation input', () => {
       isConfirmed: false,
     });
   });
+
+  test('should parse string booleans from form payload', async () => {
+    const id = '33333333-3333-4333-8333-333333333333';
+    const serviceOrder = makeServiceOrder({ id });
+    validateQuoteConfirmationUseCase.execute
+      .calledWith(any())
+      .mockResolvedValue(serviceOrder);
+
+    const request = {
+      params: { id },
+      body: {
+        documentNumber: '123.456.789-09',
+        isConfirmed: 'false',
+      },
+    } as unknown as Context;
+
+    const result = await validateQuoteConfirmationInput.execute(request);
+
+    expect(result.status).toBe(200);
+    expect(validateQuoteConfirmationUseCase.execute).toHaveBeenCalledWith({
+      id,
+      customerRequesterDocument: expect.any(Object),
+      isConfirmed: false,
+    });
+  });
 });

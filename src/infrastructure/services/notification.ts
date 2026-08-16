@@ -17,6 +17,7 @@ export class NotificationService implements INotificationService {
         from: this.defaultEmail,
         to: notification.to,
         text: notification.message,
+        html: notification.html,
         subject: notification.subject,
       });
 

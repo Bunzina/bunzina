@@ -98,11 +98,23 @@ export class UpdateServiceOrderStatusUseCase {
         id: serviceOrder.customerId,
       });
 
-      await this.notificationService.sendEmail({
-        message: `Segue orçamento da Ordem de Serviço para validação: 
+      const apiBaseUrl = this.resolveApiBaseUrl();
+      const confirmationEndpoint = `${apiBaseUrl}/service-orders/${serviceOrder.id}/quote/confirm`;
+      const message = `Segue orçamento da Ordem de Serviço para validação: 
         Total em peças: R$${Number(serviceOrder.quote.autoPartsTotal)},00 
         Total em serviço: R$${Number(serviceOrder.quote.servicesTotal)},00 
-        Total: R$${Number(serviceOrder.quote.total)},00`,
+        Total: R$${Number(serviceOrder.quote.total)},00`;
+      const html = this.buildQuoteValidationEmailHtml({
+        confirmationEndpoint,
+        documentNumber: customer.document.value,
+        autoPartsTotal: Number(serviceOrder.quote.autoPartsTotal),
+        servicesTotal: Number(serviceOrder.quote.servicesTotal),
+        total: Number(serviceOrder.quote.total),
+      });
+
+      await this.notificationService.sendEmail({
+        message,
+        html,
         to: customer.email.value,
         subject: 'Orçamento de Ordem de Serviço',
       });
@@ -142,5 +154,42 @@ export class UpdateServiceOrderStatusUseCase {
           ? new Date()
           : serviceOrder.deliveredAt,
     };
+  }
+
+  private resolveApiBaseUrl(): string {
+    const baseUrl = process.env.PUBLIC_API_URL ?? 'http://localhost:3000';
+
+    return baseUrl.replace(/\/$/, '');
+  }
+
+  private buildQuoteValidationEmailHtml(input: {
+    confirmationEndpoint: string;
+    documentNumber: string;
+    autoPartsTotal: number;
+    servicesTotal: number;
+    total: number;
+  }): string {
+    return `
+      <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #1f2937;">
+        <p>Segue orçamento da Ordem de Serviço para validação:</p>
+        <p>Total em peças: R$${input.autoPartsTotal},00</p>
+        <p>Total em serviço: R$${input.servicesTotal},00</p>
+        <p><strong>Total: R$${input.total},00</strong></p>
+
+        <div style="margin-top: 24px;">
+          <form method="post" action="${input.confirmationEndpoint}" style="display: inline-block; margin-right: 12px;">
+            <input type="hidden" name="documentNumber" value="${input.documentNumber}" />
+            <input type="hidden" name="isConfirmed" value="true" />
+            <button type="submit" style="background: #15803d; color: #ffffff; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600;">Aceitar orçamento</button>
+          </form>
+
+          <form method="post" action="${input.confirmationEndpoint}" style="display: inline-block;">
+            <input type="hidden" name="documentNumber" value="${input.documentNumber}" />
+            <input type="hidden" name="isConfirmed" value="false" />
+            <button type="submit" style="background: #b91c1c; color: #ffffff; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; font-weight: 600;">Recusar orçamento</button>
+          </form>
+        </div>
+      </div>
+    `;
   }
 }

@@ -265,7 +265,6 @@ export const validateQuoteConfirmationRouteSchema = {
     responses: {
       '200': { description: 'Quote confirmation validated successfully' },
       '400': { description: 'Invalid data' },
-      '401': { description: 'Missing or invalid token' },
       '403': {
         description: 'Service order is not awaiting approval for quote action',
       },
