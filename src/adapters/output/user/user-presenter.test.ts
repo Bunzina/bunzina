@@ -11,6 +11,7 @@ describe('user presenter', () => {
     expect(response).toEqual({
       id: user.id!,
       name: user.name,
+      document: user.document.value,
       email: user.email.value,
       role: user.role,
       isActive: user.isActive,

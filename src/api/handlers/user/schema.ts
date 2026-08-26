@@ -9,6 +9,7 @@ const userRoleSchema = t.Union([
 const userResponseSchema = t.Object({
   id: t.String({ format: 'uuid' }),
   name: t.String(),
+  document: t.String({ examples: ['11144477735'] }),
   email: t.String({ format: 'email' }),
   role: userRoleSchema,
   isActive: t.Boolean(),
@@ -33,7 +34,7 @@ export const loginSchema = {
     },
   },
   body: t.Object({
-    email: t.String({ format: 'email', examples: ['admin@bunzina.com'] }),
+    document: t.String({ examples: ['11144477735'] }),
     password: t.String({ examples: ['senha123'] }),
   }),
   response: {
@@ -60,6 +61,7 @@ export const createUserSchema = {
   },
   body: t.Object({
     name: t.String({ examples: ['João Silva'] }),
+    document: t.String({ examples: ['11144477735'] }),
     email: t.String({ format: 'email', examples: ['joao@bunzina.com'] }),
     password: t.String({
       description: 'Senha com no mínimo 6 caracteres',
@@ -117,6 +119,7 @@ export const updateUserSchema = {
   }),
   body: t.Object({
     name: t.String({ examples: ['João Silva'] }),
+    document: t.String({ examples: ['11144477735'] }),
     email: t.String({ format: 'email', examples: ['joao@bunzina.com'] }),
     role: t.String({
       description: 'ADMIN | MECHANIC | CUSTOMER',

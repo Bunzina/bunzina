@@ -21,6 +21,7 @@ describe('update user handler', () => {
         {
           id: crypto.randomUUID(),
           name: 'John Doe',
+          document: '11144477735',
           email: 'john@example.com',
           password_hash: 'hashed-password',
           role: 'ADMIN',
@@ -36,6 +37,7 @@ describe('update user handler', () => {
       params: { id: crypto.randomUUID() },
       body: {
         name: 'Jane Doe',
+        document: '111.444.777-35',
         email: 'jane@example.com',
         role: 'MECHANIC',
         isActive: true,
@@ -58,6 +60,7 @@ describe('update user handler', () => {
       params: { id: crypto.randomUUID() },
       body: {
         name: 'Jane Doe',
+        document: '111.444.777-35',
         email: 'jane@example.com',
         role: 'MECHANIC',
         isActive: true,
