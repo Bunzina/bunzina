@@ -87,5 +87,7 @@ export class CreateUserInput {
         data: { reason: 'Invalid or expired token' },
       });
     }
+
+    return null;
   }
 }

@@ -21,6 +21,7 @@ describe('find user handler', () => {
         {
           id: crypto.randomUUID(),
           name: 'John Doe',
+          document: '11144477735',
           email: 'john@example.com',
           password_hash: 'hashed-password',
           role: 'ADMIN',

@@ -6,7 +6,12 @@ import { beforeEach, describe, expect, mock, test } from 'bun:test';
 import type { Context } from 'elysia';
 
 const mockVerifyJwt = mock(() =>
-  Promise.resolve({ sub: '1', email: 'a@b.com', role: 'ADMIN' }),
+  Promise.resolve({
+    sub: '1',
+    document: '11144477735',
+    email: 'a@b.com',
+    role: 'ADMIN',
+  }),
 );
 mock.module('@/infrastructure/services/jwt', () => ({
   verifyJwt: mockVerifyJwt,
@@ -31,6 +36,7 @@ describe('create user input', () => {
     const request = {
       body: {
         name: 'John Doe',
+        document: '111.444.777-35',
         email: 'john@example.com',
         password: 'password123',
         role: 'CUSTOMER',
@@ -55,6 +61,7 @@ describe('create user input', () => {
     const request = {
       body: {
         name: 'John Doe',
+        document: '111.444.777-35',
         email: 'john@example.com',
         password: 'password123',
         role: 'MECHANIC',
@@ -74,6 +81,7 @@ describe('create user input', () => {
     const request = {
       body: {
         name: 'John Doe',
+        document: '111.444.777-35',
         email: 'john@example.com',
         password: 'password123',
         role: 'ADMIN',
@@ -94,6 +102,7 @@ describe('create user input', () => {
     const request = {
       body: {
         name: 'John Doe',
+        document: 'invalid-cpf',
         email: 'invalid-email',
         password: '123',
         role: 'INVALID',
@@ -117,6 +126,7 @@ describe('create user input', () => {
     const request = {
       body: {
         name: 'John Doe',
+        document: '111.444.777-35',
         email: 'john@example.com',
         password: 'password123',
         role: 'CUSTOMER',

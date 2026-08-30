@@ -21,6 +21,7 @@ describe('Integration - Users endpoints', () => {
   test('POST /users creates a customer user', async () => {
     const suffix = uniqueSuffix();
     const email = `user.${suffix}@example.com`;
+    const document = '52998224725';
     const password = 'senha123';
 
     const createResponse = await handleRequest(
@@ -28,6 +29,7 @@ describe('Integration - Users endpoints', () => {
         method: 'POST',
         body: JSON.stringify({
           name: 'User Example',
+          document,
           email,
           password,
           role: 'CUSTOMER',
@@ -40,7 +42,7 @@ describe('Integration - Users endpoints', () => {
     const loginResponse = await handleRequest(
       jsonRequest('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ document, password }),
       }),
     );
 
@@ -60,6 +62,7 @@ describe('Integration - Users endpoints', () => {
         method: 'PUT',
         body: JSON.stringify({
           name: 'Updated User',
+          document: '39053344705',
           email: `updated.user.${uniqueSuffix()}@example.com`,
           role: 'CUSTOMER',
           isActive: true,

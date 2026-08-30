@@ -19,7 +19,7 @@ describe('login input', () => {
 
     const request = {
       body: {
-        email: 'admin@bunzina.com',
+        document: '111.444.777-35',
         password: 'password123',
       },
     } as Context;
@@ -31,15 +31,15 @@ describe('login input', () => {
     expect(await result?.json()).toEqual({ token: 'jwt-token' });
 
     expect(loginUseCase.execute).toHaveBeenCalledWith({
-      email: 'admin@bunzina.com',
+      document: '11144477735',
       password: 'password123',
     });
   });
 
-  test('should return 400 when email is invalid', async () => {
+  test('should return 400 when document is invalid', async () => {
     const request = {
       body: {
-        email: 'invalid-email',
+        document: 'invalid-cpf',
         password: 'password123',
       },
     } as Context;
@@ -53,7 +53,7 @@ describe('login input', () => {
   test('should return 400 when password is empty', async () => {
     const request = {
       body: {
-        email: 'admin@bunzina.com',
+        document: '111.444.777-35',
         password: '',
       },
     } as Context;
@@ -69,7 +69,7 @@ describe('login input', () => {
 
     const request = {
       body: {
-        email: 'admin@bunzina.com',
+        document: '111.444.777-35',
         password: 'password123',
       },
     } as Context;

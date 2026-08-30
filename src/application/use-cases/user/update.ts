@@ -1,4 +1,5 @@
 import { Email } from '@/domain/core/value-objects/email';
+import { Document } from '@/domain/core/value-objects/document';
 import type { User } from '@/domain/user/entities/user';
 import type { UserRepository } from '@/domain/user/repositories/user-repository';
 import type { UserRole } from '@/domain/user/types/user-role';
@@ -8,6 +9,7 @@ import logger from '@lucas-pmelo/logger';
 interface Input {
   id: string;
   name: string;
+  document: string;
   email: string;
   role: UserRole;
   isActive: boolean;
@@ -31,6 +33,7 @@ export class UpdateUserUseCase {
     }
 
     user.name = input.name;
+    user.document = new Document(input.document);
     user.email = new Email(input.email);
     user.role = input.role;
     user.isActive = input.isActive;

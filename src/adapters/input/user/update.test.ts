@@ -25,6 +25,7 @@ describe('update user input', () => {
       },
       body: {
         name: 'Updated Name',
+        document: '111.444.777-35',
         email: 'updated@example.com',
         role: 'ADMIN',
         isActive: true,
@@ -42,6 +43,7 @@ describe('update user input', () => {
     expect(updateUserUseCase.execute).toHaveBeenCalledWith({
       id: user.id,
       name: 'Updated Name',
+      document: '11144477735',
       email: 'updated@example.com',
       role: 'ADMIN',
       isActive: true,
@@ -78,6 +80,7 @@ describe('update user input', () => {
       },
       body: {
         name: 'Updated Name',
+        document: '111.444.777-35',
         email: 'updated@example.com',
         role: 'ADMIN',
         isActive: true,

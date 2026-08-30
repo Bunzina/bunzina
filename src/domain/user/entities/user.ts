@@ -1,9 +1,11 @@
 import { Entity, type EntityProps } from '@/domain/core/entities/entity';
+import type { Document } from '@/domain/core/value-objects/document';
 import type { Email } from '@/domain/core/value-objects/email';
 import type { UserRole } from '../types/user-role';
 
 export interface UserProps extends EntityProps {
   name: string;
+  document: Document;
   email: Email;
   passwordHash: string;
   role: UserRole;
@@ -14,6 +16,7 @@ export interface UserProps extends EntityProps {
 
 export class User extends Entity {
   name!: string;
+  document!: Document;
   email!: Email;
   passwordHash!: string;
   role!: UserRole;

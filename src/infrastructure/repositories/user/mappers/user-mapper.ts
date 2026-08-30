@@ -1,4 +1,5 @@
 import { Email } from '@/domain/core/value-objects/email';
+import { Document } from '@/domain/core/value-objects/document';
 import { User } from '@/domain/user/entities/user';
 import type { UserDbSchema } from '../dtos/user-db-schema';
 
@@ -7,6 +8,7 @@ export const UserMapper = {
     return {
       id: user.id!,
       name: user.name,
+      document: user.document.value,
       email: user.email.value,
       password_hash: user.passwordHash,
       role: user.role,
@@ -20,6 +22,7 @@ export const UserMapper = {
     return new User({
       id: record.id,
       name: record.name,
+      document: new Document(record.document),
       email: new Email(record.email),
       passwordHash: record.password_hash,
       role: record.role,

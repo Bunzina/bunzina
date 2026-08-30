@@ -32,6 +32,30 @@ export class UserRepository implements IUserRepository {
     return user;
   }
 
+  async findByDocument(document: string): Promise<User | null> {
+    const [record] = await this.client<UserDbSchema[]>`
+      SELECT * FROM bunzina.users WHERE document = ${document} LIMIT 1
+    `;
+
+    if (!record) {
+      logger.debug({
+        message: 'No user found with document',
+        data: { document },
+      });
+
+      return null;
+    }
+
+    const user = UserMapper.toDomain(record);
+
+    logger.debug({
+      message: 'User found with document',
+      data: { document },
+    });
+
+    return user;
+  }
+
   async findById(id: string): Promise<User | null> {
     const [record] = await this.client<UserDbSchema[]>`
       SELECT * FROM bunzina.users WHERE id = ${id} LIMIT 1
