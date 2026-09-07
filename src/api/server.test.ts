@@ -26,6 +26,7 @@ describe('Server', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: 'João Silva',
+          document: '111.444.777-35',
           email: 'invalid-email',
           password: 'senha123',
           role: 'CUSTOMER',
@@ -38,20 +39,20 @@ describe('Server', () => {
     expect(response.headers.get('Content-Type')).toContain('application/json');
   });
 
-  test('POST /auth/login returns 422 when body is invalid', async () => {
+  test('POST /auth/login returns 400 when body is invalid', async () => {
     const response = await app.handle(
       new Request('http://localhost/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'not-an-email',
+          document: 'invalid-cpf',
           password: '',
         }),
       }),
     );
 
     expect(response).toBeDefined();
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(400);
     expect(response.headers.get('Content-Type')).toContain('application/json');
   });
 

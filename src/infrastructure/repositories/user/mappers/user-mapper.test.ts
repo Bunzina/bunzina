@@ -8,6 +8,7 @@ describe('user mapper', () => {
     const record: UserDbSchema = {
       id: '123',
       name: 'John Doe',
+      document: '11144477735',
       email: 'john@example.com',
       password_hash: 'hashed-password',
       role: UserRole.ADMIN,
@@ -20,6 +21,7 @@ describe('user mapper', () => {
 
     expect(user.id).toBe('123');
     expect(user.name).toBe('John Doe');
+    expect(user.document.value).toBe('11144477735');
     expect(user.email.value).toBe('john@example.com');
     expect(user.passwordHash).toBe('hashed-password');
     expect(user.role).toBe(UserRole.ADMIN);
@@ -38,6 +40,7 @@ describe('user mapper', () => {
 
     expect(record.id).toBe(user.id!);
     expect(record.name).toBe(user.name);
+    expect(record.document).toBe(user.document.value);
     expect(record.email).toBe(user.email.value);
     expect(record.password_hash).toBe(user.passwordHash);
     expect(record.role).toBe(UserRole.MECHANIC);

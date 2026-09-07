@@ -1,8 +1,8 @@
-import { emailValidation } from '@/utils/validation-helpers/email';
+import { cpfValidation } from '@/utils/validation-helpers/cpf';
 import { z } from 'zod';
 
 export const loginSchema = z.object({
-  email: emailValidation,
+  document: cpfValidation,
   password: z.string().min(1, 'Password is required'),
 });
 

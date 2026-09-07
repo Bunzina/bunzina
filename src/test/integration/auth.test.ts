@@ -20,7 +20,7 @@ describe('Integration - Auth endpoints', () => {
     const response = await handleRequest(
       jsonRequest('/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email: 'invalid', password: '' }),
+        body: JSON.stringify({ document: 'invalid', password: '' }),
       }),
     );
 

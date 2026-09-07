@@ -89,6 +89,7 @@ describe('auth middleware', () => {
   test('should pass and set user in store when token is valid', async () => {
     const token = await signJwt({
       sub: '123',
+      document: '11144477735',
       email: 'admin@bunzina.com',
       role: 'ADMIN',
     });
@@ -105,6 +106,7 @@ describe('auth middleware', () => {
     expect(result).toBeUndefined();
     expect((context.store as Record<string, unknown>).user).toMatchObject({
       sub: '123',
+      document: '11144477735',
       email: 'admin@bunzina.com',
       role: 'ADMIN',
     });
@@ -139,6 +141,7 @@ describe('auth middleware', () => {
   test('should return 401 when api key is invalid even if authorization is valid', async () => {
     const token = await signJwt({
       sub: '123',
+      document: '11144477735',
       email: 'admin@bunzina.com',
       role: 'ADMIN',
     });

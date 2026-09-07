@@ -2,7 +2,12 @@ import { signJwt, verifyJwt } from './jwt';
 
 describe('jwt service', () => {
   test('should sign and verify a JWT token', async () => {
-    const payload = { sub: '123', email: 'test@test.com', role: 'ADMIN' };
+    const payload = {
+      sub: '123',
+      document: '11144477735',
+      email: 'test@test.com',
+      role: 'ADMIN',
+    };
 
     const token = await signJwt(payload);
 
@@ -12,6 +17,7 @@ describe('jwt service', () => {
     const decoded = await verifyJwt(token);
 
     expect(decoded.sub).toBe('123');
+    expect(decoded.document).toBe('11144477735');
     expect(decoded.email).toBe('test@test.com');
     expect(decoded.role).toBe('ADMIN');
     expect(decoded.iat).toBeDefined();
@@ -26,6 +32,7 @@ describe('jwt service', () => {
   test('should reject a token with invalid signature', async () => {
     const token = await signJwt({
       sub: '123',
+      document: '11144477735',
       email: 'test@test.com',
       role: 'ADMIN',
     });
@@ -44,6 +51,7 @@ describe('jwt service', () => {
     const payload = btoa(
       JSON.stringify({
         sub: '123',
+        document: '11144477735',
         email: 'test@test.com',
         role: 'ADMIN',
         iat: 1000,
@@ -116,6 +124,7 @@ describe('jwt service', () => {
     const payload = btoa(
       JSON.stringify({
         sub: '123',
+        document: '11144477735',
         email: 'test@test.com',
         role: 'ADMIN',
         iat: 1000.5,
@@ -156,6 +165,7 @@ describe('jwt service', () => {
     const payload = btoa(
       JSON.stringify({
         sub: '123',
+        document: '11144477735',
         email: 'test@test.com',
         role: 'ADMIN',
         iat: 1000,
@@ -196,6 +206,7 @@ describe('jwt service', () => {
     const payload = btoa(
       JSON.stringify({
         sub: '123',
+        document: '11144477735',
         email: 'test@test.com',
         role: 'ADMIN',
         iat: 1000,

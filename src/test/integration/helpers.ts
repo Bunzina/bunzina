@@ -96,6 +96,7 @@ export const uniqueSuffix = () =>
 export const createUserAndLogin = async () => {
   const suffix = uniqueSuffix();
   const email = `integration.user.${suffix}@example.com`;
+  const document = '11144477735';
   const password = 'senha123';
 
   const createUserResponse = await getApp().handle(
@@ -103,6 +104,7 @@ export const createUserAndLogin = async () => {
       method: 'POST',
       body: JSON.stringify({
         name: 'Integration User',
+        document,
         email,
         password,
         role: 'CUSTOMER',
@@ -116,7 +118,7 @@ export const createUserAndLogin = async () => {
   const loginResponse = await getApp().handle(
     jsonRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ document, password }),
     }),
   );
 
@@ -125,6 +127,7 @@ export const createUserAndLogin = async () => {
 
   return {
     userId: createdUser.id,
+    document,
     token: loginBody.token,
   };
 };
