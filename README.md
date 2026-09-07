@@ -3,6 +3,8 @@
 API REST para gerenciamento de uma oficina mecânica, desenvolvida com **Bun**, **Elysia** e **PostgreSQL**, seguindo os princípios de **Clean Architecture**.
 
 > Observação para a correção: se o professor quiser ir mais direto ao ponto na avaliação da Fase 2, vale consultar o arquivo [docs/READMEs/phase-2.md](docs/READMEs/phase-2.md), que concentra a documentação específica dessa etapa.
+>
+> A documentação de arquitetura (diagramas, ADRs, RFCs e banco) está em [docs/arch](docs/arch/README.md).
 
 ---
 
@@ -41,6 +43,8 @@ O **PostgreSQL** foi escolhido pelos seguintes motivos:
 - **Schemas** — permite isolar as tabelas do projeto no schema `bunzina`, facilitando a organização em ambiente compartilhado
 - **Maturidade e ecossistema** — solução amplamente adotada, com excelente suporte no Bun via `bun:sql`
 - **Escalabilidade** — suporta índices avançados, particionamento e extensões (como `uuid-ossp`) para crescimento futuro do sistema
+
+Documentação completa do schema, ajustes e diagrama ER: [docs/arch/database.md](docs/arch/database.md).
 
 ---
 
@@ -224,11 +228,12 @@ Esse repositório contém os templates, values e configurações necessárias pa
 
 ### Arquitetura
 
-Os diagramas da Fase 2 estão em [docs/arch](docs/arch):
+A documentação de arquitetura (Fases 2 e 3) está centralizada em [docs/arch](docs/arch/README.md):
 
-- [docs/arch/application-components.png](docs/arch/application-components.png) — componentes da aplicação (API, workers, DB e serviços externos)
-- [docs/arch/infrastructure-provisioning.png](docs/arch/infrastructure-provisioning.png) — infraestrutura provisionada (cluster, banco, storage e secrets)
-- [docs/arch/deploy.png](docs/arch/deploy.png) — fluxo de deploy (build, testes, push de imagem e deploy)
+- [Visão geral](docs/arch/overview.md) — estado atual e alvo da Fase 3
+- [Diagramas](docs/arch/diagrams/README.md) — PNGs (Fase 2 + nuvem, EKS, API Gateway/Lambda, sequências e ER)
+- [Banco de dados](docs/arch/database.md) — justificativa, tabelas e relacionamentos
+- [ADRs](docs/arch/adrs/README.md) e [RFCs](docs/arch/rfcs/README.md) — decisões e o motivo de cada uma
 
 
 

@@ -110,29 +110,22 @@
 ---
 
 # Documentação da Arquitetura
-- [ ] Centralizar a documentação da arquitetura no repositório da aplicação.
-  - Toda a documentação pode ficar centralizada em uma pasta específica no repositório principal.
-- [ ] Criar os diagramas de arquitetura.
-  - Podemos utilizar como referência:
-    - `https://docs.aws.amazon.com/images/solutions/latest/workload-discovery-on-aws/images/workload-discovery-arch-diagram.png`
-  - A ideia é indicar claramente qual componente chama cada serviço.
-  - Podemos criar um diagrama para API Gateway e Lambda.
-  - Podemos criar outro diagrama para o EKS.
-  - Podemos mostrar apenas os componentes da nuvem.
-- [ ] Criar os diagramas de sequência.
-  - Podemos criar diagramas UML contendo os atores.
-  - Precisamos criar um diagrama para o fluxo de autenticação.
-  - Precisamos criar um diagrama para o fluxo de abertura da ordem de serviço.
-- [ ] Criar RFCs.
-  - As RFCs devem registrar decisões técnicas tomadas pelo grupo e o motivo de cada decisão.
-- [ ] Criar ADRs.
-  - Os ADRs devem registrar decisões arquiteturais tomadas pelo grupo e o motivo de cada decisão.
-  - Devemos explicar, por exemplo, por que utilizamos determinados valores de escalabilidade.
-- [ ] Documentar o banco de dados.
-  - Devemos justificar a escolha do banco.
-  - Devemos documentar os ajustes nas tabelas relacionais.
-  - Devemos criar ou atualizar o diagrama ER.
-  - Devemos explicar os relacionamentos entre as tabelas.
+- [x] Centralizar a documentação da arquitetura no repositório da aplicação.
+  - Toda a documentação fica em `docs/arch/`.
+- [x] Criar os diagramas de arquitetura.
+  - Índice em `docs/arch/diagrams/README.md`.
+  - Nuvem: `docs/arch/cloud-overview.png`.
+  - API Gateway e Lambda: `docs/arch/api-gateway-lambda.png`.
+  - EKS: `docs/arch/eks.png`.
+- [x] Criar os diagramas de sequência.
+  - Autenticação: `docs/arch/sequence-auth.png`.
+  - Abertura da OS: `docs/arch/sequence-service-order.png`.
+- [x] Criar RFCs.
+  - `docs/arch/rfcs/` — auth/CPF/Lambda, split de repos e banco gerenciado.
+- [x] Criar ADRs.
+  - `docs/arch/adrs/` — decisões aceitas (Postgres, Clean Architecture, EKS, Helm, JWT, migrations, escalabilidade) e propostas da Fase 3.
+- [x] Documentar o banco de dados.
+  - Justificativa, ajustes, relacionamentos e ER em `docs/arch/database.md` e `docs/arch/er.png`.
 ---
 
 # Ajustes pendentes da Fase 2 - Menos prioritário
