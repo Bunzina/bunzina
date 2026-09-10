@@ -1,0 +1,29 @@
+groups:
+  - name: bunzina-api
+    rules:
+      - alert: BunzinaPrometheusTargetDown
+        expr: up{job="bunzina"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Bunzina API is not being scraped
+          description: Prometheus cannot scrape the Bunzina metrics endpoint.
+
+      - alert: BunzinaHighServerErrorRate
+        expr: sum(rate(bunzina_http_requests_total{job="bunzina",status_code=~"5.."}[5m])) / clamp_min(sum(rate(bunzina_http_requests_total{job="bunzina"}[5m])), 0.1) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Bunzina has a high 5xx rate
+          description: More than 5% of requests returned 5xx responses for 10 minutes.
+
+      - alert: BunzinaHighRequestLatency
+        expr: histogram_quantile(0.95, sum by (le) (rate(bunzina_http_request_duration_seconds_bucket{job="bunzina"}[5m]))) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Bunzina request latency is high
+          description: The 95th percentile request latency is above one second.

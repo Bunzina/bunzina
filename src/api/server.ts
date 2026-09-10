@@ -1,3 +1,9 @@
+import { db } from '@/infrastructure/configs/database';
+import {
+  createHttpMetrics,
+  getMetrics,
+  metricsContentType,
+} from '@/infrastructure/observability/metrics';
 import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
 import z from 'zod';
@@ -47,6 +53,7 @@ import {
 } from './handlers/service-order/schema';
 import { updateServiceOrderHandler } from './handlers/service-order/update';
 import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
+import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 import { createServiceHandler } from './handlers/service/create';
 import { deleteServiceHandler } from './handlers/service/delete';
 import { findServiceByIdHandler } from './handlers/service/find-by-id';
@@ -84,9 +91,27 @@ import {
 } from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
-import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 
 export const app = new Elysia();
+const httpMetrics = createHttpMetrics();
+
+app.onRequest(({ request }) => {
+  if (new URL(request.url).pathname !== '/metrics') {
+    httpMetrics.start(request);
+  }
+});
+
+app.onAfterHandle(({ request, set }) => {
+  if (new URL(request.url).pathname !== '/metrics') {
+    httpMetrics.finish(request, set.status);
+  }
+});
+
+app.onError(({ request, set }) => {
+  if (new URL(request.url).pathname !== '/metrics') {
+    httpMetrics.finish(request, set.status);
+  }
+});
 
 app.use(
   openapi({
@@ -181,6 +206,31 @@ app.get(
     }),
   healthSchema,
 );
+
+app.get('/metrics', async () => {
+  return new Response(await getMetrics(), {
+    status: 200,
+    headers: { 'Content-Type': metricsContentType },
+  });
+});
+
+app.get('/ready', async ({ set }) => {
+  try {
+    await db`SELECT 1`;
+
+    return new Response(JSON.stringify({ status: 'ready' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch {
+    set.status = 503;
+
+    return new Response(JSON.stringify({ status: 'not_ready' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+});
 
 // Auth routes
 app.post('/auth/login', async (context) => loginHandler(context), loginSchema);

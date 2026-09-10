@@ -34,6 +34,16 @@ app-chart:
         memory: "256Mi"
     probes:
       path: /health
+      livenessPath: /health
+      readinessPath: /ready
+    metrics:
+      enabled: true
+      path: /metrics
+      port: 3000
+      serviceMonitor:
+        enabled: false
+        interval: 15s
+        scrapeTimeout: 10s
     config:
       APP_ENV: "prod"
       PROD_DB_HOST: "aws-1-sa-east-1.pooler.supabase.com"
