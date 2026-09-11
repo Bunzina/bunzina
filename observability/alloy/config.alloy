@@ -43,3 +43,30 @@ loki.write "default" {
     url = "http://loki:3100/loki/api/v1/push"
   }
 }
+
+// Traces: recebe OTLP da app (ver OTEL_EXPORTER_OTLP_ENDPOINT no compose de
+// observabilidade) e encaminha para o Tempo. No EKS isso vira uma instância
+// separada do Alloy (alloy-gateway); localmente cabe tudo num único agente.
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlphttp.tempo.input]
+  }
+}
+
+otelcol.exporter.otlphttp "tempo" {
+  client {
+    endpoint = "http://tempo:4318"
+
+    tls {
+      insecure = true
+    }
+  }
+}

@@ -19,48 +19,6 @@ services:
       db:
         condition: service_healthy
     command: ['bun', 'run', 'start:with-migrations']
-  prometheus:
-    image: prom/prometheus:v3.5.0
-    ports:
-      - '9090:9090'
-    volumes:
-      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./observability/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
-      - prometheus-data:/prometheus
-    depends_on:
-      - app
-  loki:
-    image: grafana/loki:3.5.0
-    ports:
-      - '3100:3100'
-    command: ['-config.file=/etc/loki/config.yml']
-    volumes:
-      - ./observability/loki/config.yml:/etc/loki/config.yml:ro
-      - loki-data:/loki
-  alloy:
-    image: grafana/alloy:v1.8.3
-    command:
-      ['run', '/etc/alloy/config.alloy', '--storage.path=/var/lib/alloy/data']
-    volumes:
-      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
-      - alloy-data:/var/lib/alloy/data
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      - loki
-  grafana:
-    image: grafana/grafana:12.1.1
-    ports:
-      - '3001:3000'
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
-    volumes:
-      - grafana-data:/var/lib/grafana
-      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    depends_on:
-      - prometheus
-      - loki
   db:
     image: postgres:15
     environment:
@@ -98,7 +56,3 @@ services:
 
 volumes:
   db-data:
-  prometheus-data:
-  grafana-data:
-  loki-data:
-  alloy-data:

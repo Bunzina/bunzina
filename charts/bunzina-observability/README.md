@@ -22,6 +22,7 @@ No pipeline (`deploy-k8s.yml`), o release deste chart roda **antes** do release 
 | `tempo` (grafana-community) | Traces | Single binary, storage local, PVC `gp3` |
 | `alloy` (grafana), alias `alloy-logs` | Coleta logs dos pods via API do Kubernetes (`loki.source.kubernetes`) → Loki | `Deployment`, sem hostPath/Docker socket |
 | `alloy` (grafana), alias `alloy-gateway` | Recebe OTLP (gRPC 4317 / HTTP 4318) da aplicação → Tempo | `Deployment` |
+| `mailcatcher` (manifest local, `templates/mailcatcher.yaml`) | Contact point de e-mail do Grafana unified alerting | `Deployment` + `Service`, sem persistência |
 
 `alloy` aparece duas vezes porque `controller.type` (`deployment`/`daemonset`/`statefulset`)
 é um valor por release — a coleta de logs e o gateway OTLP têm necessidades diferentes,
@@ -41,6 +42,22 @@ namespace `observability`:
 A aplicação Bunzina aponta `OTEL_EXPORTER_OTLP_ENDPOINT` para
 `http://alloy-gateway.observability.svc.cluster.local:4318`.
 
+## Alertas e dashboards como código
+
+Motor único: **Grafana unified alerting** (Alertmanager do kube-prometheus-stack fica
+desligado). As regras, o contact point e a política de notificação estão em
+`kube-prometheus-stack.grafana.alerting` (`values.yaml`) — mesmo conteúdo de
+`observability/grafana/provisioning/alerting/*.yaml`, só trocando o host de SMTP pelo
+`mailcatcher` desta release. O contact point de e-mail usa esse mailcatcher só para a
+demo conseguir mostrar a notificação chegando — não é um servidor de e-mail real.
+
+Os 5 dashboards (`observability/grafana/dashboards/*.json`) não são lidos diretamente
+pelo chart — o Helm `.Files.Glob` não alcança fora do diretório do chart. O CI copia
+esses arquivos para `charts/bunzina-observability/dashboards/` (gitignored, é um
+artefato gerado, igual aos `.tgz` de dependência) antes do `helm upgrade`; o template
+`templates/dashboards.yaml` transforma cada um num `ConfigMap` com o label
+`grafana_dashboard: "1"`, que o sidecar do Grafana importa automaticamente.
+
 ## Como instalar
 
 ```bash
@@ -48,6 +65,9 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo add grafana https://grafana.github.io/helm-charts
 helm repo add grafana-community https://grafana-community.github.io/helm-charts
 helm dependency update charts/bunzina-observability
+
+mkdir -p charts/bunzina-observability/dashboards
+cp observability/grafana/dashboards/*.json charts/bunzina-observability/dashboards/
 
 helm upgrade --install bunzina-observability charts/bunzina-observability \
   --namespace observability --create-namespace \
@@ -76,6 +96,10 @@ Depois de instalado:
    descobrir pods.
 4. Uma requisição à app com `OTEL_EXPORTER_OTLP_ENDPOINT` configurado deve gerar
    um trace visível no Tempo, acessível a partir de um log no Loki pelo `trace_id`.
+5. Grafana → Alerting → Alert rules: as 4 regras da pasta `Bunzina` devem aparecer
+   com `provenance: file`. Derrubar a app (`kubectl scale deploy/bunzina --replicas=0
+   -n bunzina`) deve disparar `Bunzina target down` e chegar um e-mail no mailcatcher
+   (`kubectl port-forward -n observability svc/mailcatcher 1080:1080`).
 
 ## O que fica de fora (demo-grade)
 

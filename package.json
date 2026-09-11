@@ -5,6 +5,7 @@
   "module": "index.ts",
   "scripts": {
     "dev": "docker compose up",
+    "dev:observability": "docker compose -f docker-compose.yml -f docker-compose.observability.yml up",
     "start": "bun run src/api/server.ts",
     "start:dev": "bun --hot run src/api/server.ts",
     "start:with-migrations": "bun run migration && bun run start:dev",

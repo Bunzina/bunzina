@@ -238,7 +238,7 @@ Os diagramas da Fase 2 estão em [docs/arch](docs/arch):
 | Banco | `StatefulSet` Postgres com `PVC` (EBS gp3) |
 | Config não-sensível | `ConfigMap` (`k8s/configmap.yaml`) |
 | Segredos | `Secret` (a partir dos `*.example.yaml`, fora do git) |
-| Infra | VPC + EKS + node group + ECR (`infra/`) |
+| Infra | VPC + EKS + node group + ECR + AWS Load Balancer Controller + metrics-server (`infra/`) |
 
 ### 1. Provisionar a infraestrutura (Terraform)
 

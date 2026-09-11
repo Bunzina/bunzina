@@ -16,10 +16,13 @@ O endpoint `/metrics` não usa JWT. Em produção, ele deve ser acessível somen
 
 ## Stack local
 
-Suba a aplicação, o PostgreSQL, o Prometheus e o Grafana com:
+O `docker-compose.yml` "de trabalho" não inclui observabilidade — só app, banco e
+mailcatcher. Para subir Prometheus, Loki, Tempo, Alloy e Grafana junto, use o overlay:
 
 ```sh
-docker compose up --build
+bun run dev:observability
+# equivalente a:
+docker compose -f docker-compose.yml -f docker-compose.observability.yml up --build
 ```
 
 Endereços locais:
@@ -32,14 +35,16 @@ Endereços locais:
 O usuário e a senha padrão do Grafana são `admin`/`admin`. Para alterar a senha local:
 
 ```sh
-GRAFANA_ADMIN_USER=admin GRAFANA_ADMIN_PASSWORD=change-me docker compose up
+GRAFANA_ADMIN_USER=admin GRAFANA_ADMIN_PASSWORD=change-me docker compose -f docker-compose.yml -f docker-compose.observability.yml up
 ```
 
-O Prometheus faz scrape de `app:3000/metrics`. O Alloy coleta os logs dos containers pelo Docker socket e envia os eventos JSON para o Loki. Os datasources e dashboards do Grafana são provisionados automaticamente a partir de `observability/`.
+O Prometheus faz scrape de `app:3000/metrics`. O Alloy coleta os logs dos containers pelo Docker socket e envia os eventos JSON para o Loki, e também recebe OTLP da app (gRPC 4317 / HTTP 4318) e encaminha para o Tempo. Os datasources e dashboards do Grafana são provisionados automaticamente a partir de `observability/`.
 
 Endereços adicionais:
 
 - Loki: `http://localhost:3100`
+- Tempo: `http://localhost:3200` (a porta não é publicada no host; acesse via Grafana)
+- Mailcatcher (contact point dos alertas): `http://localhost:1080`
 - Dashboard de logs: pasta `Bunzina`, dashboard `Bunzina Logs`
 
 O acesso ao Docker socket é adequado somente para desenvolvimento local. Em Kubernetes, use a integração do Alloy com os logs dos pods e restrinja as permissões do agente.
@@ -99,17 +104,30 @@ Também são coletadas métricas padrão do processo Node/Bun pelo cliente Prome
 
 As rotas dinâmicas são normalizadas para evitar cardinalidade alta. Documentos, IDs, query strings, tokens, e-mails e payloads nunca devem ser adicionados como labels.
 
-## Alertas e dashboard
+## Dashboards
 
-O dashboard inicial está em `observability/grafana/dashboards/bunzina-api.json` e mostra tráfego, latência P95, requisições em voo, autenticação, notificações e eventos de ordens de serviço.
+Em `observability/grafana/dashboards/`:
 
-As regras em `observability/prometheus/alerts.yml` cobrem:
+- `bunzina-api.json` — tráfego, latência P95, requisições em voo, autenticação, notificações e eventos de ordens de serviço.
+- `bunzina-logs.json` — logs.
+- `bunzina-service-orders-volume.json` — volume diário de ordens de serviço criadas, por status inicial.
+- `bunzina-service-order-duration.json` — tempo médio de execução por status (`bunzina_service_order_status_duration_seconds`), incluindo o exemplo do task doc (`IN_EXECUTION -> COMPLETED`).
+- `bunzina-integration-errors.json` — misto Prometheus (falha de notificação por canal, taxa de 5xx por rota) + Loki (linhas de log de erro reais, com `trace_id` clicável para o Tempo).
 
-- target da API indisponível;
-- taxa de respostas 5xx acima de 5% por 10 minutos;
-- latência P95 acima de um segundo por 10 minutos.
+No Kubernetes esses mesmos arquivos viram `ConfigMap`s (ver `charts/bunzina-observability/templates/dashboards.yaml`) — não são duplicados, só copiados pelo CI antes do `helm upgrade`.
 
-Os limiares são valores iniciais e devem ser ajustados conforme o tráfego real. Todo alerta de produção deve ter um canal de notificação e um runbook associado.
+## Alertas
+
+Motor único: **Grafana unified alerting**. O Prometheus não tem mais `rule_files` nem roda seu próprio Alertmanager — ele só guarda séries para o Grafana consultar. As regras, o contact point (e-mail via mailcatcher) e a política de notificação são provisionados como código em `observability/grafana/provisioning/alerting/` (local) e em `kube-prometheus-stack.grafana.alerting` / `grafana.ini.smtp` (`charts/bunzina-observability/values.yaml`, Kubernetes) — mesmo conteúdo, só o host de SMTP muda entre os dois ambientes.
+
+As 4 regras, na pasta `Bunzina`:
+
+- `BunzinaTargetDown` — `up{job="bunzina"} < 1` por 5 minutos, crítico.
+- `BunzinaHighServerErrorRate` — mais de 5% de respostas 5xx por 10 minutos, warning.
+- `BunzinaHighRequestLatency` — P95 acima de 1s por 10 minutos, warning.
+- `BunzinaServiceOrderFailures` — qualquer 5xx nas rotas `/service-orders*` por 5 minutos, warning. Cobre "falhas no processamento de ordens de serviço" (task doc) derivando da métrica HTTP já existente por rota, em vez de um contador dedicado: todo erro inesperado num use case de ordem de serviço já propaga como 5xx numa rota normalizada (`/service-orders/:id/status`, etc.), então o sinal já existe em `bunzina_http_requests_total` sem precisar de um ponto de instrumentação novo. Se um caso real aparecer que não vire 5xx (um efeito colateral silenciosamente engolido, por exemplo), vale revisitar essa decisão e adicionar um contador próprio.
+
+Os limiares são valores iniciais e devem ser ajustados conforme o tráfego real. Provisionamento por arquivo (`provenance: file` na API do Grafana) significa que essas regras **não são editáveis pela UI** — mudanças entram por PR.
 
 ## Kubernetes
 
@@ -142,6 +160,7 @@ bun test src/api/server.test.ts
 bun run lint
 bun run fmt:check
 docker compose config
+docker compose -f docker-compose.yml -f docker-compose.observability.yml config
 ```
 
 Depois de subir a stack, confirme:
@@ -151,7 +170,8 @@ Depois de subir a stack, confirme:
 3. `GET /metrics` retorna `text/plain; version=0.0.4`.
 4. O target `bunzina` aparece como `UP` em Prometheus.
 5. Uma requisição para uma rota dinâmica produz uma rota normalizada, sem CPF ou ID no output.
-6. O dashboard aparece automaticamente no Grafana.
+6. Os 5 dashboards aparecem automaticamente no Grafana, na pasta `Bunzina`.
+7. Grafana → Alerting → Alert rules mostra as 4 regras com `provenance: file`.
 
 Para validar o chart:
 
