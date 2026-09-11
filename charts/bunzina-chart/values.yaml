@@ -53,6 +53,10 @@ app-chart:
       EMAIL_SMTP_PORT: "1025"
       EMAIL: "no-reply@bunzina.local"
       JWT_EXPIRES_IN: "1d"
+      # Aponta para o release `bunzina-observability` (namespace `observability`,
+      # instalado antes deste). Sem essa env var o tracing.ts nem inicializa.
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy-gateway.observability.svc.cluster.local:4318"
+      OTEL_SERVICE_NAME: "bunzina"
 
   database:
     enabled: true

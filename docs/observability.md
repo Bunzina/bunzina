@@ -133,6 +133,8 @@ app:
 
 O `ServiceMonitor` exige as CRDs do Prometheus Operator já instaladas no cluster — por isso o release do stack de observabilidade (`kube-prometheus-stack`) precisa subir antes do release da aplicação. Como os templates do subchart não estão neste repositório, qualquer ajuste no contrato (novas probes, labels, portas) é feito via PR em `Bunzina/bunzina-chart`, não com manifests locais.
 
+O stack de observabilidade em si (`kube-prometheus-stack` + Loki + Tempo + Alloy) vive em `charts/bunzina-observability/` — ver o README desse chart para detalhes de cada dependência, nomes de serviço e ordem de instalação. A app aponta `OTEL_EXPORTER_OTLP_ENDPOINT` para `http://alloy-gateway.observability.svc.cluster.local:4318` (já configurado em `charts/bunzina-chart/values.yaml`).
+
 ## Validação
 
 ```sh
