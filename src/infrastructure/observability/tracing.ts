@@ -1,0 +1,28 @@
+import { opentelemetry } from '@elysiajs/opentelemetry';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
+import type { Elysia } from 'elysia';
+
+const tracesEndpoint =
+  process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+  process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+
+const NON_TRACED_PATHS = new Set(['/metrics', '/health', '/ready']);
+
+export const tracing: Elysia | null = tracesEndpoint ? build() : null;
+
+function build(): Elysia {
+  return opentelemetry({
+    serviceName: process.env.OTEL_SERVICE_NAME || 'bunzina',
+    spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter())],
+    checkIfShouldTrace: shouldTrace,
+  });
+}
+
+function shouldTrace(request: Request): boolean {
+  try {
+    return !NON_TRACED_PATHS.has(new URL(request.url).pathname);
+  } catch {
+    return true;
+  }
+}

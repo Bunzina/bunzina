@@ -29,6 +29,24 @@ services:
       - prometheus-data:/prometheus
     depends_on:
       - app
+  loki:
+    image: grafana/loki:3.5.0
+    ports:
+      - '3100:3100'
+    command: ['-config.file=/etc/loki/config.yml']
+    volumes:
+      - ./observability/loki/config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+  alloy:
+    image: grafana/alloy:v1.8.3
+    command:
+      ['run', '/etc/alloy/config.alloy', '--storage.path=/var/lib/alloy/data']
+    volumes:
+      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - alloy-data:/var/lib/alloy/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
   grafana:
     image: grafana/grafana:12.1.1
     ports:
@@ -42,6 +60,7 @@ services:
       - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
+      - loki
   db:
     image: postgres:15
     environment:
@@ -81,3 +100,5 @@ volumes:
   db-data:
   prometheus-data:
   grafana-data:
+  loki-data:
+  alloy-data:

@@ -31,6 +31,44 @@ export const httpRequestsInFlight = new Gauge({
   registers: [registry],
 });
 
+export const authenticationAttemptsTotal = new Counter({
+  name: 'bunzina_authentication_attempts_total',
+  help: 'Total number of authentication attempts.',
+  labelNames: ['result'],
+  registers: [registry],
+});
+
+export const notificationsTotal = new Counter({
+  name: 'bunzina_notifications_total',
+  help: 'Total number of notifications processed.',
+  labelNames: ['channel', 'result'],
+  registers: [registry],
+});
+
+export const stockMovementsTotal = new Counter({
+  name: 'bunzina_stock_movements_total',
+  help: 'Total number of stock movements created.',
+  labelNames: ['type'],
+  registers: [registry],
+});
+
+export const serviceOrdersTotal = new Counter({
+  name: 'bunzina_service_orders_total',
+  help: 'Total number of service order events.',
+  labelNames: ['event', 'status'],
+  registers: [registry],
+});
+
+export const serviceOrderStatusDurationSeconds = new Histogram({
+  name: 'bunzina_service_order_status_duration_seconds',
+  help: 'Time a service order spent in a status before moving to the next one.',
+  labelNames: ['from_status', 'to_status'],
+  registers: [registry],
+  buckets: [
+    30, 60, 300, 900, 1800, 3600, 7200, 21600, 43200, 86400, 259200, 604800,
+  ],
+});
+
 const dynamicRoutePatterns: Array<[RegExp, string]> = [
   [
     /^\/service-orders\/services\/[^/]+\/complete$/,

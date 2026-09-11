@@ -63,3 +63,9 @@ charts/**/Chart.lock
 # Superpowers (scratch e specs/plans locais)
 .superpowers/
 docs/superpowers/
+
+#RTK
+.rtk
+
+#Agents
+CLAUDE.md

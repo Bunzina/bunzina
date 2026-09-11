@@ -10,6 +10,7 @@ import { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
 import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
 import { Quote } from '@/domain/service-order/value-objects/quote';
+import { serviceOrdersTotal } from '@/infrastructure/observability/metrics';
 import logger from '@lucas-pmelo/logger';
 
 export class CreateServiceOrderUseCase {
@@ -92,6 +93,11 @@ export class CreateServiceOrderUseCase {
     });
 
     await this.serviceOrderRepository.create(serviceOrder);
+
+    serviceOrdersTotal.inc({
+      event: 'created',
+      status: serviceOrder.status,
+    });
 
     return serviceOrder;
   }

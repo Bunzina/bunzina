@@ -2,6 +2,7 @@ import type { AutoPart } from '@/domain/auto-part/entities/auto-part';
 import { StockMovement } from '@/domain/auto-part/entities/stock-movement';
 import type { StockMovementRepository } from '@/domain/auto-part/repositories/stock-movement-repository';
 import { StockMovementType } from '@/domain/auto-part/types/stock-movement-type';
+import { stockMovementsTotal } from '@/infrastructure/observability/metrics';
 import logger from '@lucas-pmelo/logger';
 
 export interface CreateStockMovementInput {
@@ -45,6 +46,8 @@ export class CreateStockMovementUseCase {
     });
 
     await this.stockMovementRepository.create(stockMovement);
+
+    stockMovementsTotal.inc({ type });
 
     return stockMovement;
   }

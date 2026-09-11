@@ -1,9 +1,12 @@
+import '@/infrastructure/observability/logger-trace';
+
 import { db } from '@/infrastructure/configs/database';
 import {
   createHttpMetrics,
   getMetrics,
   metricsContentType,
 } from '@/infrastructure/observability/metrics';
+import { tracing } from '@/infrastructure/observability/tracing';
 import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
 import z from 'zod';
@@ -93,6 +96,11 @@ import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
 
 export const app = new Elysia();
+
+if (tracing) {
+  app.use(tracing);
+}
+
 const httpMetrics = createHttpMetrics();
 
 app.onRequest(({ request }) => {

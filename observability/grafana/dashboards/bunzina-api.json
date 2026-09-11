@@ -47,6 +47,51 @@
           "refId": "A"
         }
       ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 4,
+      "title": "Authentication attempts",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (result) (rate(bunzina_authentication_attempts_total{job=\"bunzina\"}[5m]))",
+          "legendFormat": "{{result}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "id": 5,
+      "title": "Notifications",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (channel, result) (rate(bunzina_notifications_total{job=\"bunzina\"}[5m]))",
+          "legendFormat": "{{channel}} / {{result}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "id": 6,
+      "title": "Service order events",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum by (event, status) (rate(bunzina_service_orders_total{job=\"bunzina\"}[5m]))",
+          "legendFormat": "{{event}} / {{status}}",
+          "refId": "A"
+        }
+      ]
     }
   ],
   "schemaVersion": 41,

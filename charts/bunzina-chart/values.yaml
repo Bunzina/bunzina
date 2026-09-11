@@ -41,7 +41,7 @@ app-chart:
       path: /metrics
       port: 3000
       serviceMonitor:
-        enabled: false
+        enabled: true
         interval: 15s
         scrapeTimeout: 10s
     config:
