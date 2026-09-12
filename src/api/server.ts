@@ -110,15 +110,18 @@ app.onRequest(({ request }) => {
   }
 });
 
-app.onAfterHandle(({ request, set }) => {
+app.onAfterHandle(({ request, set, responseValue }) => {
   if (new URL(request.url).pathname !== '/metrics') {
-    httpMetrics.finish(request, set.status);
+    const status =
+      responseValue instanceof Response ? responseValue.status : set.status;
+    httpMetrics.finish(request, status);
   }
 });
 
-app.onError(({ request, set }) => {
+app.onError(({ request, set, error }) => {
   if (new URL(request.url).pathname !== '/metrics') {
-    httpMetrics.finish(request, set.status);
+    const status = (error as { status?: number })?.status ?? set.status ?? 500;
+    httpMetrics.finish(request, status);
   }
 });
 

@@ -21,7 +21,7 @@ datasources:
     jsonData:
       derivedFields:
         - datasourceUid: tempo
-          matcherRegex: '"trace_id":"(\w+)"'
+          matcherRegex: '"requestId":"(\w+)"'
           name: TraceID
           url: '$${__value.raw}'
   - name: Tempo
