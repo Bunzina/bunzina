@@ -460,6 +460,8 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
 /* c8 ignore next */
 if (import.meta.main) {
   app.listen(3000, () => {
-    logger.info({ message: 'Server is running on http://localhost:3000/swagger' });
+    logger.info({
+      message: 'Server is running on http://localhost:3000/swagger',
+    });
   });
 }
