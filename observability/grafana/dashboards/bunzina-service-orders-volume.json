@@ -12,7 +12,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "sum(increase(bunzina_service_orders_total{job=\"bunzina\",event=\"created\"}[24h]))",
+          "expr": "round(sum(increase(bunzina_service_orders_total{job=\"bunzina\",event=\"created\"}[24h])))",
           "legendFormat": "criadas",
           "refId": "A"
         }
@@ -27,7 +27,7 @@
       "type": "timeseries",
       "targets": [
         {
-          "expr": "sum by (status) (increase(bunzina_service_orders_total{job=\"bunzina\",event=\"created\"}[24h]))",
+          "expr": "round(sum by (status) (increase(bunzina_service_orders_total{job=\"bunzina\",event=\"created\"}[24h])))",
           "legendFormat": "{{status}}",
           "refId": "A"
         }
