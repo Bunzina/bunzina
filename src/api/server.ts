@@ -9,6 +9,7 @@ import {
 import { tracing } from '@/infrastructure/observability/tracing';
 import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
+import logger from '@lucas-pmelo/logger';
 import z from 'zod';
 import { createAutoPartHandler } from './handlers/auto-part/create';
 import { deleteAutoPartHandler } from './handlers/auto-part/delete';
@@ -456,6 +457,6 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
 /* c8 ignore next */
 if (import.meta.main) {
   app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000/swagger');
+    logger.info({ message: 'Server is running on http://localhost:3000/swagger' });
   });
 }

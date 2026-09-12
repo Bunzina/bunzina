@@ -33,7 +33,7 @@
       "id": 2,
       "targets": [
         {
-          "expr": "sum by (level) (count_over_time({compose_service=\"app\"} | json [5m]))",
+          "expr": "sum by (level) (count_over_time({compose_service=\"app\"} | json | __error__=\"\" [5m]))",
           "legendFormat": "{{level}}",
           "queryType": "range",
           "refId": "A"
