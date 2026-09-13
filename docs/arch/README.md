@@ -4,9 +4,9 @@ Toda a documentação de arquitetura do Bunzina fica nesta pasta. Os demais repo
 
 | Documento | Conteúdo |
 | --- | --- |
-| [Visão geral](./overview.md) | Estado atual (Fase 2) e alvo da Fase 3 |
-| [Banco de dados](./database.md) | Justificativa, tabelas, ajustes e relacionamentos |
-| [Diagramas](./diagrams/README.md) | PNGs da Fase 2, nuvem, EKS, API Gateway/Lambda, sequências e ER |
+| [Visão geral](./overview.md) | Componentes, fluxos, repositórios e infraestrutura |
+| [Banco de dados](./database.md) | PostgreSQL, schema, tabelas, migrations e relacionamentos |
+| [Diagramas](./diagrams/README.md) | Nuvem, EKS, API Gateway/Lambda, sequências e modelo ER |
 | [ADRs](./adrs/README.md) | Decisões arquiteturais e o motivo de cada uma |
 | [RFCs](./rfcs/README.md) | Decisões técnicas do grupo para a Fase 3 |
 

@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1420" viewBox="0 0 1800 1420">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#475569"/>
+    </marker>
+    <style>
+      .title { font: 700 30px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 16px Arial, sans-serif; fill: #475569; }
+      .header { font: 700 18px Arial, sans-serif; fill: white; }
+      .field { font: 14px Consolas, monospace; fill: #172033; }
+      .note { font: 14px Arial, sans-serif; fill: #475569; }
+      .card { fill: #ffffff; stroke: #94a3b8; stroke-width: 2; rx: 8; }
+      .line { stroke: #64748b; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1420" fill="#f8fafc"/>
+  <text x="60" y="58" class="title">BUNZINA - Modelo ER atual</text>
+  <text x="60" y="88" class="subtitle">Schema bunzina | migrations 001 a 012 | PK = chave primaria, FK = chave estrangeira, UK = unico</text>
+
+  <!-- Relationships are behind the table cards. -->
+  <path class="line" d="M270 330 L270 390"/>
+  <path class="line" d="M270 330 L270 760 L450 760"/>
+  <path class="line" d="M270 520 L270 600 L450 600"/>
+  <path class="line" d="M760 330 L760 570 L720 570 L720 600"/>
+  <path class="line" d="M1050 330 L1050 560 L360 560 L360 840 L310 840 L310 900"/>
+  <path class="line" d="M1250 540 L1250 850 L1060 850 L1060 900"/>
+  <path class="line" d="M810 780 L810 850 L560 850 L560 900"/>
+  <path class="line" d="M1110 780 L1110 900"/>
+  <path class="line" d="M1150 780 L1150 840 L1450 840 L1450 900"/>
+  <path class="line" d="M1450 540 L1550 540 L1550 900"/>
+
+  <!-- customers -->
+  <g transform="translate(60 120)">
+    <rect class="card" width="420" height="210"/>
+    <rect width="420" height="38" rx="8" fill="#2563eb"/>
+    <text x="16" y="26" class="header">customers</text>
+    <text x="16" y="64" class="field">id UUID PK</text>
+    <text x="16" y="86" class="field">name VARCHAR(255)</text>
+    <text x="16" y="108" class="field">document VARCHAR(14) UK</text>
+    <text x="16" y="130" class="field">document_kind, email UK, phone</text>
+    <text x="16" y="152" class="field">address_street ... address_complement</text>
+    <text x="16" y="174" class="field">created_at, updated_at</text>
+  </g>
+
+  <!-- users -->
+  <g transform="translate(520 120)">
+    <rect class="card" width="420" height="210"/>
+    <rect width="420" height="38" rx="8" fill="#ea580c"/>
+    <text x="16" y="26" class="header">users</text>
+    <text x="16" y="64" class="field">id UUID PK</text>
+    <text x="16" y="86" class="field">name VARCHAR(255)</text>
+    <text x="16" y="108" class="field">email VARCHAR(255) UK</text>
+    <text x="16" y="130" class="field">password_hash, role user_role</text>
+    <text x="16" y="152" class="field">is_active BOOLEAN</text>
+    <text x="16" y="174" class="field">created_at, updated_at</text>
+  </g>
+
+  <!-- services -->
+  <g transform="translate(1000 120)">
+    <rect class="card" width="500" height="210"/>
+    <rect width="500" height="38" rx="8" fill="#0891b2"/>
+    <text x="16" y="26" class="header">services</text>
+    <text x="16" y="64" class="field">id UUID PK, name, description</text>
+    <text x="16" y="86" class="field">price NUMERIC(10,2)</text>
+    <text x="16" y="108" class="field">duration_in_minutes INTEGER</text>
+    <text x="16" y="130" class="field">is_active BOOLEAN</text>
+    <text x="16" y="152" class="field">completed_count INTEGER</text>
+    <text x="16" y="174" class="field">total_execution_time_ms BIGINT</text>
+  </g>
+
+  <!-- vehicles -->
+  <g transform="translate(60 390)">
+    <rect class="card" width="420" height="150"/>
+    <rect width="420" height="38" rx="8" fill="#16a34a"/>
+    <text x="16" y="26" class="header">vehicles</text>
+    <text x="16" y="64" class="field">id UUID PK</text>
+    <text x="16" y="86" class="field">customer_id UUID FK</text>
+    <text x="16" y="108" class="field">license_plate VARCHAR(8) UK</text>
+    <text x="16" y="130" class="field">model, brand, year, timestamps</text>
+  </g>
+
+  <!-- auto parts -->
+  <g transform="translate(1000 390)">
+    <rect class="card" width="500" height="150"/>
+    <rect width="500" height="38" rx="8" fill="#dc2626"/>
+    <text x="16" y="26" class="header">auto_parts</text>
+    <text x="16" y="64" class="field">id UUID PK, name, description</text>
+    <text x="16" y="86" class="field">price NUMERIC(10,2), stock INTEGER</text>
+    <text x="16" y="108" class="field">is_active BOOLEAN</text>
+    <text x="16" y="130" class="field">created_at, updated_at</text>
+  </g>
+
+  <!-- service orders -->
+  <g transform="translate(450 600)">
+    <rect class="card" width="780" height="180"/>
+    <rect width="780" height="38" rx="8" fill="#7c3aed"/>
+    <text x="16" y="26" class="header">service_orders</text>
+    <text x="16" y="64" class="field">id UUID PK | customer_id UUID FK | vehicle_id UUID FK</text>
+    <text x="16" y="86" class="field">status service_order_status</text>
+    <text x="16" y="108" class="field">quote_services_total | quote_auto_parts_total | quote_total</text>
+    <text x="16" y="130" class="field">created_at | updated_at | approved_at | started_at</text>
+    <text x="16" y="152" class="field">completed_at | delivered_at</text>
+  </g>
+
+  <!-- service order service items -->
+  <g transform="translate(60 900)">
+    <rect class="card" width="500" height="190"/>
+    <rect width="500" height="38" rx="8" fill="#2563eb"/>
+    <text x="16" y="26" class="header">service_order_service_items</text>
+    <text x="16" y="64" class="field">id UUID PK</text>
+    <text x="16" y="86" class="field">service_order_id UUID FK</text>
+    <text x="16" y="108" class="field">service_id UUID FK, price, description</text>
+    <text x="16" y="130" class="field">is_completed, finished_at</text>
+    <text x="16" y="152" class="field">execution_time_ms, timestamps</text>
+  </g>
+
+  <!-- auto part items -->
+  <g transform="translate(790 900)">
+    <rect class="card" width="540" height="190"/>
+    <rect width="540" height="38" rx="8" fill="#16a34a"/>
+    <text x="16" y="26" class="header">service_order_auto_part_items</text>
+    <text x="16" y="64" class="field">id UUID PK</text>
+    <text x="16" y="86" class="field">service_order_id UUID FK</text>
+    <text x="16" y="108" class="field">auto_part_id UUID FK</text>
+    <text x="16" y="130" class="field">quantity INTEGER, unit_price, total_price</text>
+    <text x="16" y="152" class="field">description TEXT</text>
+  </g>
+
+  <!-- stock movements -->
+  <g transform="translate(1360 900)">
+    <rect class="card" width="380" height="190"/>
+    <rect width="380" height="38" rx="8" fill="#e11d48"/>
+    <text x="16" y="26" class="header">stock_movements</text>
+    <text x="16" y="64" class="field">id UUID PK</text>
+    <text x="16" y="86" class="field">auto_part_id UUID FK</text>
+    <text x="16" y="108" class="field">quantity INTEGER</text>
+    <text x="16" y="130" class="field">type IN | OUT</text>
+    <text x="16" y="152" class="field">service_order_id UUID FK nullable</text>
+  </g>
+
+  <rect x="60" y="1190" width="1680" height="120" rx="8" fill="#e2e8f0"/>
+  <text x="84" y="1222" class="note">Cardinalidades: customers 1:N vehicles/service_orders; vehicles 1:N service_orders.</text>
+  <text x="84" y="1248" class="note">service_orders 1:N items; services e auto_parts 1:N itens; auto_parts 1:N stock_movements.</text>
+  <text x="84" y="1274" class="note">users nao possui FK para customers no modelo atual. stock_movements.service_order_id aceita NULL e usa ON DELETE SET NULL.</text>
+  <text x="60" y="1370" class="subtitle">Fonte: migrations/001_create_schema_and_enums.sql ate migrations/012_add_service_stats.sql</text>
+</svg>

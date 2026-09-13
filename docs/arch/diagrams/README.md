@@ -19,6 +19,10 @@ Imagens no estilo da documentação AWS (ícones oficiais, grupos tracejados, fl
 | [eks.png](../eks.png) | Cluster, workloads e tráfego interno |
 | [sequence-auth.png](../sequence-auth.png) | Fluxo de autenticação com CPF |
 | [sequence-service-order.png](../sequence-service-order.png) | Abertura da ordem de serviço |
-| [er.png](../er.png) | Tabelas e relacionamentos |
+| [er.png](../er.png) | Modelo relacional atual do schema `bunzina` |
 
 A explicação de cada imagem fica no markdown correspondente desta pasta.
+
+O modelo relacional possui uma fonte textual em [er.md](./er.md). A imagem deve
+ser atualizada junto com as migrations para evitar divergência entre o diagrama
+e o schema implantado.

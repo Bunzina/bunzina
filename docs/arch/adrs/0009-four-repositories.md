@@ -22,8 +22,8 @@ Criar os repos que faltam e **esvaziar** `infra/` deste repositório depois da e
 | Repositório | Conteúdo | Pipeline |
 | --- | --- | --- |
 | `bunzina-lambda` | Function de auth + (opcional) API Gateway em Terraform/Serverless | test → package → deploy Lambda |
-| `bunzina-infra-k8s` | Terraform atual de VPC/EKS/ECR/addons | plan em PR, apply manual |
-| `bunzina-infra-db` | Terraform do PostgreSQL gerenciado | plan em PR, apply manual |
+| `bunzina-infra` | Terraform atual de VPC/EKS/ECR/addons | plan em PR, apply manual |
+| `bunzina-db` | Terraform do PostgreSQL gerenciado | plan em PR, apply manual |
 | `bunzina` | API, migrations, umbrella Helm | já existe: test → migrate → build → helm |
 | `bunzina-chart` | Chart genérico (extra) | já existe |
 

@@ -4,6 +4,6 @@ RFCs registram a decisão técnica do grupo **antes** (ou no início) da impleme
 
 | RFC | Tema | Estado |
 | --- | --- | --- |
-| [0001](./0001-auth-cpf-lambda-gateway.md) | Auth com CPF, Lambda e API Gateway | Aceita pelo grupo — implementação pendente |
-| [0002](./0002-repository-split.md) | Divisão nos quatro repositórios | Aceita pelo grupo — implementação pendente |
-| [0003](./0003-managed-database.md) | Banco gerenciado e destino das migrations | Aceita pelo grupo — implementação pendente |
+| [0001](./0001-auth-cpf-lambda-gateway.md) | Auth com CPF, Lambda e API Gateway | Desenho aceito; fluxo completo pendente |
+| [0002](./0002-repository-split.md) | Divisão nos quatro repositórios | Estrutura e CI/CD documentados |
+| [0003](./0003-managed-database.md) | Banco gerenciado e destino das migrations | Provisionamento documentado; integração operacional pendente |

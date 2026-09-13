@@ -1,6 +1,6 @@
 # Visão geral da arquitetura
 
-O Bunzina é a API REST de uma oficina mecânica. A aplicação segue Clean Architecture (domínio sem dependência de frameworks), roda em **Bun + Elysia** e persiste dados em **PostgreSQL**.
+O Bunzina é a API REST de uma oficina mecânica. A aplicação segue Clean Architecture (domínio sem dependência de frameworks), roda em **Bun + Elysia** e persiste dados em **PostgreSQL**. A solução de nuvem usa AWS API Gateway, Lambda, EKS, RDS PostgreSQL, ECR, Secrets Manager e Terraform.
 
 Esta página descreve o que já existe e o desenho-alvo da Fase 3. Os diagramas detalhados estão em [diagrams/](./diagrams/README.md).
 
@@ -8,7 +8,7 @@ Esta página descreve o que já existe e o desenho-alvo da Fase 3. Os diagramas 
 
 ## Estado atual (Fases 1 e 2)
 
-Hoje o tráfego chega direto ao cluster Kubernetes. A autenticação e as regras de negócio ficam na própria API.
+O tráfego das APIs de negócio chega ao EKS por meio do API Gateway e do balanceador ALB. O login é exposto por uma rota serverless. A API mantém autenticação e autorização próprias como segunda camada de proteção.
 
 ![Infraestrutura atual](./infrastructure-provisioning.png)
 
@@ -17,10 +17,13 @@ Hoje o tráfego chega direto ao cluster Kubernetes. A autenticação e as regras
 | Componente | Onde vive | Função |
 | --- | --- | --- |
 | API Elysia | Deployment no EKS | CRUD, workflow de OS, JWT e autorização |
-| PostgreSQL | StatefulSet no cluster **ou** host externo (`DB_HOST`) | Persistência relacional no schema `bunzina` |
+| PostgreSQL | RDS privado em produção; PostgreSQL do Compose no desenvolvimento | Persistência relacional no schema `bunzina` |
 | Helm umbrella | `charts/bunzina-chart` + [bunzina-chart](https://github.com/Bunzina/bunzina-chart) | Deployment, Service, Ingress ALB, HPA, Secret, Postgres opcional |
-| Terraform | `infra/` neste repositório | VPC, EKS, node group, addons, ECR |
-| CI/CD | `.github/workflows/deploy-k8s.yml` | Testes, migrations, build, push ECR, `helm upgrade` |
+| Terraform Kubernetes | `bunzina-infra` | VPC, EKS, node group, addons, ECR e StorageClass |
+| Terraform banco | `bunzina-db` | RDS PostgreSQL, subnet group, Security Group, parameter group e Secrets Manager |
+| CI/CD aplicação | `.github/workflows/deploy-k8s.yml` | Testes, migrations, build, push ECR, `helm upgrade` |
+| CI/CD infraestrutura | Workflows Terraform | `plan` em Pull Request e `apply` controlado em produção |
+| Lambda de autenticação | `bunzina-lambda` | Entrada serverless para o login e integração com a API |
 | Notificação | Nodemailer | E-mail de orçamento ao avançar para `AWAITING_APPROVAL` |
 
 ### Autenticação atual
@@ -31,16 +34,19 @@ Hoje o tráfego chega direto ao cluster Kubernetes. A autenticação e as regras
 - CPF/CNPJ existe no cadastro de **cliente**, não no de **usuário**
 - Cadastro público: `POST /users` apenas com role `CUSTOMER`
 
-### Repositórios atuais
+### Repositórios
 
 1. [bunzina](https://github.com/Bunzina/bunzina) — aplicação, migrations, Terraform do EKS
 2. [bunzina-chart](https://github.com/Bunzina/bunzina-chart) — Helm Chart genérico (`app-chart`)
+3. `bunzina-lambda` — Function de autenticação e API Gateway
+4. `bunzina-infra` — infraestrutura de rede e Kubernetes
+5. `bunzina-db` — infraestrutura do RDS PostgreSQL
 
 ---
 
-## Alvo da Fase 3
+## Fluxo alvo
 
-A Fase 3 exige porta de entrada (API Gateway), autenticação serverless com CPF, banco gerenciado e quatro repositórios com CI/CD.
+A entrada pública da solução é o API Gateway. O Gateway encaminha o login para a Lambda e as APIs de negócio para o ALB/EKS. O RDS fica em subnets privadas e é acessado pelos componentes autorizados da aplicação.
 
 ![Arquitetura AWS Fase 3](./cloud-overview.png)
 
@@ -49,9 +55,31 @@ A Fase 3 exige porta de entrada (API Gateway), autenticação serverless com CPF
 | API Gateway na frente de tudo | Roteamento, validação de JWT e políticas antes dos serviços internos |
 | Lambda de autenticação | Validar CPF, consultar cliente/status e emitir JWT numa única Function |
 | Banco gerenciado | Requisitos da Fase 3; a API já aceita host externo via `DB_HOST` |
-| Quatro repositórios | Separar Lambda, infra K8s, infra de banco e aplicação, cada um com CI/CD |
+| Repositórios separados | Separar Lambda, infra K8s, infra de banco e aplicação, cada um com CI/CD |
 
 O desenho detalhado está nas RFCs [0001](./rfcs/0001-auth-cpf-lambda-gateway.md), [0002](./rfcs/0002-repository-split.md) e [0003](./rfcs/0003-managed-database.md).
+
+### Fluxo de autenticação
+
+1. O cliente envia CPF, e-mail e senha ao endpoint público de autenticação.
+2. O API Gateway encaminha a requisição para a Lambda.
+3. A Function normaliza e valida o CPF, consulta o usuário e o cliente e verifica o status da conta.
+4. A Function emite o JWT e o devolve ao cliente.
+5. O cliente envia o JWT nas chamadas protegidas.
+6. O Gateway valida o token antes de encaminhar a chamada ao ALB/EKS.
+7. A API valida novamente o token e aplica as permissões específicas do papel.
+
+Na implementação atual, a Lambda ainda delega o login para `POST /auth/login` da
+API principal. O fluxo acima é o contrato arquitetural da autenticação completa.
+
+### Fluxo de dados e deploy
+
+- A aplicação é empacotada em imagem e publicada no ECR.
+- O chart Helm configura Deployment, Service, Ingress/ALB, HPA, probes, secrets e métricas.
+- O pipeline aplica migrations pendentes antes do rollout da aplicação.
+- O RDS é criado pelo Terraform do banco, com acesso privado e credenciais no Secrets Manager.
+- O Terraform de infraestrutura cria a VPC, subnets, EKS, node group, addons, ECR e StorageClass.
+- O chart desabilita o PostgreSQL interno quando `DB_HOST` aponta para o RDS.
 
 ---
 
@@ -81,4 +109,4 @@ Fluxo de dependência: `api` → `adapters` → `application` → `domain` ← `
 | IMDS hop-limit | 2 | Sem isso, EBS CSI e ALB controller entram em CrashLoop no Learner Lab |
 | NAT | 1 gateway | Custo; duas AZs apenas para o ALB |
 
-Detalhes em [ADR 0008](./adrs/0008-escalabilidade.md).
+Detalhes em [ADR 0008](./adrs/0008-scalability.md).

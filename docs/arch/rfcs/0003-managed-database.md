@@ -2,7 +2,7 @@
 
 - Status: Aceita (desenho). Implementação ainda não começou.
 - Autores: grupo Bunzina
-- ADR: [0011](../adrs/0011-banco-gerenciado.md)
+- ADR: [0011](../adrs/0011-managed-database.md)
 
 ## Problema
 
@@ -11,7 +11,7 @@ O PDF pede banco gerenciado. Hoje o chart sobe Postgres in-cluster **e** o deplo
 ## Decisão
 
 1. **Amazon RDS PostgreSQL** (versão alinhada ao 15 usado no chart), instância pequena (`db.t3.micro` ou o mínimo que o lab liberar), storage gp3, em subnet privada.
-2. Provisionamento no repo `bunzina-infra-db`, Terraform, state separado.
+2. Provisionamento no repo `bunzina-db`, Terraform, state separado.
 3. **Migrations continuam em `bunzina`**. O repo de banco cria instância, SG, subnet group e secret — não o schema `bunzina`.
 4. Em produção: `DB_HOST` preenchido → `app-chart.database.enabled=false`.
 5. Lambda e API usam o mesmo endpoint.

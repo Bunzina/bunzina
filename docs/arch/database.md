@@ -2,6 +2,10 @@
 
 Diagrama ER: [diagrams/er.md](./diagrams/er.md). Decisão de produto: [ADR 0001](./adrs/0001-postgresql.md). Evolução para banco gerenciado: [RFC 0003](./rfcs/0003-managed-database.md).
 
+O modelo abaixo representa o schema atual, conforme as migrations `001` a `012`.
+O relacionamento entre `users` e `customers` ainda não existe no banco atual e,
+por isso, não aparece como FK no diagrama.
+
 ---
 
 ## Por que PostgreSQL
@@ -105,7 +109,7 @@ vehicles  1 ──< service_orders
 service_orders 1 ──< service_order_service_items >── 1 services
 service_orders 1 ──< service_order_auto_part_items >── 1 auto_parts
 service_orders 1 ──< stock_movements >── 1 auto_parts
-users          (ainda sem FK)
+users          (sem FK para customers no modelo atual)
 ```
 
 | Relação | Cardinalidade | Integridade |
@@ -117,6 +121,7 @@ users          (ainda sem FK)
 | Serviço / Peça → Itens | 1:N | Restrict (catálogo não some de OS antiga) |
 | Peça → Movimentações | 1:N | Restrict |
 | OS → Movimentações | 1:N opcional | Set null se a OS sumir |
+| Usuário → Cliente | sem relação | Associação ainda não implementada |
 
 ---
 
@@ -133,9 +138,10 @@ users          (ainda sem FK)
 
 ---
 
-## Ajuste previsto (Fase 3)
+## Evolução de autenticação
 
-`users` precisa carregar o CPF usado no login.
+`users` precisa carregar o CPF usado no login. Essa é uma evolução do modelo e
+deve ser aplicada por uma nova migration, sem editar as migrations já executadas.
 
 Proposta (ver RFC 0001):
 
@@ -152,4 +158,21 @@ CREATE UNIQUE INDEX idx_users_document
 - `CUSTOMER`: `document` obrigatório e igual ao do cliente vinculado
 - `ADMIN` / `MECHANIC`: documento opcional (identificação interna), sem obrigar `customer_id`
 
-Até essa migration existir, a Lambda de auth não consegue associar CPF ao usuário só com o schema atual.
+Até essa migration existir, a Lambda de auth não consegue associar CPF ao usuário
+só com o schema atual.
+
+## Banco gerenciado e acesso
+
+Em produção, o PostgreSQL é provisionado como RDS privado em subnets privadas.
+O Terraform cria o DB subnet group, Security Group, parameter group, instância
+PostgreSQL 15 e um segredo no AWS Secrets Manager. A instância não é pública e
+o acesso à porta `5432` deve ser limitado aos Security Groups ou CIDRs da camada
+de aplicação.
+
+O banco gerenciado contém apenas a infraestrutura do PostgreSQL. O schema
+`bunzina` continua sendo criado e evoluído pelas migrations deste repositório.
+O pipeline executa as migrations pendentes antes do rollout da aplicação.
+
+Para desenvolvimento, o PostgreSQL do Docker Compose continua sendo suficiente.
+Em produção, `DB_HOST` e as credenciais do segredo são injetados no deployment,
+e o PostgreSQL opcional do Helm deve permanecer desabilitado.
