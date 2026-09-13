@@ -1,5 +1,15 @@
+import '@/infrastructure/observability/logger-trace';
+
+import { db } from '@/infrastructure/configs/database';
+import {
+  createHttpMetrics,
+  getMetrics,
+  metricsContentType,
+} from '@/infrastructure/observability/metrics';
+import { tracing } from '@/infrastructure/observability/tracing';
 import openapi from '@elysiajs/openapi';
 import Elysia from 'elysia';
+import logger from '@lucas-pmelo/logger';
 import z from 'zod';
 import { createAutoPartHandler } from './handlers/auto-part/create';
 import { deleteAutoPartHandler } from './handlers/auto-part/delete';
@@ -47,6 +57,7 @@ import {
 } from './handlers/service-order/schema';
 import { updateServiceOrderHandler } from './handlers/service-order/update';
 import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
+import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 import { createServiceHandler } from './handlers/service/create';
 import { deleteServiceHandler } from './handlers/service/delete';
 import { findServiceByIdHandler } from './handlers/service/find-by-id';
@@ -84,9 +95,35 @@ import {
 } from './handlers/vehicle/schema';
 import { updateVehicleHandler } from './handlers/vehicle/update';
 import { authMiddleware } from './middleware/auth';
-import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 
 export const app = new Elysia();
+
+if (tracing) {
+  app.use(tracing);
+}
+
+const httpMetrics = createHttpMetrics();
+
+app.onRequest(({ request }) => {
+  if (new URL(request.url).pathname !== '/metrics') {
+    httpMetrics.start(request);
+  }
+});
+
+app.onAfterHandle(({ request, set, responseValue }) => {
+  if (new URL(request.url).pathname !== '/metrics') {
+    const status =
+      responseValue instanceof Response ? responseValue.status : set.status;
+    httpMetrics.finish(request, status);
+  }
+});
+
+app.onError(({ request, set, error }) => {
+  if (new URL(request.url).pathname !== '/metrics') {
+    const status = (error as { status?: number })?.status ?? set.status ?? 500;
+    httpMetrics.finish(request, status);
+  }
+});
 
 app.use(
   openapi({
@@ -181,6 +218,31 @@ app.get(
     }),
   healthSchema,
 );
+
+app.get('/metrics', async () => {
+  return new Response(await getMetrics(), {
+    status: 200,
+    headers: { 'Content-Type': metricsContentType },
+  });
+});
+
+app.get('/ready', async ({ set }) => {
+  try {
+    await db`SELECT 1`;
+
+    return new Response(JSON.stringify({ status: 'ready' }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch {
+    set.status = 503;
+
+    return new Response(JSON.stringify({ status: 'not_ready' }), {
+      status: 503,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+});
 
 // Auth routes
 app.post('/auth/login', async (context) => loginHandler(context), loginSchema);
@@ -398,6 +460,8 @@ app.get('/', ({ redirect }) => redirect('/swagger'), {
 /* c8 ignore next */
 if (import.meta.main) {
   app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000/swagger');
+    logger.info({
+      message: 'Server is running on http://localhost:3000/swagger',
+    });
   });
 }

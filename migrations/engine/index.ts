@@ -1,3 +1,4 @@
+import logger from '@lucas-pmelo/logger';
 import { createMigrationTable } from './create-migration-table';
 import { existsMigrationTable } from './exists-migration-table';
 import { readDatabaseMigrations, readLocalMigrations } from './read-migrations';
@@ -37,14 +38,15 @@ export const runMigrations = async () => {
   );
 
   if (dbMigrationsMissing.length !== 0) {
-    console.log(
-      `Running pending migrations: ${dbMigrationsMissing.map((dbMigrationMissing) => dbMigrationMissing.name)}`,
-    );
+    logger.info({
+      message: 'Running pending migrations',
+      data: { migrations: dbMigrationsMissing.map(migrationKey) },
+    });
 
     await runPendingMigrations(dbMigrationsMissing);
   }
 
-  console.log('Migrations ran successfully');
+  logger.info({ message: 'Migrations ran successfully' });
 };
 
 if (import.meta.main) {

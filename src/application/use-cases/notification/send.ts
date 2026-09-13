@@ -4,6 +4,7 @@ import {
   Notification,
   type NotificationWithoutChannel,
 } from '@/domain/notification/value-objects/notification';
+import { notificationsTotal } from '@/infrastructure/observability/metrics';
 
 export class SendNotificationUseCase {
   deliveryChannelMap: Record<
@@ -26,10 +27,16 @@ export class SendNotificationUseCase {
     to,
     subject,
   }: Notification): Promise<void> {
-    await this.deliveryChannelMap[deliveryChannel]({
-      message,
-      to,
-      subject,
-    });
+    try {
+      await this.deliveryChannelMap[deliveryChannel]({
+        message,
+        to,
+        subject,
+      });
+      notificationsTotal.inc({ channel: deliveryChannel, result: 'success' });
+    } catch (error) {
+      notificationsTotal.inc({ channel: deliveryChannel, result: 'failure' });
+      throw error;
+    }
   }
 }
