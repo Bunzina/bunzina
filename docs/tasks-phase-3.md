@@ -12,14 +12,14 @@
 - [x] Implementar o API Gateway como porta de entrada.
   - A responsabilidade principal do API Gateway será receber as requisições e encaminhá-las para os serviços corretos.
   - A rota `POST /auth/login` aponta para a Function Serverless de login.
-  - O professor não deixou claro se o API Gateway precisa contemplar todas as rotas.
-  - Como etapa inicial, o API Gateway pode ficar apenas para a Function Serverless.
-  - As demais rotas podem continuar nos serviços do Kubernetes até nova definição.
-  - Se for necessário contemplar todos os pods, também faremos o mapeamento das rotas no API Gateway.
+  - O escopo confirmado com o professor contempla apenas a rota `POST /auth/login`.
+  - As demais rotas continuam na aplicação principal executando no Kubernetes.
+  - Não será necessário mapear todas as rotas da aplicação neste API Gateway nesta etapa.
 
 - [x] Configurar roteamento mínimo no API Gateway.
   - Definir a rota `POST /auth/login` para a Function Serverless.
   - Garantir encaminhamento correto por rota.
+  - O roteamento implementado contempla somente `POST /auth/login`.
 ---
 
 # Estrutura de Repositórios e CI/CD
@@ -54,7 +54,9 @@
 
 # Infraestrutura obrigatória
 - [x] Provisionar um API Gateway.
+  - O API Gateway provisionado expõe somente a rota `POST /auth/login`.
 - [x] Provisionar a Function Serverless.
+  - A Function Serverless provisionada é responsável apenas pelo fluxo de login.
 - [ ] Provisionar um banco de dados gerenciado.
   - O PDF permite a escolha entre PostgreSQL, MySQL, SQL Server ou outro banco gerenciado equivalente.
 - [ ] Provisionar a infraestrutura utilizando Terraform.
