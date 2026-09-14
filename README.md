@@ -198,14 +198,68 @@ gerenciados separadamente:
   Secret no cluster.
 - Este repositório testa, constrói a imagem e executa o deploy da API.
 
-O fluxo de primeira instalação é:
+### Ordem da primeira instalação
+
+1. Aplique o `bunzina-infra` para criar a VPC, o EKS, os nodes, os addons e os repositórios ECR.
+2. Configure o `kubectl` para o cluster criado.
+3. Aplique o `bunzina-db` com a senha fornecida por `TF_VAR_db_password`.
+4. Publique/atualize o chart `app-chart` no repositório `bunzina-chart`.
+5. Execute o workflow de deploy deste repositório.
 
 ```text
-bunzina-infra → bunzina-db → workflow de deploy do bunzina
+bunzina-infra → bunzina-db → bunzina-chart → workflow de deploy do bunzina
 ```
 
-Para alterações somente na aplicação, execute apenas o workflow de deploy. O
-PostgreSQL deve estar criado antes, pois o chart da aplicação não cria um
+O workflow de deploy deste repositório exige que o EKS e o PostgreSQL já
+existam. Ele executa testes, valida novas migrations, executa migrations
+pendentes quando houver arquivos novos, constrói a imagem, publica no ECR e
+atualiza a aplicação e a observabilidade com Helm.
+
+### Alterações posteriores
+
+- Alteração somente na API ou nos manifests da aplicação: execute apenas este workflow.
+- Nova migration: o workflow também precisa alcançar o PostgreSQL por `kubectl port-forward` ou por `DB_HOST` acessível ao runner.
+- Alteração no PostgreSQL: aplique primeiro o `bunzina-db` e depois execute este workflow.
+- Alteração na infraestrutura: aplique primeiro o `bunzina-infra`, valide o cluster e reaplique o `bunzina-db` se necessário.
+
+### Configuração do workflow
+
+Em **Settings → Secrets and variables → Actions**, configure:
+
+**Secrets**:
+
+```text
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_SESSION_TOKEN
+DB_USER
+DB_PASSWORD
+JWT_SECRET
+API_KEY
+PROD_DATABASE_URL
+GRAFANA_ADMIN_PASSWORD
+```
+
+**Variables opcionais**:
+
+```text
+AWS_REGION=us-east-1
+EKS_CLUSTER_NAME=bunzina-eks
+DB_HOST
+DB_PORT=5432
+DB_NAME=bunzina
+DB_SSLMODE=require
+```
+
+As credenciais do AWS Academy são temporárias e precisam ser atualizadas no
+GitHub sempre que o laboratório renovar os tokens. `DB_USER` e `DB_PASSWORD`
+devem ser os mesmos valores usados no Secret criado pelo `bunzina-db`.
+
+Se `DB_HOST` não estiver configurado, o workflow usa o Service interno
+`postgres` e abre um port-forward durante as migrations. Para o deploy da API,
+o banco interno do chart é desabilitado quando `DB_HOST` está configurado.
+
+O PostgreSQL deve estar criado antes, pois o chart da aplicação não cria um
 banco adicional.
 ## Segurança de código (CodeQL)
 
