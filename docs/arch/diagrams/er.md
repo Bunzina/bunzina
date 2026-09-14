@@ -1,7 +1,7 @@
 # Diagrama ER
 
 Modelo atual do schema `bunzina`, baseado nas migrations `001` a `012`.
-Fonte visual versionável: [er.svg](../er.svg).
+Fonte visual versionável: [er.svg](../er.svg). O PNG e o SVG mostram as 9 tabelas, 85 colunas e 9 FKs do domínio, incluindo as alterações das migrations 010–012.
 
 ![Modelo ER atual](../er.png)
 
@@ -127,6 +127,46 @@ por CPF está descrita em [database.md](../database.md#evolucao-de-autenticacao)
 e [RFC 0001](../rfcs/0001-auth-cpf-lambda-gateway.md), mas não faz parte do
 modelo atual.
 
-As setas não representam apenas navegação de API: elas refletem as FKs SQL e
-suas regras de exclusão. Veículos e itens da OS usam cascade a partir do pai;
-movimentações preservam o histórico da peça e desassociam a OS com `SET NULL`.
+## Cardinalidades e exclusão
+
+As linhas representam FKs SQL. A cardinalidade junto a cada tabela indica quantos
+registros dela podem corresponder a um registro da outra ponta. `1` significa
+exatamente um; `0..1`, zero ou um; `0..*`, zero ou muitos. A linha tracejada no
+PNG/SVG destaca a FK opcional de movimentação para OS. A coluna **NULO** marca
+com `sim` os campos que aceitam NULL; os demais são obrigatórios.
+
+| Pai | FK na tabela filha | Pais por filho | Filhos por pai | ON DELETE |
+| --- | --- | --- | --- | --- |
+| customers | vehicles.customer_id | 1 | 0..* | CASCADE |
+| customers | service_orders.customer_id | 1 | 0..* | NO ACTION |
+| vehicles | service_orders.vehicle_id | 1 | 0..* | NO ACTION |
+| service_orders | service_order_service_items.service_order_id | 1 | 0..* | CASCADE |
+| services | service_order_service_items.service_id | 1 | 0..* | NO ACTION |
+| service_orders | service_order_auto_part_items.service_order_id | 1 | 0..* | CASCADE |
+| auto_parts | service_order_auto_part_items.auto_part_id | 1 | 0..* | NO ACTION |
+| auto_parts | stock_movements.auto_part_id | 1 | 0..* | NO ACTION |
+| service_orders | stock_movements.service_order_id | 0..1 | 0..* | SET NULL |
+
+`NO ACTION` é o comportamento padrão quando a migration não declara uma ação.
+Nenhuma FK impõe a existência de pelo menos um filho. Uma OS pode, portanto,
+existir sem itens no banco, independentemente das regras da aplicação.
+As relações N:N entre OS e serviços/peças são representadas pelas tabelas de itens.
+Não há UNIQUE composto sobre os pares de FKs dessas tabelas.
+
+As FKs de `service_orders.customer_id` e `vehicle_id` são independentes: as
+migrations não garantem que o cliente da OS seja o proprietário do veículo.
+`public.migrations` é controle do engine, fora do schema de domínio `bunzina`,
+e não está incluída no desenho.
+
+## Regenerar a imagem
+
+Na raiz do projeto, em Linux/WSL com Python 3 e as bibliotecas de sistema
+librsvg, Cairo e GObject instaladas:
+
+```sh
+python3 docs/arch/diagrams/generate_er.py
+```
+
+O gerador lê as migrations SQL em ordem, incorpora as colunas adicionadas por
+ALTER TABLE e grava `docs/arch/er.svg` e `docs/arch/er.png`. O layout foi preparado
+para o modelo 001–012; mudanças no schema exigem revisar o layout e as relações.

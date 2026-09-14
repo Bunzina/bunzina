@@ -1,53 +1,56 @@
 # API Gateway e Lambda
 
-A Lambda executa as três etapas obrigatórias do PDF na mesma Function. O Gateway é a única porta pública.
+O API Gateway encaminha o login para a Lambda. A Lambda valida o CPF e chama a API no EKS, que valida o cliente e gera o JWT. A Lambda devolve o status HTTP e o corpo da resposta desse serviço.
 
 ![API Gateway e Lambda Auth](../api-gateway-lambda.png)
-
-> **Nota**: O diagrama PNG precisa ser atualizado para refletir o fluxo correto abaixo.
 
 ## Responsabilidades
 
 ### API Gateway
 
-- Roteia **apenas** `POST /auth` para a Lambda (as demais rotas vão direto para o EKS)
-- Valida o JWT **antes** da requisição chegar à API
-- Aplica políticas (CORS) — *rate limit: confirmar se há configuração*
-- Não conhece regras de negócio (RBAC por papel, estoque, máquina de estados)
+- Roteia `POST /auth/login` para a Lambda, conforme `bunzina-lambda/serverless.yml`.
+- Essa é a única rota declarada no HTTP API; as demais rotas da aplicação são acessadas pelo EKS.
+- Não há configuração explícita de validação de JWT, CORS ou rate limit customizado nesse arquivo.
+- A ausência de rate limit customizado no código não confirma as configurações efetivas da conta AWS; alterações feitas diretamente no ambiente não foram verificadas.
 
 ### Lambda Auth
 
-Uma Function, três etapas:
+1. Recebe `document` e `password` e valida o formato da requisição e os dígitos verificadores do CPF.
+2. Chama `POST /auth/login` da API no EKS via Axios, enviando os dados validados.
+3. Devolve o status HTTP e o corpo da resposta da API, incluindo respostas de erro.
 
-1. **Validar CPF** — dígitos verificadores e normalização (mesmo helper da API)
-2. **Chamar serviço no EKS via axios** — o serviço no EKS valida usuário/cliente, verifica `users.is_active`, associa CPF ao usuário
-3. **Emitir JWT** — `sub`, `email`, `role` e o documento do cliente (após resposta do EKS)
+A Lambda não consulta diretamente o banco nem gera o JWT. Se não conseguir obter uma resposta do serviço de autenticação, retorna `502`.
 
-E-mail e senha continuam como credenciais. O CPF entra no mesmo request e precisa estar associado ao usuário.
+### API Bunzina no EKS
 
-## Contrato proposto de login
+- Valida o cliente e as credenciais.
+- Gera o JWT e retorna a resposta de autenticação para a Lambda.
+
+## Contrato de login
 
 ```http
-POST /auth
+POST /auth/login
 Content-Type: application/json
 
 {
   "document": "12345678909",
-  "email": "cliente@bunzina.com",
   "password": "********"
 }
 ```
 
-```json
-{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
-```
+O corpo da resposta de autenticação é definido pela API no EKS e repassado pela Lambda.
 
 | Situação | Resposta |
 | --- | --- |
-| CPF inválido | 400 |
-| Cliente inexistente | 401 (mesma mensagem de credencial inválida) |
-| Usuário inativo | 401 |
-| Senha incorreta | 401 |
-| Sucesso | 200 + JWT |
+| JSON inválido, CPF inválido ou dados fora do schema | 400 |
+| Resposta do serviço no EKS, incluindo erros de autenticação | Mesmo status HTTP e corpo retornados pelo serviço |
+| Falha de comunicação sem resposta do serviço | 502 |
 
-Detalhes em [RFC 0001](../rfcs/0001-auth-cpf-lambda-gateway.md).
+## Referências da implementação
+
+Arquivos no projeto `bunzina-lambda`:
+
+- `serverless.yml`: rota do API Gateway.
+- `src/adapters/input/validations/login-schema.ts`: contrato de entrada.
+- `src/adapters/input/login.ts`: validação e construção da resposta.
+- `src/infrastructure/services/bunzina-auth-service.ts`: chamada à API e tratamento de falhas.
