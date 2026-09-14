@@ -4,7 +4,7 @@ app-chart:
   app:
     name: bunzina
     image:
-      repository: 955971900480.dkr.ecr.us-east-1.amazonaws.com/bunzina
+      repository: __AWS_ACCOUNT_ID__.dkr.ecr.us-east-1.amazonaws.com/bunzina
       tag: ""
       pullPolicy: IfNotPresent
     replicaCount: 2

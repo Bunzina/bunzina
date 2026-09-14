@@ -7,4 +7,4 @@ appVersion: "1.0.0"
 dependencies:
   - name: app-chart
     version: "0.2.0"
-    repository: "oci://955971900480.dkr.ecr.us-east-1.amazonaws.com"
+    repository: "oci://__AWS_ACCOUNT_ID__.dkr.ecr.us-east-1.amazonaws.com"
