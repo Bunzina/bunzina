@@ -90,24 +90,7 @@ jobs:
           DB_SSLMODE: ${{ vars.DB_SSLMODE || secrets.DB_SSLMODE }}
         run: |
           if [ -n "$DB_HOST" ]; then
-            export PROD_DATABASE_URL="$(python3 - <<'PY'
-              import os
-              import urllib.parse
-
-              host = os.environ.get("DB_HOST", "")
-              port = os.environ.get("DB_PORT", "5432")
-              name = os.environ.get("DB_NAME", "postgres")
-              user = os.environ.get("DB_USER", "")
-              password = os.environ.get("DB_PASSWORD", "")
-              sslmode = os.environ.get("DB_SSLMODE", "require")
-
-              if not user or not password:
-                  raise SystemExit("DB_USER and DB_PASSWORD are required")
-
-              encoded_password = urllib.parse.quote(password, safe="")
-              print(f"postgresql://{user}:{encoded_password}@{host}:{port}/{name}?sslmode={sslmode}")
-            PY
-            )"
+            export PROD_DATABASE_URL="$(python3 -c 'import os, sys, urllib.parse; host=os.environ.get("DB_HOST", ""); port=os.environ.get("DB_PORT", "5432"); name=os.environ.get("DB_NAME", "postgres"); user=os.environ.get("DB_USER", ""); password=os.environ.get("DB_PASSWORD", ""); sslmode=os.environ.get("DB_SSLMODE", "require"); sys.exit("DB_USER and DB_PASSWORD are required") if not user or not password else print("postgresql://{}:{}@{}:{}/{}?sslmode={}".format(user, urllib.parse.quote(password, safe=""), host, port, name, sslmode))')"
           else
             kubectl port-forward -n "$K8S_NAMESPACE" svc/postgres 5432:5432 &
             PF_PID=$!
