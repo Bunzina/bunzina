@@ -1,6 +1,6 @@
 # Tasks — Fase 3 do Tech Challenge
 # Autenticação e API Gateway
-- [ ] Implementar autenticação com CPF e senha na Function Serverless.
+- [x] Implementar autenticação com CPF e senha na Function Serverless.
   - O login deve identificar o cliente por CPF.
   - A Function recebe CPF e senha.
   - A Function valida o payload de entrada.
@@ -9,17 +9,17 @@
   - O ajuste principal no `bunzina` é trocar a identificação por e-mail para identificação por CPF/documento.
   - A lógica de autenticação, validação de credenciais e geração de JWT fica no `bunzina`.
 
-- [ ] Implementar o API Gateway como porta de entrada.
+- [x] Implementar o API Gateway como porta de entrada.
   - A responsabilidade principal do API Gateway será receber as requisições e encaminhá-las para os serviços corretos.
   - A rota `POST /auth/login` aponta para a Function Serverless de login.
-  - O professor não deixou claro se o API Gateway precisa contemplar todas as rotas.
-  - Como etapa inicial, o API Gateway pode ficar apenas para a Function Serverless.
-  - As demais rotas podem continuar nos serviços do Kubernetes até nova definição.
-  - Se for necessário contemplar todos os pods, também faremos o mapeamento das rotas no API Gateway.
+  - O escopo confirmado com o professor contempla apenas a rota `POST /auth/login`.
+  - As demais rotas continuam na aplicação principal executando no Kubernetes.
+  - Não será necessário mapear todas as rotas da aplicação neste API Gateway nesta etapa.
 
-- [ ] Configurar roteamento mínimo no API Gateway.
+- [x] Configurar roteamento mínimo no API Gateway.
   - Definir a rota `POST /auth/login` para a Function Serverless.
   - Garantir encaminhamento correto por rota.
+  - O roteamento implementado contempla somente `POST /auth/login`.
 ---
 
 # Estrutura de Repositórios e CI/CD
@@ -31,7 +31,7 @@
     3. Infraestrutura do banco de dados gerenciado;
     4. Aplicação principal executando no Kubernetes.
   - Podemos continuar utilizando o repositório `bunzina-chart` para o Helm Chart.
-- [ ] Criar o repositório da Lambda.
+- [x] Criar o repositório da Lambda.
   - Esse repositório precisa conter o código da Lambda.
   - Conforme o PDF, esse repositório representa a Function Serverless.
   - O deploy para a Lambda pode ser realizado utilizando Terraform ou Serverless Framework.
@@ -53,8 +53,10 @@
 ---
 
 # Infraestrutura obrigatória
-- [ ] Provisionar um API Gateway.
-- [ ] Provisionar a Function Serverless.
+- [x] Provisionar um API Gateway.
+  - O API Gateway provisionado expõe somente a rota `POST /auth/login`.
+- [x] Provisionar a Function Serverless.
+  - A Function Serverless provisionada é responsável apenas pelo fluxo de login.
 - [x] Provisionar um banco de dados gerenciado.
   - O PDF permite a escolha entre PostgreSQL, MySQL, SQL Server ou outro banco gerenciado equivalente.
 - [x] Provisionar a infraestrutura utilizando Terraform.
@@ -155,7 +157,7 @@
   - O PDF solicita um diagrama específico em cada repositório, mas não precisamos repetir os diagramas.
   - Podemos manter os diagramas no repositório principal e referenciá-los nos READMEs dos outros repositórios.
   - Para o link do Swagger, podemos informar que ele estará disponível ao executar a aplicação localmente.
-- [ ] Adicionar Dockerfiles quando aplicável.
+- [x] Adicionar Dockerfiles quando aplicável.
   - O próprio PDF indica que os Dockerfiles são obrigatórios apenas quando forem aplicáveis ao repositório.
 - [ ] Adicionar pipelines de CI/CD funcionais nos quatro repositórios.
 - [ ] Preparar os links dos repositórios e das documentações.
