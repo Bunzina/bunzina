@@ -267,12 +267,44 @@ jobs:
         with:
           version: v3.16.4
 
+      - name: Add observability Helm repos
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add grafana-community https://grafana-community.github.io/helm-charts
+          helm repo update
+
+      - name: Copy dashboards into the observability chart
+        run: |
+          mkdir -p charts/bunzina-observability/dashboards
+          cp observability/grafana/dashboards/*.json charts/bunzina-observability/dashboards/
+
+      - name: Resolve bunzina-observability dependencies
+        run: helm dependency update charts/bunzina-observability
+
+      - name: Deploy observability stack
+        env:
+          GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
+        run: |
+          helm upgrade --install bunzina-observability charts/bunzina-observability \
+            --namespace observability --create-namespace \
+            --set kube-prometheus-stack.grafana.adminPassword="$GRAFANA_ADMIN_PASSWORD" \
+            --wait --timeout 10m
+
       - name: Log in to ECR for Helm (OCI)
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           aws ecr get-login-password --region "$AWS_REGION" \
             | helm registry login --username AWS --password-stdin "$ECR_REGISTRY"
+
+      - name: Inject AWS account ID into chart dependency
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          sed -i "s/__AWS_ACCOUNT_ID__/${AWS_ACCOUNT_ID}/g" \
+            charts/bunzina-chart/Chart.yaml \
+            charts/bunzina-chart/values.yaml
 
       - name: Resolve app-chart dependency from OCI
         run: helm dependency update charts/bunzina-chart

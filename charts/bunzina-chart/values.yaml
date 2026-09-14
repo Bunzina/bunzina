@@ -4,7 +4,7 @@ app-chart:
   app:
     name: bunzina
     image:
-      repository: 955971900480.dkr.ecr.us-east-1.amazonaws.com/bunzina
+      repository: __AWS_ACCOUNT_ID__.dkr.ecr.us-east-1.amazonaws.com/bunzina
       tag: ""
       pullPolicy: IfNotPresent
     replicaCount: 2
@@ -34,6 +34,16 @@ app-chart:
         memory: "256Mi"
     probes:
       path: /health
+      livenessPath: /health
+      readinessPath: /ready
+    metrics:
+      enabled: true
+      path: /metrics
+      port: 3000
+      serviceMonitor:
+        enabled: true
+        interval: 15s
+        scrapeTimeout: 10s
     config:
       APP_ENV: "prod"
       PROD_DB_HOST: "aws-1-sa-east-1.pooler.supabase.com"
@@ -43,6 +53,10 @@ app-chart:
       EMAIL_SMTP_PORT: "1025"
       EMAIL: "no-reply@bunzina.local"
       JWT_EXPIRES_IN: "1d"
+      # Aponta para o release `bunzina-observability` (namespace `observability`,
+      # instalado antes deste). Sem essa env var o tracing.ts nem inicializa.
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://alloy-gateway.observability.svc.cluster.local:4318"
+      OTEL_SERVICE_NAME: "bunzina"
 
   database:
     enabled: true

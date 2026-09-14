@@ -42,10 +42,14 @@ function parseJwtPayload(payload: unknown): JwtPayload {
     throw new Error('Invalid token payload');
   }
 
-  const { sub, email, role, iat, exp } = payload as Record<string, unknown>;
+  const { sub, document, email, role, iat, exp } = payload as Record<
+    string,
+    unknown
+  >;
 
   if (
     !isString(sub) ||
+    !isString(document) ||
     !isString(email) ||
     !isString(role) ||
     !isFiniteInteger(iat) ||
@@ -56,11 +60,12 @@ function parseJwtPayload(payload: unknown): JwtPayload {
     throw new Error('Invalid token payload');
   }
 
-  return { sub, email, role, iat, exp };
+  return { sub, document, email, role, iat, exp };
 }
 
 export interface JwtPayload {
   sub: string;
+  document: string;
   email: string;
   role: string;
   iat: number;

@@ -1,35 +1,49 @@
 # Tasks — Fase 3 do Tech Challenge
-
 # Autenticação e API Gateway
-- [ ] Implementar um API Gateway.
-  - O PDF permite utilizar AWS API Gateway, Kong, Traefik ou outra solução equivalente.
-- [ ] Proteger as rotas sensíveis da aplicação com autenticação via CPF.
-- [ ] Criar uma Function Serverless para autenticação.
-  - Não precisa implementar as três responsabilidades na mesma Function Serverless.
-  - Pode ser implementada apenas uma das responsabilidades na Function Serverless.
-  - As outras responsabilidades precisam estar implementadas em algum lugar, podendo ficar no pod da aplicação ou em outra Lambda.
-  - As responsabilidades apresentadas no requisito são:
-    - Validar o CPF do cliente;
-    - Consultar a existência e o status do cliente na base de dados;
-    - Gerar e devolver um JWT válido para consumo das APIs protegidas.
-- [ ] Definir como será implementado o fluxo de autenticação e API Gateway.
-  - Estamos aguardando o professor responder uma dúvida no canal do Discord para realmente iniciarmos essa implementação.
+- [x] Implementar autenticação com CPF e senha na Function Serverless.
+  - O login deve identificar o cliente por CPF.
+  - A Function recebe CPF e senha.
+  - A Function valida o payload de entrada.
+  - A Function não autentica direto no banco e não gera JWT.
+  - A Function chama o `bunzina` via `POST /auth/login` e devolve a resposta recebida.
+  - O ajuste principal no `bunzina` é trocar a identificação por e-mail para identificação por CPF/documento.
+  - A lógica de autenticação, validação de credenciais e geração de JWT fica no `bunzina`.
+
+- [x] Implementar o API Gateway como porta de entrada.
+  - A responsabilidade principal do API Gateway será receber as requisições e encaminhá-las para os serviços corretos.
+  - A rota `POST /auth/login` aponta para a Function Serverless de login.
+  - O escopo confirmado com o professor contempla apenas a rota `POST /auth/login`.
+  - As demais rotas continuam na aplicação principal executando no Kubernetes.
+  - Não será necessário mapear todas as rotas da aplicação neste API Gateway nesta etapa.
+
+- [x] Configurar roteamento mínimo no API Gateway.
+  - Definir a rota `POST /auth/login` para a Function Serverless.
+  - Garantir encaminhamento correto por rota.
+  - O roteamento implementado contempla somente `POST /auth/login`.
 ---
 
 # Estrutura de Repositórios e CI/CD
-- [ ] Criar o repositório da Lambda.
+- [x] Organizar o projeto em quatro repositórios separados.
+  - Os quatro repositórios precisam possuir CI/CD.
+  - Os repositórios necessários são:
+    1. Lambda;
+    2. Infraestrutura Kubernetes;
+    3. Infraestrutura do banco de dados gerenciado;
+    4. Aplicação principal executando no Kubernetes.
+  - Podemos continuar utilizando o repositório `bunzina-chart` para o Helm Chart.
+- [x] Criar o repositório da Lambda.
   - Esse repositório precisa conter o código da Lambda.
   - Conforme o PDF, esse repositório representa a Function Serverless.
   - O deploy para a Lambda pode ser realizado utilizando Terraform ou Serverless Framework.
   - O API Gateway pode ficar no repositório da Lambda ou no repositório de infraestrutura Kubernetes.
-  - O deploy deve ser automático para a nuvem.
 - [x] Criar o repositório de infraestrutura Kubernetes.
-  - O deploy deve ser automático para a nuvem.
 - [x] Criar o repositório de infraestrutura do banco de dados gerenciado.
   - As migrations podem ficar no repositório da infraestrutura do banco ou no repositório da aplicação.
   - Podemos continuar mantendo as migrations no repositório da aplicação, como já ocorre atualmente.
-  - O deploy deve ser automático para a nuvem.
 - [x] Manter e adaptar o repositório da aplicação principal.
+- [x] Implementar CI/CD nos quatro repositórios.
+  - O PDF permite utilizar GitHub Actions, GitLab CI ou outra ferramenta equivalente.
+  - O deploy deve ser automático para a nuvem.
 - [x] Configurar proteção da branch principal e uso de Pull Requests.
   - O PDF exige que a branch `main` ou `master` seja protegida, sem commits diretos.
   - O uso de Pull Requests para merge é obrigatório.
@@ -39,13 +53,13 @@
 ---
 
 # Infraestrutura obrigatória
-- [ ] Provisionar um API Gateway.
-- [ ] Provisionar a Function Serverless.
-- [ ] Provisionar um banco de dados gerenciado.
+- [x] Provisionar um API Gateway.
+  - O API Gateway provisionado expõe somente a rota `POST /auth/login`.
+- [x] Provisionar a Function Serverless.
+  - A Function Serverless provisionada é responsável apenas pelo fluxo de login.
+- [x] Provisionar um banco de dados gerenciado.
   - O PDF permite a escolha entre PostgreSQL, MySQL, SQL Server ou outro banco gerenciado equivalente.
-- [ ] Provisionar um cluster Kubernetes com escalabilidade.
-  - A escolha da nuvem é livre, conforme o PDF.
-- [ ] Provisionar a infraestrutura utilizando Terraform.
+- [x] Provisionar a infraestrutura utilizando Terraform.
   - Os repositórios sugeridos pelo professor utilizam AWS Academy:
     - `https://github.com/dougls/terraform-academy`
     - `https://github.com/dougls/terraform-soat`
@@ -143,7 +157,7 @@
   - O PDF solicita um diagrama específico em cada repositório, mas não precisamos repetir os diagramas.
   - Podemos manter os diagramas no repositório principal e referenciá-los nos READMEs dos outros repositórios.
   - Para o link do Swagger, podemos informar que ele estará disponível ao executar a aplicação localmente.
-- [ ] Adicionar Dockerfiles quando aplicável.
+- [x] Adicionar Dockerfiles quando aplicável.
   - O próprio PDF indica que os Dockerfiles são obrigatórios apenas quando forem aplicáveis ao repositório.
 - [ ] Adicionar pipelines de CI/CD funcionais nos quatro repositórios.
 - [ ] Preparar os links dos repositórios e das documentações.
@@ -157,3 +171,4 @@
   - Segundo o PDF, o documento deve reunir os links dos quatro repositórios, do vídeo e das documentações.
   - Não é necessária a confirmação do usuário `soat-architecture`, pois os repositórios são públicos.
 - [ ] Destruir os recursos da AWS após a gravação e validação do vídeo.
+---

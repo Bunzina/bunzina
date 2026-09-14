@@ -1,10 +1,11 @@
 import type { UserRepository } from '@/domain/user/repositories/user-repository';
+import { authenticationAttemptsTotal } from '@/infrastructure/observability/metrics';
 import { signJwt } from '@/infrastructure/services/jwt';
 import { UnauthorizedError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
 
 interface Input {
-  email: string;
+  document: string;
   password: string;
 }
 
@@ -16,21 +17,23 @@ export class LoginUseCase {
   constructor(private userRepository: UserRepository) {}
 
   async execute(input: Input): Promise<Output> {
-    const user = await this.userRepository.findByEmail(input.email);
+    const user = await this.userRepository.findByDocument(input.document);
 
     if (!user) {
+      authenticationAttemptsTotal.inc({ result: 'failure' });
       logger.warn({
         message: 'Login failed: user not found',
-        data: { email: input.email },
+        data: { document: input.document },
       });
 
       throw new UnauthorizedError('Invalid credentials');
     }
 
     if (!user.isActive) {
+      authenticationAttemptsTotal.inc({ result: 'failure' });
       logger.warn({
         message: 'Login failed: user is inactive',
-        data: { email: input.email },
+        data: { document: input.document },
       });
 
       throw new UnauthorizedError('Invalid credentials');
@@ -42,9 +45,10 @@ export class LoginUseCase {
     );
 
     if (!passwordValid) {
+      authenticationAttemptsTotal.inc({ result: 'failure' });
       logger.warn({
         message: 'Login failed: invalid password',
-        data: { email: input.email },
+        data: { document: input.document },
       });
 
       throw new UnauthorizedError('Invalid credentials');
@@ -52,13 +56,16 @@ export class LoginUseCase {
 
     const token = await signJwt({
       sub: user.id!,
+      document: user.document.value,
       email: user.email.value,
       role: user.role,
     });
 
+    authenticationAttemptsTotal.inc({ result: 'success' });
+
     logger.info({
       message: 'Login successful',
-      data: { email: input.email, role: user.role },
+      data: { document: input.document, role: user.role },
     });
 
     return { token };

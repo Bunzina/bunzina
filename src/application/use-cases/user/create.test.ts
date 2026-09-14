@@ -1,5 +1,6 @@
 import type { UserRepository } from '@/domain/user/repositories/user-repository';
 import { UserRole } from '@/domain/user/types/user-role';
+import { makeDocument } from '@/test/factories/make-document';
 import { makeEmail } from '@/test/factories/make-email';
 import { makeUser } from '@/test/factories/make-user';
 import type { MockProxy } from 'bun-mock-extended';
@@ -18,6 +19,7 @@ describe('create user use case', () => {
   test('should create a user', async () => {
     const input = {
       name: 'John Doe',
+      document: '11144477735',
       email: 'john@example.com',
       password: 'password123',
       role: UserRole.MECHANIC,
@@ -27,6 +29,7 @@ describe('create user use case', () => {
 
     expect(result).toMatchObject({
       name: 'John Doe',
+      document: { value: '11144477735' },
       email: { value: 'john@example.com' },
       role: UserRole.MECHANIC,
       isActive: true,
@@ -50,6 +53,33 @@ describe('create user use case', () => {
 
     const input = {
       name: 'John Doe',
+      document: '11144477735',
+      email: 'john@example.com',
+      password: 'password123',
+      role: UserRole.MECHANIC,
+    };
+
+    await expect(createUserUseCase.execute(input)).rejects.toThrow(
+      'User already exists',
+    );
+    expect(userRepository.create).not.toHaveBeenCalled();
+  });
+
+  test('should throw ConflictError if user document already exists', async () => {
+    const existingUser = makeUser({
+      document: makeDocument('11144477735'),
+    });
+
+    userRepository.findByEmail
+      .calledWith('john@example.com')
+      .mockResolvedValue(null);
+    userRepository.findByDocument
+      .calledWith('11144477735')
+      .mockResolvedValue(existingUser);
+
+    const input = {
+      name: 'John Doe',
+      document: '11144477735',
       email: 'john@example.com',
       password: 'password123',
       role: UserRole.MECHANIC,

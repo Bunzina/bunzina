@@ -1,5 +1,5 @@
 import { mockFn } from 'bun-mock-extended';
-import { mock, test, describe, expect } from 'bun:test';
+import { describe, expect, mock, test } from 'bun:test';
 
 const mockDb = mockFn<(..._args: unknown[]) => Promise<unknown[]>>();
 
@@ -19,6 +19,24 @@ describe('Server', () => {
     expect(await response.json()).toEqual({ status: 'ok' });
   });
 
+  test('GET /ready returns 200 when the database is available', async () => {
+    mockDb.mockResolvedValueOnce([]);
+
+    const response = await app.handle(new Request('http://localhost/ready'));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ status: 'ready' });
+  });
+
+  test('GET /ready returns 503 when the database is unavailable', async () => {
+    mockDb.mockRejectedValueOnce(new Error('database unavailable'));
+
+    const response = await app.handle(new Request('http://localhost/ready'));
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ status: 'not_ready' });
+  });
+
   test('POST /users returns 422 for invalid email payload', async () => {
     const response = await app.handle(
       new Request('http://localhost/users', {
@@ -26,6 +44,7 @@ describe('Server', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: 'João Silva',
+          document: '111.444.777-35',
           email: 'invalid-email',
           password: 'senha123',
           role: 'CUSTOMER',
@@ -38,20 +57,20 @@ describe('Server', () => {
     expect(response.headers.get('Content-Type')).toContain('application/json');
   });
 
-  test('POST /auth/login returns 422 when body is invalid', async () => {
+  test('POST /auth/login returns 400 when body is invalid', async () => {
     const response = await app.handle(
       new Request('http://localhost/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'not-an-email',
+          document: 'invalid-cpf',
           password: '',
         }),
       }),
     );
 
     expect(response).toBeDefined();
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(400);
     expect(response.headers.get('Content-Type')).toContain('application/json');
   });
 
@@ -83,5 +102,26 @@ describe('Server', () => {
     expect(response.status).not.toBe(401);
     expect(response.headers.get('Content-Type')).toContain('application/json');
     expect(await response.json()).toEqual([]);
+  });
+
+  test('GET /metrics exposes HTTP metrics without sensitive route parameters', async () => {
+    await app.handle(
+      new Request('http://localhost/customers/12345678901', {
+        method: 'GET',
+      }),
+    );
+
+    const response = await app.handle(
+      new Request('http://localhost/metrics', { method: 'GET' }),
+    );
+    const metrics = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toContain(
+      'text/plain; version=0.0.4',
+    );
+    expect(metrics).toContain('bunzina_http_requests_total');
+    expect(metrics).toContain('route="/customers/:documentNumber"');
+    expect(metrics).not.toContain('12345678901');
   });
 });

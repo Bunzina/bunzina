@@ -20,6 +20,7 @@ describe('create user handler', () => {
       request: { method: 'POST', headers: new Headers() },
       body: {
         name: 'John Doe',
+        document: '111.444.777-35',
         email: 'john@example.com',
         password: 'password123',
         role: 'CUSTOMER',
@@ -41,6 +42,7 @@ describe('create user handler', () => {
       request: { headers: new Headers() },
       body: {
         name: 'John Doe',
+        document: '111.444.777-35',
         email: 'john@example.com',
         password: 'password123',
         role: 'CUSTOMER',
