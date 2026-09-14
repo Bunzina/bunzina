@@ -437,8 +437,6 @@
 <text x="1812" y="1748" class="field" font-size="20">description</text>
 <text x="2110" y="1748" class="dtype" font-size="20">TEXT</text>
 <text x="2342" y="1748" class="" font-size="15" style="fill:#b45309" text-anchor="end">sim</text>
-<text x="1720" y="590" class="muted" font-size="21">users não possui FK para outras tabelas.</text>
-<text x="1720" y="623" class="muted" font-size="18">Nenhuma relação com customers é definida nas migrations.</text>
 <rect x="120" y="1930" width="2240" height="210" rx="14" fill="#eaf0f8"/>
 <text x="150" y="1970" class="" font-size="20" font-weight="700">COMO LER O MODELO</text>
 <text x="150" y="2010" class="" font-size="20">PK: chave primária   ·   FK: chave estrangeira   ·   UK: UNIQUE   ·   NULO vazio: NOT NULL</text>

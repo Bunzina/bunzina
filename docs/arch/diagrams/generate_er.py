@@ -113,8 +113,6 @@ for name, (x,y,color) in positions.items():
         text(x+390,baseline,dtype,cls='dtype')
         if nullable: text(x+622,baseline,'sim',15,fill='#b45309',anchor='end')
 
-text(1720, 590, 'users não possui FK para outras tabelas.', 21, cls='muted')
-text(1720, 623, 'Nenhuma relação com customers é definida nas migrations.', 18, cls='muted')
 
 svg.append('<rect x="120" y="1930" width="2240" height="210" rx="14" fill="#eaf0f8"/>')
 text(150,1970,'COMO LER O MODELO',20,weight=700)

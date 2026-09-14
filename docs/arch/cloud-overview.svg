@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1540" viewBox="0 0 2400 1540">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#405574"/></marker></defs>
+<style>text{font-family:DejaVu Sans,sans-serif;fill:#17253c}</style>
+<rect width="2400" height="1540" fill="#f7f9fc"/>
+<text x="65" y="72" font-size="36" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">BUNZINA / VISÃO GERAL DA NUVEM</text>
+<text x="65" y="115" font-size="21" fill="#61728b" style="fill:#61728b" font-weight="400" text-anchor="start">Login serverless e acesso às APIs de negócio</text>
+<rect x="420" y="170" width="1880" height="980" rx="12" fill="#f1f6fc" stroke="#9eb3ce" stroke-width="2"/>
+<text x="450" y="210" font-size="25" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">AWS · us-east-1</text>
+<rect x="65" y="455" width="290" height="140" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M77,455 H343 Q355,455 355,467 V504 H65 V467 Q65,455 77,455" fill="#64748b"/>
+<text x="83" y="488" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">Cliente</text>
+<text x="83" y="536" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Login</text>
+<text x="83" y="567" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">APIs de negócio</text>
+<rect x="470" y="265" width="420" height="130" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M482,265 H878 Q890,265 890,277 V314 H470 V277 Q470,265 482,265" fill="#c26b12"/>
+<text x="488" y="298" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">API Gateway HTTP API</text>
+<text x="488" y="346" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">POST /auth/login</text>
+<text x="488" y="377" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Integração com Lambda</text>
+<rect x="1030" y="265" width="440" height="130" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M1042,265 H1458 Q1470,265 1470,277 V314 H1030 V277 Q1030,265 1042,265" fill="#c26b12"/>
+<text x="1048" y="298" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">Lambda Auth</text>
+<text x="1048" y="346" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Valida payload e CPF</text>
+<text x="1048" y="377" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Chama a API via Axios</text>
+<path d="M355,485 L395,485 L395,330 L470,330" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M890,330 L1030,330" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="960.0" y="317" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">Login</text>
+<rect x="1210" y="470" width="1040" height="630" rx="12" fill="#eef4ff" stroke="#9bb7e3" stroke-width="2" stroke-dasharray="10 7"/>
+<text x="1240" y="510" font-size="25" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">VPC / EKS</text>
+<rect x="1260" y="585" width="345" height="150" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M1272,585 H1593 Q1605,585 1605,597 V634 H1260 V597 Q1260,585 1272,585" fill="#c26b12"/>
+<text x="1278" y="618" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">ALB público</text>
+<text x="1278" y="666" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">IngressClass alb</text>
+<text x="1278" y="697" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">HTTP :80</text>
+<text x="1278" y="728" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">target-type: ip</text>
+<rect x="1760" y="585" width="440" height="180" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M1772,585 H2188 Q2200,585 2200,597 V634 H1760 V597 Q1760,585 1772,585" fill="#6d28d9"/>
+<text x="1778" y="618" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">API Bunzina no EKS</text>
+<text x="1778" y="666" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Login: credenciais e JWT</text>
+<text x="1778" y="697" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Rotas de negócio + auth</text>
+<text x="1778" y="728" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Pods :3000 · HPA 2–10</text>
+<path d="M1470,335 L1550,335 L1550,555 L1430,555 L1430,585" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1740" y="365" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">POST /auth/login</text>
+<text x="1740" y="396" font-size="18" fill="#61728b" style="fill:#61728b" font-weight="400" text-anchor="middle">BUNZINA_API_BASE_URL</text>
+<path d="M355,560 L1130,560 L1130,660 L1260,660" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="775" y="546" font-size="23" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">Rotas de negócio + Bearer JWT / Api-Key</text>
+<path d="M1605,660 L1760,660" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1682.5" y="647" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">HTTP</text>
+<rect x="1750" y="915" width="450" height="142" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M1762,915 H2188 Q2200,915 2200,927 V964 H1750 V927 Q1750,915 1762,915" fill="#0e7490"/>
+<text x="1768" y="948" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">PostgreSQL local</text>
+<text x="1768" y="996" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Service + StatefulSet + PVC</text>
+<text x="1768" y="1027" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Deploy sem DB_HOST</text>
+<path d="M1940,765 L1940,915" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#arrow)"/>
+<text x="1920" y="840" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="end">SQL</text>
+<text x="1240" y="840" font-size="22" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">Nós em subnets privadas</text>
+<text x="1240" y="882" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">ConfigMap + Secret → pods</text>
+<text x="1240" y="924" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">ALB → IP dos pods</text>
+<text x="1240" y="966" font-size="19" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">NAT: saída das subnets privadas</text>
+<text x="470" y="815" font-size="25" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">Autenticação</text>
+<text x="470" y="858" font-size="22" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">A API consulta o banco e gera o JWT.</text>
+<text x="470" y="901" font-size="22" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">A Lambda repassa status e body.</text>
+<text x="470" y="985" font-size="22" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">As demais rotas chegam pelo ALB.</text>
+<text x="470" y="1028" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">O middleware da API valida a credencial.</text>
+<rect x="1750" y="1270" width="450" height="142" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M1762,1270 H2188 Q2200,1270 2200,1282 V1319 H1750 V1282 Q1750,1270 1762,1270" fill="#0e7490"/>
+<text x="1768" y="1303" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">PostgreSQL externo</text>
+<text x="1768" y="1351" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Host configurado em DB_HOST</text>
+<text x="1768" y="1382" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Alternativa ao banco local</text>
+<path d="M2200,715 L2330,715 L2330,1340 L2200,1340" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#arrow)"/>
+<text x="2220" y="1220" font-size="19" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">SQL</text>
+<text x="65" y="1230" font-size="25" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">ENTREGA DE ARTEFATOS</text>
+<rect x="65" y="1270" width="410" height="142" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M77,1270 H463 Q475,1270 475,1282 V1319 H65 V1282 Q65,1270 77,1270" fill="#64748b"/>
+<text x="83" y="1303" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">GitHub Actions</text>
+<text x="83" y="1351" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Build e publicação</text>
+<text x="83" y="1382" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Deploy: Serverless / Helm</text>
+<rect x="650" y="1270" width="670" height="142" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
+<path d="M662,1270 H1308 Q1320,1270 1320,1282 V1319 H650 V1282 Q650,1270 662,1270" fill="#64748b"/>
+<text x="668" y="1303" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">Amazon ECR</text>
+<text x="668" y="1351" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Imagens da API e da Lambda</text>
+<text x="668" y="1382" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Chart app-chart publicado via OCI</text>
+<path d="M475,1340 L650,1340" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="562.5" y="1327" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">Push</text>
+</svg>
