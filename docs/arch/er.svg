@@ -20,15 +20,25 @@
 
   <!-- Relationships are behind the table cards. -->
   <path class="line" d="M270 330 L270 390"/>
+  <text x="240" y="360" class="note" text-anchor="end">1:N</text>
   <path class="line" d="M270 330 L270 760 L450 760"/>
+  <text x="360" y="750" class="note">1:N</text>
   <path class="line" d="M270 520 L270 600 L450 600"/>
+  <text x="360" y="590" class="note">1:N</text>
   <path class="line" d="M760 330 L760 570 L720 570 L720 600"/>
+  <text x="700" y="560" class="note">1:N</text>
   <path class="line" d="M1050 330 L1050 560 L360 560 L360 840 L310 840 L310 900"/>
+  <text x="360" y="830" class="note">1:N</text>
   <path class="line" d="M1250 540 L1250 850 L1060 850 L1060 900"/>
+  <text x="1060" y="840" class="note" text-anchor="end">1:N</text>
   <path class="line" d="M810 780 L810 850 L560 850 L560 900"/>
+  <text x="560" y="840" class="note" text-anchor="end">1:N</text>
   <path class="line" d="M1110 780 L1110 900"/>
+  <text x="1080" y="840" class="note" text-anchor="end">1:N</text>
   <path class="line" d="M1150 780 L1150 840 L1450 840 L1450 900"/>
+  <text x="1300" y="830" class="note">1:N</text>
   <path class="line" d="M1450 540 L1550 540 L1550 900"/>
+  <text x="1560" y="720" class="note">1:N</text>
 
   <!-- customers -->
   <g transform="translate(60 120)">
@@ -139,9 +149,10 @@
     <text x="16" y="152" class="field">service_order_id UUID FK nullable</text>
   </g>
 
-  <rect x="60" y="1190" width="1680" height="120" rx="8" fill="#e2e8f0"/>
+  <rect x="60" y="1190" width="1680" height="140" rx="8" fill="#e2e8f0"/>
   <text x="84" y="1222" class="note">Cardinalidades: customers 1:N vehicles/service_orders; vehicles 1:N service_orders.</text>
-  <text x="84" y="1248" class="note">service_orders 1:N items; services e auto_parts 1:N itens; auto_parts 1:N stock_movements.</text>
-  <text x="84" y="1274" class="note">users nao possui FK para customers no modelo atual. stock_movements.service_order_id aceita NULL e usa ON DELETE SET NULL.</text>
-  <text x="60" y="1370" class="subtitle">Fonte: migrations/001_create_schema_and_enums.sql ate migrations/012_add_service_stats.sql</text>
+  <text x="84" y="1248" class="note">service_orders 1:N service_order_service_items/auto_part_items; services/auto_parts 1:N items; auto_parts 1:N stock_movements.</text>
+  <text x="84" y="1274" class="note">stock_movements 0..1 service_order (nullable FK, ON DELETE SET NULL); users não possui FK para customers no modelo atual.</text>
+  <text x="84" y="1300" class="note">Legenda nas setas: 1:N = um-para-muitos (FK na tabela destino).</text>
+  <text x="60" y="1360" class="subtitle">Fonte: migrations/001_create_schema_and_enums.sql ate migrations/012_add_service_stats.sql</text>
 </svg>
