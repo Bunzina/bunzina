@@ -298,6 +298,14 @@ jobs:
           aws ecr get-login-password --region "$AWS_REGION" \
             | helm registry login --username AWS --password-stdin "$ECR_REGISTRY"
 
+      - name: Inject AWS account ID into chart dependency
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+        run: |
+          sed -i "s/__AWS_ACCOUNT_ID__/${AWS_ACCOUNT_ID}/g" \
+            charts/bunzina-chart/Chart.yaml \
+            charts/bunzina-chart/values.yaml
+
       - name: Resolve app-chart dependency from OCI
         run: helm dependency update charts/bunzina-chart
 
