@@ -187,185 +187,80 @@ done
 
 ---
 
-## Pipeline de Terraform (infra/)
+## Deploy em Kubernetes
 
-O workflow `.github/workflows/terraform.yml` roda o Terraform de `infra/`:
+A aplicação é implantada no EKS usando o Helm chart publicado em
+[`bunzina-chart`](https://github.com/Bunzina/bunzina-chart). A infraestrutura AWS e o PostgreSQL são
+gerenciados separadamente:
 
-- **Plan** automático em PRs que tocam `infra/**`; o resultado é comentado no PR.
-- **Apply** manual: aba **Actions → Terraform → Run workflow**. Requer aprovação
-  no environment `production`.
+- [`bunzina-infra`](https://github.com/Bunzina/bunzina-infra) provisiona VPC, EKS, nodes, addons e ECR.
+- [`bunzina-db`](https://github.com/Bunzina/bunzina-db) provisiona o PostgreSQL, PVC, StorageClass e
+  Secret no cluster.
+- Este repositório testa, constrói a imagem e executa o deploy da API.
 
-**Secrets necessários** (Settings → Secrets and variables → Actions) — credenciais
-temporárias do AWS Academy Learner Lab, **reatualize a cada reset do lab**:
+### Ordem da primeira instalação
 
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_SESSION_TOKEN`
+1. Aplique o `bunzina-infra` para criar a VPC, o EKS, os nodes, os addons e os repositórios ECR.
+2. Configure o `kubectl` para o cluster criado.
+3. Aplique o `bunzina-db` com a senha fornecida por `TF_VAR_db_password`.
+4. Publique/atualize o chart `app-chart` no repositório `bunzina-chart`.
+5. Execute o workflow de deploy deste repositório.
 
-O state fica em S3 (`bunzina-tfstate-<ACCOUNT_ID>`, key `infra/terraform.tfstate`),
-com lock nativo do S3 (sem DynamoDB). O bucket é criado automaticamente no primeiro
-run. Se a infra já foi aplicada localmente, rode `terraform state push` uma vez
-antes do primeiro apply no CI.
-
----
-
-## Deploy em Kubernetes (Fase 2)
-
-A partir da Fase 2, a aplicação roda em **Kubernetes (AWS EKS)** em vez de AWS Lambda. A infraestrutura é provisionada com **Terraform** (`infra/`).
-
-Os recursos Kubernetes da aplicação são gerenciados por meio de um **Helm Chart**, mantido em um repositório separado:
-
-- [Bunzina Helm Chart](https://github.com/Bunzina/bunzina-chart)
-
-Esse repositório contém os templates, values e configurações necessárias para realizar o deploy da aplicação no cluster Kubernetes. Portanto, para a avaliação e execução completa do projeto, devem ser considerados os dois repositórios:
-
-- [Bunzina — aplicação principal](https://github.com/Bunzina/bunzina)
-- [Bunzina Chart — Helm Chart para Kubernetes](https://github.com/Bunzina/bunzina-chart)
-
-### Arquitetura
-
-Os diagramas da Fase 2 estão em [docs/arch](docs/arch):
-
-- [docs/arch/application-components.png](docs/arch/application-components.png) — componentes da aplicação (API, workers, DB e serviços externos)
-- [docs/arch/infrastructure-provisioning.png](docs/arch/infrastructure-provisioning.png) — infraestrutura provisionada (cluster, banco, storage e secrets)
-- [docs/arch/deploy.png](docs/arch/deploy.png) — fluxo de deploy (build, testes, push de imagem e deploy)
-
-
-
-| Componente | Recurso |
-| --- | --- |
-| API | `Deployment` + `Service` + `Ingress` + `HPA` |
-| Banco | `StatefulSet` Postgres com `PVC` (EBS gp3) |
-| Config não-sensível | `ConfigMap` (`k8s/configmap.yaml`) |
-| Segredos | `Secret` (a partir dos `*.example.yaml`, fora do git) |
-| Infra | VPC + EKS + node group + ECR + AWS Load Balancer Controller + metrics-server (`infra/`) |
-
-### 1. Provisionar a infraestrutura (Terraform)
-
-```bash
-cd infra
-cp terraform.tfvars.example terraform.tfvars   # ajuste se necessário
-terraform init
-terraform plan
-terraform apply
-
-# Configurar o kubectl para o cluster criado (use o output gerado):
-aws eks update-kubeconfig --name bunzina-eks --region us-east-1
+```text
+bunzina-infra → bunzina-db → bunzina-chart → workflow de deploy do bunzina
 ```
 
-### 2. Criar os Secrets
+O workflow de deploy deste repositório exige que o EKS e o PostgreSQL já
+existam. Ele executa testes, valida novas migrations, executa migrations
+pendentes quando houver arquivos novos, constrói a imagem, publica no ECR e
+atualiza a aplicação e a observabilidade com Helm.
 
-Os arquivos `*.example.yaml` são modelos. Copie, preencha e aplique (os reais ficam no `.gitignore`):
+### Alterações posteriores
 
-```bash
-cp k8s/secret.example.yaml k8s/secret.yaml
-cp k8s/postgres-secret.example.yaml k8s/postgres-secret.yaml
-# edite os dois (as credenciais de banco devem bater entre eles)
+- Alteração somente na API ou nos manifests da aplicação: execute apenas este workflow.
+- Nova migration: o workflow também precisa alcançar o PostgreSQL por `kubectl port-forward` ou por `DB_HOST` acessível ao runner.
+- Alteração no PostgreSQL: aplique primeiro o `bunzina-db` e depois execute este workflow.
+- Alteração na infraestrutura: aplique primeiro o `bunzina-infra`, valide o cluster e reaplique o `bunzina-db` se necessário.
 
-kubectl apply -f k8s/namespace.yaml
-kubectl apply -f k8s/secret.yaml
-kubectl apply -f k8s/postgres-secret.yaml
+### Configuração do workflow
+
+Em **Settings → Secrets and variables → Actions**, configure:
+
+**Secrets**:
+
+```text
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_SESSION_TOKEN
+DB_USER
+DB_PASSWORD
+JWT_SECRET
+API_KEY
+PROD_DATABASE_URL
+GRAFANA_ADMIN_PASSWORD
 ```
 
-### 3. Aplicar os manifests
+**Variables opcionais**:
 
-```bash
-kubectl apply -f k8s/configmap.yaml
-kubectl apply -f k8s/postgres-service.yaml
-kubectl apply -f k8s/postgres-statefulset.yaml
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-kubectl apply -f k8s/ingress.yaml
-kubectl apply -f k8s/hpa.yaml
-
-kubectl get pods -n bunzina -w
+```text
+AWS_REGION=us-east-1
+EKS_CLUSTER_NAME=bunzina-eks
+DB_HOST
+DB_PORT=5432
+DB_NAME=bunzina
+DB_SSLMODE=require
 ```
 
-### 4. Rodar as migrations
+As credenciais do AWS Academy são temporárias e precisam ser atualizadas no
+GitHub sempre que o laboratório renovar os tokens. `DB_USER` e `DB_PASSWORD`
+devem ser os mesmos valores usados no Secret criado pelo `bunzina-db`.
 
-O banco é interno ao cluster, então abrimos um túnel e rodamos o engine de migrations (mesmo fluxo do CI/CD):
+Se `DB_HOST` não estiver configurado, o workflow usa o Service interno
+`postgres` e abre um port-forward durante as migrations. Para o deploy da API,
+o banco interno do chart é desabilitado quando `DB_HOST` está configurado.
 
-```bash
-kubectl port-forward -n bunzina svc/postgres 5432:5432 &
-APP_ENV=prod PROD_DATABASE_URL="postgres://<user>:<pass>@127.0.0.1:5432/bunzina" bun run migration
-```
-
-### 5. Acessar e validar
-
-```bash
-# Health via port-forward
-kubectl port-forward -n bunzina svc/bunzina 8080:80
-curl http://localhost:8080/health   # {"status":"ok"}
-
-# Externamente (após o ALB provisionar):
-kubectl get ingress -n bunzina
-```
-
-### Escalabilidade (HPA)
-
-```bash
-kubectl get hpa -n bunzina
-# Gere carga e observe as réplicas subirem:
-hey -z 60s -c 50 http://<endereco>/health
-kubectl get pods -n bunzina -w
-```
-
-### Secrets necessários no GitHub Actions
-
-| Secret | Uso |
-| --- | --- |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | Acesso ao ECR e ao EKS |
-| `PROD_DATABASE_URL` | Banco usado pelos testes no job `test` |
-| `DB_USER` / `DB_PASSWORD` | Credenciais do Postgres in-cluster para a migration |
-
-### Cluster local (alternativa para demo)
-
-Os manifests são genéricos. Em kind/minikube, remova `storageClassName: gp3` do `k8s/postgres-statefulset.yaml` (usa o StorageClass default) e troque o `Ingress` por um `Service` tipo `LoadBalancer` ou use `port-forward`.
-
----
-
-## Testes
-
-```bash
-# Roda todos os testes
-bun test
-
-# Roda com cobertura
-bun test --coverage
-
-# Roda um arquivo específico
-bun test src/adapters/input/customer/create.test.ts
-```
-
-## Testes de integração
-
-Usam um Postgres dedicado (`db_test`, porta `5433`) isolado do banco de dev. O script sobe o container, roda os testes de `src/test/integration/` com `bunfig.integration.toml` e derruba o container ao final (`posttest:integration`).
-
-```bash
-# Executar testes de integração
-bun run test:integration
-```
-
----
-
-## Lint e formatação
-
-```bash
-# Verifica lint
-bun lint
-
-# Corrige lint automaticamente
-bun lint:fix
-
-# Formata o código
-bun fmt
-
-# Verifica formatação sem alterar
-bun fmt:check
-```
-
----
-
+O PostgreSQL deve estar criado antes, pois o chart da aplicação não cria um
+banco adicional.
 ## Segurança de código (CodeQL)
 
 Análise estática de segurança com **GitHub CodeQL** (Code scanning) detecta vulnerabilidades e padrões inseguros no código versionado. O lint e a formatação em PR rodam no workflow [.github/workflows/lint-format-pr.yml](.github/workflows/lint-format-pr.yml).

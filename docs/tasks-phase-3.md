@@ -23,7 +23,7 @@
 ---
 
 # Estrutura de Repositórios e CI/CD
-- [ ] Organizar o projeto em quatro repositórios separados.
+- [x] Organizar o projeto em quatro repositórios separados.
   - Os quatro repositórios precisam possuir CI/CD.
   - Os repositórios necessários são:
     1. Lambda;
@@ -36,12 +36,12 @@
   - Conforme o PDF, esse repositório representa a Function Serverless.
   - O deploy para a Lambda pode ser realizado utilizando Terraform ou Serverless Framework.
   - O API Gateway pode ficar no repositório da Lambda ou no repositório de infraestrutura Kubernetes.
-- [ ] Criar o repositório de infraestrutura Kubernetes.
-- [ ] Criar o repositório de infraestrutura do banco de dados gerenciado.
+- [x] Criar o repositório de infraestrutura Kubernetes.
+- [x] Criar o repositório de infraestrutura do banco de dados gerenciado.
   - As migrations podem ficar no repositório da infraestrutura do banco ou no repositório da aplicação.
   - Podemos continuar mantendo as migrations no repositório da aplicação, como já ocorre atualmente.
-- [ ] Manter e adaptar o repositório da aplicação principal.
-- [ ] Implementar CI/CD nos quatro repositórios.
+- [x] Manter e adaptar o repositório da aplicação principal.
+- [x] Implementar CI/CD nos quatro repositórios.
   - O PDF permite utilizar GitHub Actions, GitLab CI ou outra ferramenta equivalente.
   - O deploy deve ser automático para a nuvem.
 - [x] Configurar proteção da branch principal e uso de Pull Requests.
@@ -57,9 +57,9 @@
   - O API Gateway provisionado expõe somente a rota `POST /auth/login`.
 - [x] Provisionar a Function Serverless.
   - A Function Serverless provisionada é responsável apenas pelo fluxo de login.
-- [ ] Provisionar um banco de dados gerenciado.
+- [x] Provisionar um banco de dados gerenciado.
   - O PDF permite a escolha entre PostgreSQL, MySQL, SQL Server ou outro banco gerenciado equivalente.
-- [ ] Provisionar a infraestrutura utilizando Terraform.
+- [x] Provisionar a infraestrutura utilizando Terraform.
   - Os repositórios sugeridos pelo professor utilizam AWS Academy:
     - `https://github.com/dougls/terraform-academy`
     - `https://github.com/dougls/terraform-soat`
