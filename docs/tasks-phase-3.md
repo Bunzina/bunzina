@@ -64,7 +64,7 @@
     - `https://github.com/dougls/terraform-academy`
     - `https://github.com/dougls/terraform-soat`
     - `https://github.com/dougls/opentelemetry`
-- [ ] Preparar o ambiente de produção para a demonstração.
+- [x] Preparar o ambiente de produção para a demonstração.
   - A aplicação não precisa permanecer rodando em produção.
   - Os recursos precisam estar ativos apenas durante a gravação do vídeo.
   - Depois da gravação, podemos destruir os recursos.
