@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Sem rule_files: o motor de alertas é o Grafana unified alerting (ver
+# observability/grafana/provisioning/alerting/), não o Alertmanager/regras do
+# Prometheus. O Prometheus aqui só armazena séries para o Grafana consultar.
+
+scrape_configs:
+  - job_name: bunzina
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['app:3000']
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

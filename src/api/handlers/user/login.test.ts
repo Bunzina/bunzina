@@ -19,7 +19,7 @@ describe('login handler', () => {
     const ctx = {
       request: { method: 'POST', headers: new Headers() },
       body: {
-        email: 'invalid',
+        document: 'invalid',
         password: '',
       },
     } as unknown as Context;
@@ -36,7 +36,7 @@ describe('login handler', () => {
     const ctx = {
       request: { method: 'POST', headers: new Headers() },
       body: {
-        email: 'admin@bunzina.com',
+        document: '111.444.777-35',
         password: 'password123',
       },
     } as unknown as Context;

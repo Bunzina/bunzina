@@ -1,0 +1,11 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: bunzina-email
+    receivers:
+      - uid: bunzina-email-1
+        type: email
+        settings:
+          addresses: alerts@bunzina.local
+          singleEmail: true

@@ -1,4 +1,5 @@
 import type { UpdateServiceOrderStatusInput } from '@/adapters/input/service-order/validations/update-service-order-status-schema';
+import type { NotificationService } from '@/domain/notification/services/notification';
 import { ServiceOrder } from '@/domain/service-order/entities/service-order';
 import type { ServiceOrderRepository } from '@/domain/service-order/repositories/service-order-repository';
 import {
@@ -6,11 +7,14 @@ import {
   StatusDirection,
 } from '@/domain/service-order/state-machines/status-machine';
 import { ServiceOrderStatus } from '@/domain/service-order/types/service-order-status';
+import {
+  serviceOrdersTotal,
+  serviceOrderStatusDurationSeconds,
+} from '@/infrastructure/observability/metrics';
 import { ForbiddenError } from '@lucas-pmelo/handlers';
 import logger from '@lucas-pmelo/logger';
-import type { FindServiceOrderByIdUseCase } from './find-by-id';
-import type { NotificationService } from '@/domain/notification/services/notification';
 import type { FindCustomerByIdUseCase } from '../customer/find-by-id';
+import type { FindServiceOrderByIdUseCase } from './find-by-id';
 
 export class UpdateServiceOrderStatusUseCase {
   constructor(
@@ -92,6 +96,16 @@ export class UpdateServiceOrderStatusUseCase {
     });
 
     await this.serviceOrderRepository.update(updatedServiceOrder);
+
+    serviceOrdersTotal.inc({
+      event: 'status_changed',
+      status: targetStatus,
+    });
+
+    serviceOrderStatusDurationSeconds.observe(
+      { from_status: serviceOrder.status, to_status: targetStatus },
+      Math.max(0, (Date.now() - serviceOrder.updatedAt.getTime()) / 1000),
+    );
 
     if (targetStatus === ServiceOrderStatus.AWAITING_APPROVAL) {
       const customer = await this.findCustomerByIdUseCase.execute({

@@ -57,6 +57,7 @@ function validateApiKey(
       ...context.store,
       user: {
         sub: 'service:internal',
+        document: 'service',
         email: 'service@bunzina.internal',
         role: 'SERVICE',
         iat: 0,

@@ -17,12 +17,12 @@ describe('login use case', () => {
     const passwordHash = await Bun.password.hash('password123');
     const user = makeUser({ passwordHash, role: UserRole.ADMIN });
 
-    userRepository.findByEmail
-      .calledWith(user.email.value)
+    userRepository.findByDocument
+      .calledWith(user.document.value)
       .mockResolvedValue(user);
 
     const result = await loginUseCase.execute({
-      email: user.email.value,
+      document: user.document.value,
       password: 'password123',
     });
 
@@ -31,13 +31,13 @@ describe('login use case', () => {
   });
 
   test('should throw when user is not found', async () => {
-    userRepository.findByEmail
-      .calledWith('notfound@test.com')
+    userRepository.findByDocument
+      .calledWith('11144477735')
       .mockResolvedValue(null);
 
     await expect(
       loginUseCase.execute({
-        email: 'notfound@test.com',
+        document: '11144477735',
         password: 'password123',
       }),
     ).rejects.toThrow('Invalid credentials');
@@ -47,13 +47,13 @@ describe('login use case', () => {
     const passwordHash = await Bun.password.hash('password123');
     const user = makeUser({ passwordHash, isActive: false });
 
-    userRepository.findByEmail
-      .calledWith(user.email.value)
+    userRepository.findByDocument
+      .calledWith(user.document.value)
       .mockResolvedValue(user);
 
     await expect(
       loginUseCase.execute({
-        email: user.email.value,
+        document: user.document.value,
         password: 'password123',
       }),
     ).rejects.toThrow('Invalid credentials');
@@ -63,13 +63,13 @@ describe('login use case', () => {
     const passwordHash = await Bun.password.hash('password123');
     const user = makeUser({ passwordHash });
 
-    userRepository.findByEmail
-      .calledWith(user.email.value)
+    userRepository.findByDocument
+      .calledWith(user.document.value)
       .mockResolvedValue(user);
 
     await expect(
       loginUseCase.execute({
-        email: user.email.value,
+        document: user.document.value,
         password: 'wrongpassword',
       }),
     ).rejects.toThrow('Invalid credentials');

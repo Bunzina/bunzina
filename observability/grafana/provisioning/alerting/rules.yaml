@@ -1,0 +1,147 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: bunzina-api
+    folder: Bunzina
+    interval: 1m
+    rules:
+      - uid: bunzina-target-down
+        title: Bunzina target down
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            relativeTimeRange:
+              from: 600
+              to: 0
+            model:
+              refId: A
+              instant: true
+              expr: up{job="bunzina"}
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]
+        for: 5m
+        noDataState: Alerting
+        execErrState: Alerting
+        labels:
+          severity: critical
+        annotations:
+          summary: Bunzina API is not being scraped
+          description: Prometheus cannot scrape the Bunzina metrics endpoint for 5 minutes.
+
+      - uid: bunzina-high-5xx-rate
+        title: Bunzina high 5xx rate
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            relativeTimeRange:
+              from: 600
+              to: 0
+            model:
+              refId: A
+              instant: true
+              expr: >-
+                sum(rate(bunzina_http_requests_total{job="bunzina",status_code=~"5.."}[5m]))
+                /
+                clamp_min(sum(rate(bunzina_http_requests_total{job="bunzina"}[5m])), 0.1)
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0.05]
+        for: 10m
+        noDataState: OK
+        execErrState: Alerting
+        labels:
+          severity: warning
+        annotations:
+          summary: Bunzina has a high 5xx rate
+          description: More than 5% of requests returned 5xx responses for 10 minutes.
+
+      - uid: bunzina-high-latency
+        title: Bunzina high request latency
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            relativeTimeRange:
+              from: 600
+              to: 0
+            model:
+              refId: A
+              instant: true
+              expr: >-
+                histogram_quantile(0.95,
+                sum by (le) (rate(bunzina_http_request_duration_seconds_bucket{job="bunzina"}[5m])))
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [1]
+        for: 10m
+        noDataState: OK
+        execErrState: Alerting
+        labels:
+          severity: warning
+        annotations:
+          summary: Bunzina request latency is high
+          description: The 95th percentile request latency is above one second for 10 minutes.
+
+      # Falhas no processamento de ordens de serviço (tasks-phase-3.md, seção
+      # Monitoramento). Deriva de 5xx nas rotas /service-orders* em vez de um
+      # contador dedicado: toda rota de ordem de serviço já cai em 5xx quando o
+      # use case lança algo além dos erros de negócio esperados (4xx), então o
+      # sinal já existe em bunzina_http_requests_total sem precisar de um
+      # ponto de instrumentação novo.
+      - uid: bunzina-service-order-failures
+        title: Bunzina service order failures
+        condition: B
+        data:
+          - refId: A
+            datasourceUid: prometheus
+            relativeTimeRange:
+              from: 300
+              to: 0
+            model:
+              refId: A
+              instant: true
+              expr: >-
+                sum(rate(bunzina_http_requests_total{job="bunzina",route=~"/service-orders.*",status_code=~"5.."}[5m]))
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              refId: B
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+        for: 5m
+        noDataState: OK
+        execErrState: Alerting
+        labels:
+          severity: warning
+        annotations:
+          summary: Bunzina service order APIs are failing
+          description: At least one /service-orders* route has returned 5xx responses for 5 minutes.

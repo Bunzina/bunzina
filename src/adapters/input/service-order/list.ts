@@ -36,7 +36,6 @@ export class ListServiceOrdersInput {
     }
 
     return withErrorHandler(async () => {
-      console.log({ data });
       const result = await this.listServiceOrdersUseCase.execute(
         data! as ListServiceOrdersInputType,
       );
