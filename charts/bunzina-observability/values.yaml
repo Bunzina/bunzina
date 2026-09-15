@@ -43,6 +43,11 @@ kube-prometheus-stack:
     adminUser: admin
     # Sobrescrito via --set no CI (secret do GitHub) ou values.secret.yaml local.
     adminPassword: change-me
+    # Grafana 13 installs/updates bundled datasource plugins at startup.
+    # Keep the container root filesystem writable so Prometheus/Loki/Tempo
+    # plugins can register correctly.
+    containerSecurityContext:
+      readOnlyRootFilesystem: false
     datasources:
       datasources.yaml:
         apiVersion: 1
@@ -58,7 +63,7 @@ kube-prometheus-stack:
             uid: prometheus
             type: prometheus
             access: proxy
-            url: http://bunzina-observability-kube-prometheus-stack-prometheus.observability.svc.cluster.local:9090
+            url: http://bunzina-observability-kube-prometheus.observability.svc.cluster.local:9090
             isDefault: true
             editable: false
             jsonData:
