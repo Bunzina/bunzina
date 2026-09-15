@@ -140,14 +140,6 @@
 
 # Ajustes pendentes da Fase 2 - Menos prioritário
 
-- [ ] Melhorar a documentação sobre os testes.
-  - A documentação atual sobre os testes não está tão clara quanto poderia.
-  - Devemos explicar melhor quais tipos de testes existem no projeto e o objetivo de cada um.
-- [ ] Detalhar a seção de testes no README.
-  - Incluir os comandos necessários para executar os testes.
-  - Incluir exemplos de execução dos testes de integração.
-  - Explicar eventuais pré-requisitos para os testes, como banco de dados, variáveis de ambiente ou serviços auxiliares.
-  - Informar como interpretar o resultado da execução dos testes.
 - [ ] Documentar a configuração do ambiente de desenvolvimento.
   - Ensinar como instalar as ferramentas e dependências necessárias para executar o projeto.
   - Incluir instruções de instalação do Node.js ou do runtime utilizado pela aplicação.

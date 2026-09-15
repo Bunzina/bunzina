@@ -58,6 +58,8 @@ src/
 migrations/         # Migrations SQL em ordem de execução
 ```
 
+Documentação detalhada sobre os tipos de teste do projeto e o objetivo de cada um: [docs/testing.md](docs/testing.md).
+
 ---
 
 ## Pré-requisitos
@@ -183,6 +185,21 @@ done
 for f in migrations/*.sql; do
   psql "postgres://bun:bun@localhost:5432/bunzina" -f "$f"
 done
+```
+
+---
+
+## Testes
+
+O projeto tem testes unitários (mockados, rodam no CI) e testes de integração (contra um PostgreSQL real, apenas locais). Detalhes sobre os tipos de teste, pré-requisitos e como interpretar os resultados estão em [docs/testing.md](docs/testing.md).
+
+```bash
+# Testes unitários — não precisam de Docker nem de configuração extra
+bun test
+
+# Testes de integração — sobe o banco de teste (db_test), roda as migrations e os testes,
+# e derruba o banco ao final. Requer Docker rodando.
+bun run test:integration
 ```
 
 ---
