@@ -32,5 +32,4 @@ instância. O `bunzina-infra` provisiona previamente a rede e o cluster.
 ## Referência vigente
 
 Sizing, recursos, credenciais, limitações e critérios de validação estão na
-[ADR-001](../../adrs/adr-001-postgresql-terraform.md). A existência de suporte a
-host externo no deploy não muda a decisão de usar PostgreSQL no EKS.
+[ADR-001](../../adrs/adr-001-postgresql-terraform.md).

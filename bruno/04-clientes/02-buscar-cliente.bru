@@ -1,0 +1,21 @@
+meta {
+  name: Buscar cliente
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/customers/{{customerDocument}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("customerId", res.body.id);
+  }
+}

@@ -1,0 +1,35 @@
+meta {
+  name: Criar veiculo
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/vehicles
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "customerId": "{{customerId}}",
+    "licensePlate": "ABC1D23",
+    "model": "Corolla",
+    "brand": "Toyota",
+    "year": 2020
+  }
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("vehicleId", res.body.id);
+  }
+}

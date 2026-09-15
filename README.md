@@ -62,6 +62,8 @@ src/
 migrations/         # Migrations SQL em ordem de execução
 ```
 
+Documentação detalhada sobre os tipos de teste do projeto e o objetivo de cada um: [docs/testing.md](docs/testing.md).
+
 ---
 
 ## Pré-requisitos
@@ -191,6 +193,21 @@ done
 
 ---
 
+## Testes
+
+O projeto tem testes unitários (mockados, rodam no CI) e testes de integração (contra um PostgreSQL real, apenas locais). Detalhes sobre os tipos de teste, pré-requisitos e como interpretar os resultados estão em [docs/testing.md](docs/testing.md).
+
+```bash
+# Testes unitários — não precisam de Docker nem de configuração extra
+bun test
+
+# Testes de integração — sobe o banco de teste (db_test), roda as migrations e os testes,
+# e derruba o banco ao final. Requer Docker rodando.
+bun run test:integration
+```
+
+---
+
 ## Deploy em Kubernetes
 
 A aplicação é implantada no EKS usando o Helm chart publicado em
@@ -269,8 +286,16 @@ GitHub sempre que o laboratório renovar os tokens. `DB_USER` e `DB_PASSWORD`
 devem ser os mesmos valores usados no Secret criado pelo `bunzina-db`.
 
 Se `DB_HOST` não estiver configurado, o workflow usa o Service interno
-`postgres` e abre um port-forward durante as migrations. Para o deploy da API,
-o banco interno do chart é desabilitado quando `DB_HOST` está configurado.
+`postgres` no namespace `bunzina` e abre um port-forward durante as migrations.
+Se o Service não existir ou o túnel não ficar pronto, o workflow falha antes de
+executar migrations. O banco interno do chart é sempre desabilitado no deploy.
+
+Para um banco externo (por exemplo, Supabase), configure `DB_HOST`, `DB_PORT`,
+`DB_NAME`, `DB_USER` e `DB_PASSWORD` nas variables/secrets acessíveis ao environment
+`production`. Os valores do workflow sobrescrevem os defaults do chart.
+`PROD_DATABASE_URL` é usado no job de testes; o job de migrations monta sua URL
+com os campos `DB_*`. `DB_SSLMODE` assume `require` para host externo e `disable`
+para port-forward quando não configurado.
 
 O PostgreSQL deve estar criado antes, pois o chart da aplicação não cria um
 banco adicional.
@@ -434,3 +459,7 @@ curl http://localhost:3000/customers/12345678909 \
 | ------ | -------------------------------------------- |
 | 400    | Email ou senha com formato inválido          |
 | 401    | Credenciais inválidas ou token ausente/expirado |
+
+## Coleção Bruno e cURL
+
+A pasta [bruno](bruno/README.md) contém as requisições da API prontas para abrir no Bruno, ambiente local, captura de token e IDs e [comandos cURL](bruno/curl.md).

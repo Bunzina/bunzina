@@ -9,7 +9,7 @@ Precisávamos versionar o schema sem ORM. As migrations têm de rodar local, no 
 
 ## Decisão
 
-Engine em `migrations/engine/`: lê `migrations/*.sql` em ordem, grava em `bunzina.migrations`, aplica só o pendente. Em `main`, só vale **adicionar** arquivo novo.
+Engine em `migrations/engine/`: lê `migrations/*.sql` em ordem, grava em `public.migrations`, aplica só o pendente. Em `main`, só vale **adicionar** arquivo novo.
 
 ## Motivo
 

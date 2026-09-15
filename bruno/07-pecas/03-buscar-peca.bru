@@ -1,0 +1,21 @@
+meta {
+  name: Buscar peca
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/auto-parts/{{autoPartId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("autoPartId", res.body.id);
+  }
+}

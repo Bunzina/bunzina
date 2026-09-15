@@ -1,0 +1,32 @@
+meta {
+  name: Enviar notificacao
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/notifications
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "to": "cliente@example.com",
+    "message": "Seu veiculo esta pronto para retirada",
+    "subject": "Atualizacao da ordem de servico",
+    "deliveryChannel": "EMAIL"
+  }
+}
+
+docs {
+  Configure o destino e o provedor. O schema aceita EMAIL, SMS e PUSH; a disponibilidade depende do provedor implementado.
+}

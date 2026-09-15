@@ -19,9 +19,9 @@ A API de negócio roda como Deployment no **EKS**. Lambda fica reservada ao flux
 
 ## Consequências
 
-- Custo de cluster no Academy (sobe só para gravar o vídeo)
+- Custo de manter o cluster e seus recursos no ambiente Academy
 - Dois modelos de compute para operar
-- Terraform do EKS já existe em `infra/`
+- Provisionamento do EKS pelo repositório `bunzina-infra`
 
 ## Alternativas
 

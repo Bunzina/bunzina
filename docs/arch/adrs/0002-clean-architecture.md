@@ -9,7 +9,7 @@ O Tech Challenge pede abordagem acadêmica de Clean/Hexagonal. O domínio não p
 
 ## Decisão
 
-Quatro camadas (`domain`, `application`, `adapters`, `infrastructure` + `api`). Repositórios são interfaces no domínio; `bun:sql` só na infrastructure. Handlers Elysia não contém regra de negócio.
+As responsabilidades são organizadas em `domain`, `application`, `adapters`, `infrastructure` e `api`. Repositórios são interfaces no domínio; `bun:sql` só na infrastructure. Handlers Elysia não contêm regra de negócio.
 
 ## Motivo
 

@@ -43,6 +43,55 @@ kube-prometheus-stack:
     adminUser: admin
     # Sobrescrito via --set no CI (secret do GitHub) ou values.secret.yaml local.
     adminPassword: change-me
+    # Grafana 13 installs/updates bundled datasource plugins at startup.
+    # Keep the container root filesystem writable so Prometheus/Loki/Tempo
+    # plugins can register correctly.
+    containerSecurityContext:
+      readOnlyRootFilesystem: false
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        deleteDatasources:
+          - name: Prometheus
+            orgId: 1
+          - name: Loki
+            orgId: 1
+          - name: Tempo
+            orgId: 1
+        datasources:
+          - name: Prometheus
+            uid: prometheus
+            type: prometheus
+            access: proxy
+            url: http://bunzina-observability-kube-prometheus.observability.svc.cluster.local:9090
+            isDefault: true
+            editable: false
+            jsonData:
+              httpMethod: POST
+          - name: Loki
+            uid: loki
+            type: loki
+            access: proxy
+            url: http://loki.observability.svc.cluster.local:3100
+            editable: false
+            jsonData:
+              derivedFields:
+                - datasourceUid: tempo
+                  matcherRegex: '"trace_id":"(\w+)"'
+                  name: TraceID
+                  url: "$${__value.raw}"
+          - name: Tempo
+            uid: tempo
+            type: tempo
+            access: proxy
+            url: http://tempo.observability.svc.cluster.local:3200
+            editable: false
+            jsonData:
+              tracesToLogsV2:
+                datasourceUid: loki
+                filterByTraceID: true
+              serviceMap:
+                datasourceUid: prometheus
     ingress:
       enabled: true
       ingressClassName: alb
@@ -56,42 +105,17 @@ kube-prometheus-stack:
     resources:
       requests:
         cpu: 100m
-        memory: 128Mi
+        memory: 256Mi
       limits:
         cpu: 250m
-        memory: 256Mi
+        memory: 512Mi
     sidecar:
+      datasources:
+        enabled: false
       dashboards:
         enabled: true # já é o default do chart; explícito para documentar o mecanismo.
         label: grafana_dashboard
         labelValue: "1"
-    # Prometheus e Alertmanager já entram como datasource automaticamente. Loki e
-    # Tempo, que vivem em charts separados nesta mesma release, são adicionados
-    # aqui. A correlação trace -> log usa o campo `trace_id` extraído do JSON
-    # (ver docs/observability.md).
-    additionalDataSources:
-      - name: Loki
-        type: loki
-        access: proxy
-        url: http://loki.observability.svc.cluster.local:3100
-        jsonData:
-          derivedFields:
-            - datasourceUid: tempo
-              matcherRegex: '"trace_id":"(\w+)"'
-              name: TraceID
-              url: "$${__value.raw}"
-      - name: Tempo
-        type: tempo
-        uid: tempo
-        access: proxy
-        url: http://tempo.observability.svc.cluster.local:3200
-        jsonData:
-          tracesToLogsV2:
-            datasourceUid: loki
-            filterByTraceID: true
-          serviceMap:
-            datasourceUid: prometheus
-
     # SMTP do contact point de alerta (ver `alerting` abaixo). Aponta para o
     # mailcatcher desta mesma release (templates/mailcatcher.yaml) — só para
     # a demo conseguir mostrar o e-mail chegando; não é um servidor de e-mail

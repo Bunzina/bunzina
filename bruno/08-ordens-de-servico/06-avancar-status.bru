@@ -1,0 +1,29 @@
+meta {
+  name: Avancar status
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/service-orders/{{serviceOrderId}}/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "direction": "next"
+  }
+}
+
+docs {
+  direction aceita next ou back. A transicao depende do status atual.
+}

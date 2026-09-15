@@ -1,0 +1,43 @@
+meta {
+  name: Criar cliente
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/customers
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Cliente Exemplo",
+    "document": "{{customerDocument}}",
+    "email": "cliente@example.com",
+    "phone": "+5511999999999",
+    "address": {
+      "street": "Rua das Flores",
+      "number": "42",
+      "neighborhood": "Centro",
+      "city": "Sao Paulo",
+      "state": "SP",
+      "zipCode": "01310-100",
+      "complement": "Apto 3"
+    }
+  }
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("customerId", res.body.id);
+  }
+}

@@ -1,40 +1,33 @@
-# ADR 0009 — Quatro repositórios com CI/CD
+# ADR 0009 — Separação de repositórios
 
-- Status: Proposta
-- Data: Fase 3
+- Status: Aceita
 - RFC: [0002](../rfcs/0002-repository-split.md)
-
-## Contexto
-
-O PDF exige quatro repositórios, cada um com CI/CD, branch principal protegida e merge só por PR:
-
-1. Lambda
-2. Infraestrutura Kubernetes
-3. Infraestrutura do banco gerenciado
-4. Aplicação principal no Kubernetes
-
-Já existem `bunzina` (app + Terraform do EKS + migrations) e `bunzina-chart`.
 
 ## Decisão
 
-Criar os repos que faltam e **esvaziar** `infra/` deste repositório depois da extração. Manter `bunzina-chart`. Migrations **ficam na aplicação**.
+Separar aplicação, login serverless, infraestrutura do cluster e infraestrutura
+do banco. Manter o chart genérico em um quinto repositório.
 
-| Repositório | Conteúdo | Pipeline |
-| --- | --- | --- |
-| `bunzina-lambda` | Function de auth + (opcional) API Gateway em Terraform/Serverless | test → package → deploy Lambda |
-| `bunzina-infra` | Terraform atual de VPC/EKS/ECR/addons | plan em PR, apply manual |
-| `bunzina-db` | Terraform do PostgreSQL no EKS | plan em PR, apply manual |
-| `bunzina` | API, migrations, umbrella Helm | já existe: test → migrate → build → helm |
-| `bunzina-chart` | Chart genérico (extra) | já existe |
+| Repositório | Responsabilidade |
+| --- | --- |
+| `bunzina` | API, testes, migrations, umbrella e deploy da aplicação |
+| `bunzina-lambda` | Lambda de login e API Gateway |
+| `bunzina-infra` | Rede, EKS, nós, addons e ECR |
+| `bunzina-db` | PostgreSQL no EKS, armazenamento e credenciais |
+| `bunzina-chart` | Templates reutilizáveis do chart `app-chart` |
 
 ## Motivo
 
-- Um pipeline por tipo de mudança (auth ≠ nodes ≠ schema de instância ≠ código)
-- State do Terraform separado (K8s vs banco)
-- O professor aceitou manter o chart e as migrations na aplicação
+A separação permite evoluir o banco e a infraestrutura sem associar seu ciclo
+de vida ao rollout da API. As migrations permanecem junto do código que depende
+do schema.
 
 ## Consequências
 
-- Quatro (cinco) PRs para uma feature transversal — documentar a ordem no README de cada repo
-- Secrets AWS repetidos no Academy (session token gira)
-- Este repo deixa de ser a fonte da infra de cluster
+- Cada repositório controla seus testes e sua entrega.
+- States de infraestrutura e banco usam keys distintas, conforme a [ADR de provisionamento](../../adrs/adr-001-postgresql-terraform.md).
+- A instalação respeita a ordem cluster → banco → aplicação.
+- A documentação de arquitetura é centralizada em `bunzina/docs/arch`.
+
+O `bunzina-db` lê o output `cluster_name` do state de `bunzina-infra` em S3.
+O bucket é informado por `infra_state_bucket`; a key, por `infra_state_key`.
