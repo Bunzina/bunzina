@@ -72,6 +72,7 @@ kube-prometheus-stack:
     additionalDataSources:
       - name: Loki
         type: loki
+        uid: loki
         access: proxy
         url: http://loki.observability.svc.cluster.local:3100
         jsonData:
