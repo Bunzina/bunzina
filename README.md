@@ -189,6 +189,21 @@ done
 
 ---
 
+## Testes
+
+O projeto tem testes unitários (mockados, rodam no CI) e testes de integração (contra um PostgreSQL real, apenas locais). Detalhes sobre os tipos de teste, pré-requisitos e como interpretar os resultados estão em [docs/testing.md](docs/testing.md).
+
+```bash
+# Testes unitários — não precisam de Docker nem de configuração extra
+bun test
+
+# Testes de integração — sobe o banco de teste (db_test), roda as migrations e os testes,
+# e derruba o banco ao final. Requer Docker rodando.
+bun run test:integration
+```
+
+---
+
 ## Deploy em Kubernetes
 
 A aplicação é implantada no EKS usando o Helm chart publicado em
