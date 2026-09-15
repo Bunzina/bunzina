@@ -56,10 +56,10 @@ kube-prometheus-stack:
     resources:
       requests:
         cpu: 100m
-        memory: 128Mi
+        memory: 256Mi
       limits:
         cpu: 250m
-        memory: 256Mi
+        memory: 512Mi
     sidecar:
       dashboards:
         enabled: true # já é o default do chart; explícito para documentar o mecanismo.
