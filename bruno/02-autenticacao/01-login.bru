@@ -1,0 +1,28 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "document": "{{loginDocument}}",
+    "password": "{{loginPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.token) {
+    bru.setVar("token", res.body.token);
+  }
+}

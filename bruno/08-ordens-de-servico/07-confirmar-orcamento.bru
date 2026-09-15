@@ -1,0 +1,30 @@
+meta {
+  name: Confirmar orcamento
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/service-orders/{{serviceOrderId}}/quote/confirm
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "documentNumber": "{{customerDocument}}",
+    "isConfirmed": true
+  }
+}
+
+docs {
+  Exige autenticacao e status AWAITING_APPROVAL. Para rejeitar, use isConfirmed: false.
+}

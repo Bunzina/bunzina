@@ -1,0 +1,21 @@
+meta {
+  name: Buscar usuario
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/users/{{userId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+vars:pre-request {
+  baseUrl: k8s-bunzina-bunzina-5a6831c175-1345441244.us-east-1.elb.amazonaws.com
+  userId: 01a0a2b9-a811-7000-9d39-71d355ed24e4
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMWEwYTJiOS1hODExLTcwMDAtOWQzOS03MWQzNTVlZDI0ZTQiLCJkb2N1bWVudCI6IjExMjc3MjM2NjkwIiwiZW1haWwiOiJyb2JlcnRoY2pyMTk5OUBnbWFpbC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3ODk0Mzc1ODEsImV4cCI6MTc4OTQ0MTE4MX0.yqaZ490gnRkXSmsmBLSXeDf9Vn6kxPL878-MynY5A6c
+}

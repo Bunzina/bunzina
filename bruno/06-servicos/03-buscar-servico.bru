@@ -1,0 +1,21 @@
+meta {
+  name: Buscar servico
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/services/{{serviceId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("serviceId", res.body.id);
+  }
+}

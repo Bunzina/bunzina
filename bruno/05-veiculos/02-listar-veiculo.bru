@@ -1,0 +1,27 @@
+meta {
+  name: Listar veiculo
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/vehicles?page={{page}}&limit={{limit}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: {{page}}
+  limit: {{limit}}
+  ~customerId: {{customerId}}
+  ~licensePlate: ABC1D23
+  ~model: Corolla
+  ~brand: Toyota
+  ~year: 2020
+  ~startCreatedAt: 2026-01-01T00:00:00Z
+  ~endCreatedAt: 2026-12-31T23:59:59Z
+}
