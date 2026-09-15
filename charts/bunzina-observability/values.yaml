@@ -41,6 +41,10 @@ kube-prometheus-stack:
 
   grafana:
     adminUser: admin
+    # Mantem os UIDs dos datasources estaveis para os dashboards versionados.
+    # Sem isso, o Grafana pode carregar os dashboards sem encontrar
+    # `prometheus` e `loki`, gerando "Datasource ... was not found".
+    forceDeployDatasources: true
     # Sobrescrito via --set no CI (secret do GitHub) ou values.secret.yaml local.
     adminPassword: change-me
     ingress:
@@ -61,6 +65,14 @@ kube-prometheus-stack:
         cpu: 250m
         memory: 512Mi
     sidecar:
+      datasources:
+        enabled: true
+        defaultDatasourceEnabled: true
+        isDefaultDatasource: true
+        name: Prometheus
+        uid: prometheus
+        label: grafana_datasource
+        labelValue: "1"
       dashboards:
         enabled: true # já é o default do chart; explícito para documentar o mecanismo.
         label: grafana_dashboard
