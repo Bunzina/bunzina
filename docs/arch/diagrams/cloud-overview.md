@@ -12,40 +12,32 @@ Fonte editável: [cloud-overview.svg](../cloud-overview.svg).
 | --- | --- | --- |
 | Cliente | API Gateway HTTP API | `POST /auth/login` |
 | API Gateway | Lambda Auth | Encaminha a requisição de login |
-| Lambda | API principal via endereço configurado | Axios `POST /auth/login`, usando `BUNZINA_API_BASE_URL` |
-| Cliente | ALB público | Rotas de negócio; Bearer JWT ou Api-Key quando exigido |
-| ALB | Pods da API no EKS | Tráfego HTTP, com `target-type: ip` |
-| API | PostgreSQL | Autenticação e persistência de negócio |
-| GitHub Actions | Amazon ECR | Publicação de imagens e do chart OCI pelos respectivos workflows |
-| GitHub Actions | Lambda / API Gateway / EKS | Deploy via Serverless e Helm |
+| Lambda | API principal via ALB | Axios `POST /auth/login`, usando `BUNZINA_API_BASE_URL` |
+| Cliente | ALB público | Rotas de negócio; credencial quando exigida |
+| ALB | Pods da API | HTTP, com `target-type: ip` |
+| API | PostgreSQL no EKS | Autenticação e persistência de negócio |
+| GitHub Actions | ECR | Publicação de imagens e chart OCI |
+| GitHub Actions | Lambda / Gateway / EKS | Deploy via Serverless e Helm |
 
-A API concentra a autenticação e a geração de JWT; a Lambda valida a entrada e
-repassa a resposta da API. A [sequência de autenticação](./sequence-auth.md)
-detalha o fluxo do RFC e a divergência encontrada nos contratos locais.
+A API consulta o usuário e gera o JWT. A Lambda valida o CPF e repassa a
+resposta da API. A [sequência de autenticação](./sequence-auth.md) detalha o fluxo.
 
 ## Rede, banco e artefatos
 
-O Terraform em `infra/` declara VPC, subnets públicas e privadas, NAT, EKS,
-node group, addons e ECR. O Ingress do chart configura o ALB público, que
-encaminha o tráfego aos IPs dos pods. O NAT atende à saída das subnets privadas;
-a [visão do EKS](./eks.md) detalha esse caminho.
+Os nós EKS ficam em subnets privadas. O ALB recebe as requisições públicas;
+o NAT atende à saída dos nós e pods. O [diagrama EKS](./eks.md) detalha a rede.
 
-O workflow `deploy-k8s.yml` usa banco externo quando `DB_HOST` está definido e
-desativa o PostgreSQL do chart. Sem esse valor, usa o Service `postgres`,
-StatefulSet e PVC. As duas conexões SQL tracejadas representam alternativas de
-configuração, não replicação ou acesso simultâneo obrigatório aos dois bancos.
+O PostgreSQL é provisionado no EKS pelo `bunzina-db`, com Deployment, Service e
+PVC, conforme a [ADR-001](../../adrs/adr-001-postgresql-terraform.md). A API usa o
+Service `postgres:5432`; o banco tem ciclo de vida separado do chart da aplicação.
 
-A Lambda é configurada no projeto irmão `bunzina-lambda/serverless.yml`, sem
-associação VPC declarada. O caminho Lambda → ALB pressupõe que
-`BUNZINA_API_BASE_URL` aponta para a API publicada nesse ALB. O desenho mostra a
-topologia da solução; o valor do secret de deploy não foi consultado.
-
-O painel de artefatos mostra a publicação no ECR. Imagens são consumidas pela
-Lambda e pelos nós EKS; o chart OCI é consumido pelo Helm durante o deploy.
+A Lambda usa `BUNZINA_API_BASE_URL` para alcançar a API. Sua configuração
+Serverless não declara associação a uma VPC. O ECR armazena imagens consumidas
+pela Lambda e pelos nós EKS, além do chart OCI usado pelo Helm.
 
 ## Fontes
 
-- [VPC](../../../infra/vpc.tf) e [EKS](../../../infra/eks.tf).
-- [Valores Helm](../../../charts/bunzina-chart/values.yaml).
-- [Deploy da API](../../../.github/workflows/deploy-k8s.yml).
-- Projeto irmão: `bunzina-lambda/serverless.yml`, serviço Axios e workflow de deploy.
+- Repositório `bunzina-infra`: `infra/vpc.tf` e `infra/eks.tf`.
+- [Valores Helm](../../../charts/bunzina-chart/values.yaml)
+- [Deploy da API](../../../.github/workflows/deploy-k8s.yml)
+- Projeto `bunzina-lambda`: configuração Serverless, serviço Axios e workflow de deploy.

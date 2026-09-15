@@ -1,6 +1,6 @@
 # API Gateway e Lambda
 
-O API Gateway encaminha o login para a Lambda. A Lambda valida o CPF e chama a API no EKS, que valida o cliente e gera o JWT. A Lambda devolve o status HTTP e o corpo da resposta desse serviço.
+O API Gateway encaminha o login para a Lambda. A Lambda valida o CPF e chama a API no EKS, que autentica o usuário e gera o JWT. A Lambda devolve o status HTTP e o corpo da resposta desse serviço.
 
 ![API Gateway e Lambda Auth](../api-gateway-lambda.png)
 
@@ -11,7 +11,6 @@ O API Gateway encaminha o login para a Lambda. A Lambda valida o CPF e chama a A
 - Roteia `POST /auth/login` para a Lambda, conforme `bunzina-lambda/serverless.yml`.
 - Essa é a única rota declarada no HTTP API; as demais rotas da aplicação são acessadas pelo EKS.
 - Não há configuração explícita de validação de JWT, CORS ou rate limit customizado nesse arquivo.
-- A ausência de rate limit customizado no código não confirma as configurações efetivas da conta AWS; alterações feitas diretamente no ambiente não foram verificadas.
 
 ### Lambda Auth
 
@@ -23,7 +22,7 @@ A Lambda não consulta diretamente o banco nem gera o JWT. Se não conseguir obt
 
 ### API Bunzina no EKS
 
-- Valida o cliente e as credenciais.
+- Busca o usuário por documento e valida senha e status.
 - Gera o JWT e retorna a resposta de autenticação para a Lambda.
 
 ## Contrato de login

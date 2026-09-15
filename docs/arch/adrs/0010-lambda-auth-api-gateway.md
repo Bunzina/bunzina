@@ -1,37 +1,30 @@
-# ADR 0010 — Lambda de autenticação e API Gateway
+# ADR 0010 — Lambda de login e API Gateway
 
-- Status: Proposta
-- Data: Fase 3
+- Status: Aceita
 - RFC: [0001](../rfcs/0001-auth-cpf-lambda-gateway.md)
 
 ## Contexto
 
-O PDF pede Function Serverless que (1) valide CPF, (2) consulte existência/status e (3) emita JWT — as três na mesma Function. Também pede API Gateway (AWS, Kong, Traefik ou equivalente) validando JWT antes dos serviços internos.
+A aplicação principal já concentra a autenticação e a geração de JWT. A entrada
+serverless de login permite incorporar API Gateway e Lambda sem duplicar essas
+regras ou o acesso ao banco.
 
 ## Decisão
 
-- **AWS API Gateway** na frente de tudo
-- **Uma AWS Lambda** para o fluxo completo de login
-- CPF + e-mail + senha no body; CPF associado ao usuário no banco
-- Gateway valida JWT nas rotas protegidas; a API **revalida** e aplica RBAC
-- HS256 compartilhado (mesmo `JWT_SECRET` da ADR 0004) para não trocar o middleware de uma vez
-
-## Motivo
-
-- AWS nativo encaixa no Terraform/Academy e no vídeo (“deploy na nuvem”)
-- Kong/Traefik no cluster não isolam a borda: o tráfego ainda chegaria no EKS sem token
-- Uma Function só atende o “não escolher uma das três funcionalidades”
-- Segunda validação na API é permitida (e pedida) pelo PDF
+- API Gateway HTTP API expõe somente `POST /auth/login`.
+- Lambda recebe `{ document, password }`, valida o CPF e chama a API via Axios.
+- A API busca o usuário por documento, valida senha e status e emite o JWT.
+- A Lambda repassa status e body, incluindo erros HTTP retornados pela API.
+- Rotas de negócio são atendidas pelo ALB/EKS; o middleware da API autentica as requisições.
+- Lambda e Gateway são mantidos no repositório `bunzina-lambda`.
 
 ## Consequências
 
-- Login sai de `POST /auth/login` na Elysia; a rota atual vira legado ou proxy
-- Users ganham coluna de documento (migration nova)
-- Acesso ao banco: a decisão vigente no RFC 0001 delega o login à API; apenas a API consulta o PostgreSQL no EKS.
-- Gateway e Lambda podem viver no repo da Lambda (RFC 0002)
+- A API continua responsável por banco, credenciais e JWT.
+- A Lambda depende da disponibilidade da API e retorna `502` quando não obtém resposta.
+- O segredo de assinatura JWT pertence à API; a Lambda não precisa assiná-lo ou verificá-lo.
 
-## Alternativas
+## Alternativas consideradas
 
-- Kong/Traefik no EKS — mais simples de operar, pior isolamento
-- Authorizer Lambda separado da Function de login — duas Functions, foge do enunciado do login
-- RS256 + JWKS — melhor a longo prazo, mais peça para a demo
+Autenticar ou gerar JWT na Lambda duplicaria lógica da aplicação. Mapear todas
+as rotas no Gateway ampliaria o escopo além do login definido para esta etapa.

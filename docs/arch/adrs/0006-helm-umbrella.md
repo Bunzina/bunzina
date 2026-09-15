@@ -10,7 +10,7 @@ Manifests soltos em `/k8s` não escalam (imagem, secret, HPA, Postgres opcional)
 ## Decisão
 
 - Chart genérico `app-chart` no repositório [bunzina-chart](https://github.com/Bunzina/bunzina-chart), publicado em ECR OCI
-- Umbrella `charts/bunzina-chart` neste repo, só com `values.yaml`
+- Umbrella `charts/bunzina-chart` neste repo, com `Chart.yaml` e `values.yaml`
 - Namespace **não** é criado pelo chart (`--create-namespace` no deploy)
 
 ## Motivo

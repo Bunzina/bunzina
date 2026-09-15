@@ -1,6 +1,6 @@
 # Documentação da Arquitetura
 
-Toda a documentação de arquitetura do Bunzina fica nesta pasta. Os demais repositórios da Fase 3 devem apenas referenciar estes documentos.
+Esta pasta centraliza a documentação de arquitetura do Bunzina. Os demais repositórios da Fase 3 devem apenas referenciar estes documentos.
 
 | Documento | Conteúdo |
 | --- | --- |
@@ -14,3 +14,6 @@ Documentos complementares fora desta pasta:
 
 - [Domain Design (DDD)](../domain.md) — bounded context, agregados, linguagem ubíqua e máquina de estados
 - [Domain Storytelling](../domain-storytelling/) — narrativas de criação de veículo, abertura e aprovação de OS
+
+- [Provisionamento do PostgreSQL no EKS](../adrs/adr-001-postgresql-terraform.md) — decisão vigente do banco
+- [Observabilidade](../observability.md) — métricas, logs, traces e alertas

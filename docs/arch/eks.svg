@@ -33,7 +33,7 @@
 <text x="1668" y="448" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">Deployment / pods bunzina</text>
 <text x="1668" y="496" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">API Bun + Elysia · porta 3000</text>
 <text x="1668" y="527" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Middleware de autenticação na API</text>
-<text x="1668" y="558" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Readiness / liveness: GET /health</text>
+<text x="1668" y="558" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Liveness /health · readiness /ready</text>
 <path d="M385,478 L530,478" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M920,440 L985,440 L985,380 L1940,380 L1940,415" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <text x="1440" y="402" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">Tráfego HTTP → IP dos pods :3000</text>
@@ -57,12 +57,12 @@
 <text x="2015" y="654" font-size="18" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">env</text>
 <rect x="1090" y="975" width="470" height="172" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
 <path d="M1102,975 H1548 Q1560,975 1560,987 V1024 H1090 V987 Q1090,975 1102,975" fill="#0e7490"/>
-<text x="1108" y="1008" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">PostgreSQL in-cluster (opcional)</text>
-<text x="1108" y="1056" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Service postgres:5432 + StatefulSet</text>
+<text x="1108" y="1008" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">PostgreSQL no EKS</text>
+<text x="1108" y="1056" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Service postgres:5432 + Deployment</text>
 <text x="1108" y="1087" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">PostgreSQL 15 · PVC gp3 / 10Gi</text>
-<text x="1108" y="1118" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Deploy sem DB_HOST usa este banco</text>
+<text x="1108" y="1118" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Provisionamento: bunzina-db</text>
 <path d="M2220,558 L2255,558 L2255,920 L1320,920 L1320,975" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#arrow)"/>
-<text x="1790" y="908" font-size="19" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">Conexão local quando habilitado</text>
+<text x="1790" y="908" font-size="19" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="middle">Conexão SQL pelo Service postgres</text>
 <text x="1640" y="1020" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">Addons declarados em Terraform:</text>
 <text x="1640" y="1057" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">vpc-cni · kube-proxy · coredns</text>
 <text x="1640" y="1094" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">aws-ebs-csi-driver · StorageClass gp3</text>
@@ -73,7 +73,7 @@
 <text x="515" y="889" font-size="21" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">POST /auth/login</text>
 <text x="515" y="922" font-size="19" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">API Gateway → Lambda → API</text>
 <text x="515" y="955" font-size="18" fill="#61728b" style="fill:#61728b" font-weight="400" text-anchor="start">Fluxo separado deste desenho.</text>
-<text x="480" y="1248" font-size="20" fill="#61728b" style="fill:#61728b" font-weight="400" text-anchor="start">Linhas contínuas: tráfego HTTP. Tracejadas: configuração, controle ou conexão condicional com o banco local.</text>
+<text x="480" y="1248" font-size="20" fill="#61728b" style="fill:#61728b" font-weight="400" text-anchor="start">Linhas contínuas: tráfego HTTP. Tracejadas: configuração, controle ou conexão SQL com o banco.</text>
 <text x="65" y="1350" font-size="24" fill="#17253c" style="fill:#17253c" font-weight="700" text-anchor="start">SAÍDA DAS SUBNETS PRIVADAS — CAMINHO SEPARADO DO TRÁFEGO DE ENTRADA</text>
 <rect x="65" y="1400" width="440" height="130" rx="12" fill="#ffffff" stroke="#d1dae8" stroke-width="2"/>
 <path d="M77,1400 H493 Q505,1400 505,1412 V1449 H65 V1412 Q65,1400 77,1400" fill="#2563eb"/>
@@ -93,9 +93,9 @@
 <path d="M1652,1400 H2318 Q2330,1400 2330,1412 V1449 H1640 V1412 Q1640,1400 1652,1400" fill="#64748b"/>
 <text x="1658" y="1433" font-size="23" fill="white" style="fill:white" font-weight="700" text-anchor="start">Destinos externos</text>
 <text x="1658" y="1481" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">ECR: download da imagem da aplicação</text>
-<text x="1658" y="1512" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Banco público externo: host definido por DB_HOST</text>
-<text x="1658" y="1543" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Se DB_HOST for definido, deploy desativa o banco local</text>
+<text x="1658" y="1512" font-size="20" fill="#17253c" style="fill:#17253c" font-weight="400" text-anchor="start">Acesso a serviços com endpoint público</text>
 <path d="M505,1460 L645,1460" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M1040,1460 L1180,1460" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <path d="M1480,1460 L1640,1460" fill="none" stroke="#405574" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1640" y="1131" font-size="20">Helm: ALB Controller + metrics-server</text>
 </svg>

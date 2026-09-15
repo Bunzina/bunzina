@@ -1,7 +1,7 @@
 # Diagrama ER
 
-Modelo atual do schema `bunzina`, baseado nas migrations `001` a `012`.
-Fonte visual versionável: [er.svg](../er.svg). O PNG e o SVG mostram as 9 tabelas, 85 colunas e 9 FKs do domínio, incluindo as alterações das migrations 010–012.
+Modelo atual do schema `bunzina`, baseado nas migrations `001` a `013`.
+Fonte visual versionável: [er.svg](../er.svg). O PNG e o SVG mostram as 9 tabelas, 86 colunas e 9 FKs do domínio, incluindo as alterações das migrations 010–013.
 
 ![Modelo ER atual](../er.png)
 
@@ -46,6 +46,7 @@ erDiagram
     }
     USERS {
         uuid id PK
+        varchar document UK
         varchar name
         varchar email UK
         varchar password_hash
@@ -122,10 +123,7 @@ erDiagram
     }
 ```
 
-`users` ainda não possui FK para `customers`. A associação prevista para o login
-por CPF está descrita em [database.md](../database.md#evolucao-de-autenticacao)
-e [RFC 0001](../rfcs/0001-auth-cpf-lambda-gateway.md), mas não faz parte do
-modelo atual.
+`users.document` é obrigatório e único e identifica o usuário no login por CPF. Não há FK entre `users` e `customers`.
 
 ## Cardinalidades e exclusão
 

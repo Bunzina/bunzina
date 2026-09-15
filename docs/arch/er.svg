@@ -2,7 +2,7 @@
 <rect width="100%" height="100%" fill="#f6f8fc"/>
 <style>text{font-family:DejaVu Sans,sans-serif;fill:#18243b}.muted{fill:#58677f}.field{font-family:DejaVu Sans Mono,monospace;font-size:18px}.dtype{font-family:DejaVu Sans Mono,monospace;font-size:16px;fill:#607088}</style>
 <text x="120" y="82" class="" font-size="36" font-weight="700">BUNZINA / MODELO ENTIDADE–RELACIONAMENTO</text>
-<text x="120" y="127" class="muted" font-size="23">Schema bunzina · 9 tabelas · 9 chaves estrangeiras · migrations 001–012</text>
+<text x="120" y="127" class="muted" font-size="23">Schema bunzina · 9 tabelas · 9 chaves estrangeiras · migrations 001–013</text>
 <text x="120" y="168" class="muted" font-size="21">Cardinalidade em cada ponta: 1 = exatamente um    0..1 = opcional    0..* = zero ou muitos</text>
 <path d="M760,360 L920,360" fill="none" stroke="#71809a" stroke-width="3" stroke-linejoin="round"/>
 <rect x="774.0" y="345" width="36" height="30" rx="10" fill="#f6f8fc" stroke="#71809a"/>
@@ -149,8 +149,8 @@
 <text x="938" y="537" class="" font-size="15" style="fill:#2563eb" font-weight="700"></text>
 <text x="1012" y="537" class="field" font-size="20">updated_at</text>
 <text x="1310" y="537" class="dtype" font-size="20">TIMESTAMPTZ</text>
-<rect x="1720" y="235" width="640" height="315" rx="12" fill="#e5eaf2"/>
-<rect x="1720" y="230" width="640" height="315" rx="12" fill="white" stroke="#d2dbe7"/>
+<rect x="1720" y="235" width="640" height="344" rx="12" fill="#e5eaf2"/>
+<rect x="1720" y="230" width="640" height="344" rx="12" fill="white" stroke="#d2dbe7"/>
 <path d="M1732,230 H2348 Q2360,230 2360,242 V282 H1720 V242 Q1720,230 1732,230" fill="#64748b"/>
 <text x="1738" y="264" class="" font-size="23" style="fill:white" font-weight="700">users</text>
 <text x="1738" y="305" class="muted" font-size="12" font-weight="700">CHAVE</text>
@@ -185,6 +185,10 @@
 <text x="1738" y="537" class="" font-size="15" style="fill:#64748b" font-weight="700"></text>
 <text x="1812" y="537" class="field" font-size="20">updated_at</text>
 <text x="2110" y="537" class="dtype" font-size="20">TIMESTAMPTZ</text>
+<rect x="1721" y="544" width="638" height="29" fill="#f8fafc"/>
+<text x="1738" y="566" font-size="15" style="fill:#64748b" font-weight="700">UK</text>
+<text x="1812" y="566" class="field">document</text>
+<text x="2110" y="566" class="dtype">VARCHAR(11)</text>
 <rect x="120" y="855" width="640" height="460" rx="12" fill="#e5eaf2"/>
 <rect x="120" y="850" width="640" height="460" rx="12" fill="white" stroke="#d2dbe7"/>
 <path d="M132,850 H748 Q760,850 760,862 V902 H120 V862 Q120,850 132,850" fill="#6d28d9"/>
@@ -442,5 +446,5 @@
 <text x="150" y="2010" class="" font-size="20">PK: chave primária   ·   FK: chave estrangeira   ·   UK: UNIQUE   ·   NULO vazio: NOT NULL</text>
 <text x="150" y="2045" class="" font-size="20">Cada filho aponta para 1 pai; um pai pode ter 0..* filhos. Exceção: stock_movements.service_order_id aceita NULL (0..1 OS).</text>
 <text x="150" y="2080" class="" font-size="20">Linha tracejada: vínculo opcional com a OS. users é independente. Relações N:N de OS com serviços/peças passam pelas tabelas de itens.</text>
-<text x="150" y="2115" class="muted" font-size="18">Todas as colunas das migrations 001–012 estão representadas. Defaults, CHECKs e ações ON DELETE: consultar as migrations e o Markdown.</text>
+<text x="150" y="2115" class="muted" font-size="18">Todas as colunas das migrations 001–013 estão representadas. Defaults, CHECKs e ações ON DELETE: consultar as migrations e o Markdown.</text>
 </svg>

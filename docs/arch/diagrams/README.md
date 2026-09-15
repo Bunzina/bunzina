@@ -1,12 +1,12 @@
 # Diagramas
 
-Imagens no estilo da documentação AWS (ícones oficiais, grupos tracejados, fluxo numerado). Referência: [Workload Discovery on AWS](https://docs.aws.amazon.com/images/solutions/latest/workload-discovery-on-aws/images/workload-discovery-arch-diagram.png).
+Diagramas dos componentes, fluxos e modelo de dados da aplicação.
 
 ## Fase 2
 
 | Diagrama | O que mostra |
 | --- | --- |
-| [application-components.png](../application-components.png) | Componentes da aplicação (API, workers, DB e serviços externos) |
+| [application-components.png](../application-components.png) | Componentes da aplicação e serviços externos |
 | [infrastructure-provisioning.png](../infrastructure-provisioning.png) | Infraestrutura provisionada (cluster, banco, storage e secrets) |
 | [deploy.png](../deploy.png) | Fluxo de deploy (build, testes, push de imagem e deploy) |
 
