@@ -1,6 +1,6 @@
 # Banco de dados
 
-Diagrama ER: [diagrams/er.md](./diagrams/er.md). Decisão de produto: [ADR 0001](./adrs/0001-postgresql.md). Evolução para banco gerenciado: [RFC 0003](./rfcs/0003-managed-database.md).
+Diagrama ER: [diagrams/er.md](./diagrams/er.md). Decisão de produto: [ADR 0001](./adrs/0001-postgresql.md). Provisionamento no EKS: [ADR-001](../adrs/adr-001-postgresql-terraform.md).
 
 O modelo abaixo representa o schema atual, conforme as migrations `001` a `012`.
 O relacionamento entre `users` e `customers` ainda não existe no banco atual e,
@@ -161,18 +161,29 @@ CREATE UNIQUE INDEX idx_users_document
 Até essa migration existir, a Lambda de auth não consegue associar CPF ao usuário
 só com o schema atual.
 
-## Banco gerenciado e acesso
+## PostgreSQL no EKS e acesso
 
-Em produção, o PostgreSQL é provisionado como RDS privado em subnets privadas.
-O Terraform cria o DB subnet group, Security Group, parameter group, instância
-PostgreSQL 15 e um segredo no AWS Secrets Manager. A instância não é pública e
-o acesso à porta `5432` deve ser limitado aos Security Groups ou CIDRs da camada
-de aplicação.
+O banco da solução é PostgreSQL 15 dentro do EKS, conforme a
+[ADR-001 de provisionamento](../adrs/adr-001-postgresql-terraform.md).
 
-O banco gerenciado contém apenas a infraestrutura do PostgreSQL. O schema
-`bunzina` continua sendo criado e evoluído pelas migrations deste repositório.
-O pipeline executa as migrations pendentes antes do rollout da aplicação.
+O repositório `bunzina-db` é responsável pelos recursos do banco via Terraform:
+Deployment de uma réplica, Service `postgres:5432`, PVC `gp3` e credenciais no
+namespace `bunzina`. O chart da API deve consumir esse Service sem criar outro
+PostgreSQL.
 
-Para desenvolvimento, o PostgreSQL do Docker Compose continua sendo suficiente.
-Em produção, `DB_HOST` e as credenciais do segredo são injetados no deployment,
-e o PostgreSQL opcional do Helm deve permanecer desabilitado.
+A API usa `PROD_DB_HOST=postgres`, `PROD_DB_PORT=5432` e `PROD_DB_NAME=bunzina`.
+A Lambda acessa a API por HTTP e não se conecta diretamente ao banco.
+As migrations deste repositório criam e evoluem o schema; não são executadas
+pelo Terraform do banco.
+
+O workflow usa `postgres` como host padrão e permite sobrescrevê-lo com
+`DB_HOST`. Essa variável pode apontar para o Service Kubernetes.
+Para migrations no CI, o workflow
+usa port-forward quando `DB_HOST` não está definido.
+
+O `values.yaml` ainda contém um host Supabase estático e `database.enabled=true`,
+mas o workflow sobrescreve o host e a decisão aceita atribui o banco ao
+`bunzina-db`. Esses valores precisam ser distinguidos da arquitetura adotada:
+o deploy deve evitar criar um segundo PostgreSQL pelo chart da API.
+
+Para desenvolvimento local, o PostgreSQL do Docker Compose continua disponível.

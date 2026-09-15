@@ -113,7 +113,7 @@
   - Autenticação: `docs/arch/sequence-auth.png`.
   - Abertura da OS: `docs/arch/sequence-service-order.png`.
 - [x] Criar RFCs.
-  - `docs/arch/rfcs/` — auth/CPF/Lambda, split de repos e banco gerenciado.
+  - `docs/arch/rfcs/` — auth/CPF/Lambda, split de repos e PostgreSQL no EKS e migrations.
 - [x] Criar ADRs.
   - `docs/arch/adrs/` — decisões aceitas (Postgres, Clean Architecture, EKS, Helm, JWT, migrations, escalabilidade) e propostas da Fase 3.
 - [x] Documentar o banco de dados.

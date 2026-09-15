@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Cada ADR registra uma decisão e o motivo. Status: **Aceita** (já vale no código/infra) ou **Proposta** (Fase 3, ainda não implementada).
+Cada ADR registra uma decisão e o motivo. Status: **Aceita** (já vale no código/infra) **Proposta** (ainda não adotada) ou **Proposta substituída** (histórico preservado, com referência à decisão vigente).
 
 | ADR | Decisão | Status |
 | --- | --- | --- |
@@ -14,4 +14,6 @@ Cada ADR registra uma decisão e o motivo. Status: **Aceita** (já vale no códi
 | [0008](./0008-scalability.md) | Valores de HPA e node group | Aceita |
 | [0009](./0009-four-repositories.md) | Quatro repositórios com CI/CD | Proposta |
 | [0010](./0010-lambda-auth-api-gateway.md) | Lambda de auth + API Gateway | Proposta |
-| [0011](./0011-managed-database.md) | PostgreSQL gerenciado fora do cluster | Proposta |
+| [0011](./0011-managed-database.md) | Proposta de banco gerenciado → PostgreSQL no EKS | Proposta substituída |
+
+A decisão vigente de provisionamento do banco está na [ADR-001 — PostgreSQL no EKS com Terraform](../../adrs/adr-001-postgresql-terraform.md), aceita em 2026-09-13.

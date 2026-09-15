@@ -1,8 +1,8 @@
 # Visão geral da arquitetura
 
-O Bunzina é a API REST de uma oficina mecânica. A aplicação segue Clean Architecture (domínio sem dependência de frameworks), roda em **Bun + Elysia** e persiste dados em **PostgreSQL**. A solução de nuvem usa AWS API Gateway, Lambda, EKS, RDS PostgreSQL, ECR, Secrets Manager e Terraform.
+O Bunzina é a API REST de uma oficina mecânica. A aplicação segue Clean Architecture (domínio sem dependência de frameworks), roda em **Bun + Elysia** e persiste dados em **PostgreSQL**. A solução de nuvem usa AWS API Gateway, Lambda, EKS, PostgreSQL no cluster, ECR, Secrets Manager e Terraform.
 
-Esta página descreve o que já existe e o desenho-alvo da Fase 3. Os diagramas detalhados estão em [diagrams/](./diagrams/README.md).
+O banco adotado é PostgreSQL no EKS, conforme a [ADR-001](../adrs/adr-001-postgresql-terraform.md). Os diagramas detalhados estão em [diagrams/](./diagrams/README.md).
 
 ---
 
@@ -17,10 +17,10 @@ O tráfego das APIs de negócio chega ao EKS por meio do API Gateway e do balanc
 | Componente | Onde vive | Função |
 | --- | --- | --- |
 | API Elysia | Deployment no EKS | CRUD, workflow de OS, JWT e autorização |
-| PostgreSQL | RDS privado em produção; PostgreSQL do Compose no desenvolvimento | Persistência relacional no schema `bunzina` |
-| Helm umbrella | `charts/bunzina-chart` + [bunzina-chart](https://github.com/Bunzina/bunzina-chart) | Deployment, Service, Ingress ALB, HPA, Secret, Postgres opcional |
-| Terraform Kubernetes | `bunzina-infra` | VPC, EKS, node group, addons, ECR e StorageClass |
-| Terraform banco | `bunzina-db` | RDS PostgreSQL, subnet group, Security Group, parameter group e Secrets Manager |
+| PostgreSQL | PostgreSQL 15 no EKS; PostgreSQL do Compose no desenvolvimento | Persistência relacional no schema `bunzina` |
+| Helm umbrella | `charts/bunzina-chart` + [bunzina-chart](https://github.com/Bunzina/bunzina-chart) | Recursos da API; consome o Service PostgreSQL provisionado separadamente |
+| Terraform Kubernetes | `bunzina-infra` | VPC, EKS, node group, addons e ECR |
+| Terraform banco | `bunzina-db` | PostgreSQL no EKS: Deployment, Service, PVC, StorageClass e credenciais |
 | CI/CD aplicação | `.github/workflows/deploy-k8s.yml` | Testes, migrations, build, push ECR, `helm upgrade` |
 | CI/CD infraestrutura | Workflows Terraform | `plan` em Pull Request e `apply` controlado em produção |
 | Lambda de autenticação | `bunzina-lambda` | Entrada serverless para o login e integração com a API |
@@ -40,13 +40,13 @@ O tráfego das APIs de negócio chega ao EKS por meio do API Gateway e do balanc
 2. [bunzina-chart](https://github.com/Bunzina/bunzina-chart) — Helm Chart genérico (`app-chart`)
 3. `bunzina-lambda` — Function de autenticação e API Gateway
 4. `bunzina-infra` — infraestrutura de rede e Kubernetes
-5. `bunzina-db` — infraestrutura do RDS PostgreSQL
+5. `bunzina-db` — provisionamento do PostgreSQL no EKS
 
 ---
 
 ## Fluxo alvo
 
-A entrada pública da solução é o API Gateway. O Gateway encaminha o login para a Lambda e as APIs de negócio para o ALB/EKS. O RDS fica em subnets privadas e é acessado pelos componentes autorizados da aplicação.
+A entrada pública da solução é o API Gateway. O Gateway encaminha o login para a Lambda e as APIs de negócio para o ALB/EKS. O PostgreSQL roda no EKS e a API o acessa pelo Service interno `postgres:5432`. A Lambda acessa a API, não o banco diretamente.
 
 ![Arquitetura AWS Fase 3](./cloud-overview.png)
 
@@ -54,7 +54,7 @@ A entrada pública da solução é o API Gateway. O Gateway encaminha o login pa
 | --- | --- |
 | API Gateway na frente de tudo | Roteamento, validação de JWT e políticas antes dos serviços internos |
 | Lambda de autenticação | Validar CPF, consultar cliente/status e emitir JWT numa única Function |
-| Banco gerenciado | Requisitos da Fase 3; a API já aceita host externo via `DB_HOST` |
+| PostgreSQL no EKS | Banco provisionado separadamente pelo `bunzina-db`, conforme a ADR-001 |
 | Repositórios separados | Separar Lambda, infra K8s, infra de banco e aplicação, cada um com CI/CD |
 
 O desenho detalhado está nas RFCs [0001](./rfcs/0001-auth-cpf-lambda-gateway.md), [0002](./rfcs/0002-repository-split.md) e [0003](./rfcs/0003-managed-database.md).
@@ -77,9 +77,9 @@ API principal. O fluxo acima é o contrato arquitetural da autenticação comple
 - A aplicação é empacotada em imagem e publicada no ECR.
 - O chart Helm configura Deployment, Service, Ingress/ALB, HPA, probes, secrets e métricas.
 - O pipeline aplica migrations pendentes antes do rollout da aplicação.
-- O RDS é criado pelo Terraform do banco, com acesso privado e credenciais no Secrets Manager.
+- O PostgreSQL é provisionado no EKS pelo `bunzina-db`, com Service interno, Deployment e PVC, conforme a [ADR-001](../adrs/adr-001-postgresql-terraform.md).
 - O Terraform de infraestrutura cria a VPC, subnets, EKS, node group, addons, ECR e StorageClass.
-- O chart desabilita o PostgreSQL interno quando `DB_HOST` aponta para o RDS.
+- O chart da API deve consumir o PostgreSQL existente, sem criar outra instância. `DB_HOST` configura o endereço do Service Kubernetes.
 
 ---
 

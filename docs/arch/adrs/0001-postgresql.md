@@ -21,7 +21,7 @@ Usar **PostgreSQL**, schema `bunzina`, acesso via `bun:sql`.
 ## Consequências
 
 - Migrations SQL versionadas; sem Prisma/TypeORM
-- Evolução para RDS/Aurora/Supabase não muda o dialeto
+- Mesmo dialeto SQL no desenvolvimento local e no EKS
 - Time precisa conhecer SQL e o engine próprio
 
 ## Alternativas

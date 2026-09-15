@@ -63,10 +63,9 @@ versão `0.1.0` via OCI. A imagem publicada desse chart não foi inspecionada.
 O PostgreSQL do chart usa StatefulSet, imagem `postgres:15`, Service e PVC `gp3`
 de `10Gi`. O `values.yaml` do umbrella contém um host externo como valor estático,
 mas o workflow o sobrescreve nos dois casos acima. Por isso, apenas esse valor
-não comprova qual banco está em uso. Não há recurso RDS declarado no Terraform
-local; a imagem identifica o destino externo genericamente, sem presumir RDS.
+não comprova qual banco está em uso. O banco adotado é PostgreSQL no EKS, provisionado pelo `bunzina-db`.
 
-## Fontes e geração
+## Fontes
 
 - [Rede Terraform](../../../infra/vpc.tf)
 - [Cluster, nós e addons](../../../infra/eks.tf)
@@ -74,9 +73,3 @@ local; a imagem identifica o destino externo genericamente, sem presumir RDS.
 - [Valores do umbrella](../../../charts/bunzina-chart/values.yaml)
 - [Workflow de deploy](../../../.github/workflows/deploy-k8s.yml)
 - Templates: projeto irmão `bunzina-chart/charts/app-chart/templates/`.
-
-Em Linux/WSL com Python 3, librsvg, Cairo e GObject, execute na raiz do projeto:
-
-```sh
-python3 docs/arch/diagrams/generate_architecture.py
-```

@@ -157,16 +157,3 @@ As FKs de `service_orders.customer_id` e `vehicle_id` são independentes: as
 migrations não garantem que o cliente da OS seja o proprietário do veículo.
 `public.migrations` é controle do engine, fora do schema de domínio `bunzina`,
 e não está incluída no desenho.
-
-## Regenerar a imagem
-
-Na raiz do projeto, em Linux/WSL com Python 3 e as bibliotecas de sistema
-librsvg, Cairo e GObject instaladas:
-
-```sh
-python3 docs/arch/diagrams/generate_er.py
-```
-
-O gerador lê as migrations SQL em ordem, incorpora as colunas adicionadas por
-ALTER TABLE e grava `docs/arch/er.svg` e `docs/arch/er.png`. O layout foi preparado
-para o modelo 001–012; mudanças no schema exigem revisar o layout e as relações.

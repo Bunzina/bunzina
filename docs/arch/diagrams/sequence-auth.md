@@ -37,11 +37,3 @@ alterado nesta revisão de documentação.
 
 A Lambda retorna `400` para entrada inválida, repassa erros HTTP da API e retorna
 `502` quando não obtém resposta do serviço de autenticação.
-
-## Regeneração
-
-Na raiz do projeto, em Linux/WSL com Python 3, librsvg, Cairo e GObject:
-
-```sh
-python3 -B docs/arch/diagrams/generate_auth_cloud.py
-```

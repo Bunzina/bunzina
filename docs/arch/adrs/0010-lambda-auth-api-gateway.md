@@ -27,7 +27,7 @@ O PDF pede Function Serverless que (1) valide CPF, (2) consulte existência/stat
 
 - Login sai de `POST /auth/login` na Elysia; a rota atual vira legado ou proxy
 - Users ganham coluna de documento (migration nova)
-- Lambda precisa alcançar o banco gerenciado (VPC ou URL pública com SSL)
+- Acesso ao banco: a decisão vigente no RFC 0001 delega o login à API; apenas a API consulta o PostgreSQL no EKS.
 - Gateway e Lambda podem viver no repo da Lambda (RFC 0002)
 
 ## Alternativas

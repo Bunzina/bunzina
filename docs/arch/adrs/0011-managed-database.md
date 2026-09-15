@@ -1,32 +1,45 @@
-# ADR 0011 — PostgreSQL gerenciado fora do cluster
+# ADR 0011 — Proposta de banco gerenciado e decisão por PostgreSQL no EKS
 
-- Status: Proposta
-- Data: Fase 3
-- RFC: [0003](../rfcs/0003-managed-database.md)
+- Status: Proposta substituída
+- Decisão vigente: [ADR-001 — PostgreSQL no EKS com Terraform](../../adrs/adr-001-postgresql-terraform.md)
+- RFC relacionada: [0003](../rfcs/0003-managed-database.md)
 
-## Contexto
+## Histórico da decisão
 
-A Fase 2 colocou Postgres em StatefulSet + PVC. O PDF da Fase 3 pede banco **gerenciado**. O deploy **já** aceita host externo (`DB_HOST` desliga o StatefulSet). O `values.yaml` aponta hoje para um pooler Supabase.
+Inicialmente, consideramos Amazon RDS PostgreSQL para ter um banco gerenciado
+fora do cluster. Essa proposta foi discutida na [RFC 0003](../rfcs/0003-managed-database.md).
 
-## Decisão
+Depois, optamos por manter o PostgreSQL no EKS e separar seu provisionamento
+no repositório `bunzina-db`. A decisão foi formalizada em 2026-09-13 pela
+[ADR-001 de provisionamento](../../adrs/adr-001-postgresql-terraform.md).
 
-Provisionar **Amazon RDS PostgreSQL** (ou Aurora PostgreSQL se a cota do lab permitir) no repositório de infra de banco. A aplicação continua falando SQL no schema `bunzina`. O StatefulSet vira fallback de demo local, desligado em produção.
+Os motivos registrados nessa ADR foram aproveitar o PostgreSQL já utilizado no
+EKS, evitar duplicar o banco e os custos de RDS, e separar o ciclo de vida do
+banco do deploy da API. Em contrapartida, backup, restauração, atualização e
+disponibilidade ficam sob responsabilidade da equipe.
 
-## Motivo
+Este histórico registra uma mudança de proposta arquitetural, não uma migração
+de dados de uma instância RDS para o EKS.
 
-- RDS é o gerenciado canônico no Terraform Academy (`dougls/terraform-academy`, `dougls/terraform-soat`)
-- Mesmo dialeto, zero mudança de repositório/domínio
-- Tira I/O e memória de Postgres dos nós `t3.medium`
-- Supabase funciona, mas fica fora da conta AWS do vídeo e do Terraform do grupo
+## Decisão vigente
+
+O banco é PostgreSQL 15 executado no cluster EKS. A ADR-001 aceita atribui seu
+provisionamento ao repositório `bunzina-db`, usando Terraform para criar os
+recursos Kubernetes no namespace `bunzina`:
+
+- Deployment com uma réplica de `postgres:15`;
+- Service `ClusterIP` chamado `postgres`, na porta `5432`;
+- PVC com armazenamento EBS `gp3`;
+- recursos de credenciais conforme a ADR de provisionamento.
+
+A aplicação acessa o Service do banco. A Lambda chama a API e não acessa o
+PostgreSQL diretamente. As migrations permanecem no repositório `bunzina`.
 
 ## Consequências
 
-- Mais um recurso para destruir depois da gravação
-- Lambda e API usam o mesmo endpoint
-- Security group: 5432 só a partir do node group e da Lambda
-- Senha no Secrets Manager ou no Secret do Helm, nunca no Git
+- O PostgreSQL no EKS é o banco da solução.
+- O banco tem ciclo de vida separado do chart da API, sob responsabilidade do `bunzina-db`.
+- Backup, restauração, atualizações e disponibilidade são responsabilidades da equipe.
+- A configuração `DB_HOST` permite selecionar o endereço do Service Kubernetes do banco.
 
-## Alternativas
-
-- Manter só Supabase — já conecta, mas não demonstra provisionamento Terraform de banco
-- Postgres no EKS — não atende o requisito de gerenciado
+Os critérios de provisionamento e validação estão na [ADR-001](../../adrs/adr-001-postgresql-terraform.md).

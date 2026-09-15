@@ -14,7 +14,7 @@ Hoje `bunzina` concentra API, migrations, Terraform de VPC/EKS/ECR e o umbrella 
 bunzina                 aplicação + migrations + umbrella + CI de deploy
 bunzina-lambda          Function Auth + API Gateway + CI de deploy serverless
 bunzina-infra           Terraform de VPC, EKS, node group, addons, ECR
-bunzina-db              Terraform do RDS PostgreSQL
+bunzina-db              Terraform do PostgreSQL no EKS
 bunzina-chart           (extra) chart genérico OCI
 ```
 
@@ -56,7 +56,7 @@ Não repetir diagramas. Linkar `docs/arch/` neste repositório.
 ## Ordem de extração
 
 1. Manter `bunzina-infra` com o conteúdo de infraestrutura de VPC/EKS (state push se necessário)
-2. Manter `bunzina-db` com o RDS (RFC 0003)
+2. Manter `bunzina-db` com o PostgreSQL no EKS (ADR-001 de provisionamento)
 3. Criar `bunzina-lambda` com o esqueleto da Function
 4. Proteção de `main` + PR obrigatório
 5. Só então apontar o Gateway para o EKS já existente

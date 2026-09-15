@@ -34,7 +34,6 @@ O workflow `deploy-k8s.yml` usa banco externo quando `DB_HOST` está definido e
 desativa o PostgreSQL do chart. Sem esse valor, usa o Service `postgres`,
 StatefulSet e PVC. As duas conexões SQL tracejadas representam alternativas de
 configuração, não replicação ou acesso simultâneo obrigatório aos dois bancos.
-O destino externo é genérico; não há recurso RDS no Terraform local.
 
 A Lambda é configurada no projeto irmão `bunzina-lambda/serverless.yml`, sem
 associação VPC declarada. O caminho Lambda → ALB pressupõe que
@@ -44,15 +43,9 @@ topologia da solução; o valor do secret de deploy não foi consultado.
 O painel de artefatos mostra a publicação no ECR. Imagens são consumidas pela
 Lambda e pelos nós EKS; o chart OCI é consumido pelo Helm durante o deploy.
 
-## Fontes e regeneração
+## Fontes
 
 - [VPC](../../../infra/vpc.tf) e [EKS](../../../infra/eks.tf).
 - [Valores Helm](../../../charts/bunzina-chart/values.yaml).
 - [Deploy da API](../../../.github/workflows/deploy-k8s.yml).
 - Projeto irmão: `bunzina-lambda/serverless.yml`, serviço Axios e workflow de deploy.
-
-Na raiz do projeto, em Linux/WSL com Python 3, librsvg, Cairo e GObject:
-
-```sh
-python3 -B docs/arch/diagrams/generate_auth_cloud.py
-```

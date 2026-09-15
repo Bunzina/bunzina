@@ -1,52 +1,36 @@
-# RFC 0003 — Banco de dados gerenciado
+# RFC 0003 — Proposta de banco gerenciado e encaminhamento para PostgreSQL no EKS
 
-- Status: Aceita (desenho). Implementação ainda não começou.
-- Autores: grupo Bunzina
-- ADR: [0011](../adrs/0011-managed-database.md)
+- Status: Proposta original substituída
+- Decisão vigente: [ADR-001 — PostgreSQL no EKS com Terraform](../../adrs/adr-001-postgresql-terraform.md)
+- ADR relacionada: [0011](../adrs/0011-managed-database.md)
 
-## Problema
+## Encaminhamento da proposta
 
-O PDF pede banco gerenciado. Hoje o chart sobe Postgres in-cluster **e** o deploy já sabe usar um host externo. O `values.yaml` aponta para Supabase. Precisamos decidir o produto gerenciado, quem provisiona e onde ficam as migrations.
+Esta RFC inicialmente propunha Amazon RDS PostgreSQL. A decisão posterior foi
+manter PostgreSQL no EKS, provisionado pelo `bunzina-db`. O histórico e os motivos
+dessa mudança estão no [ADR 0011](../adrs/0011-managed-database.md#historico-da-decisao);
+a especificação vigente está na [ADR-001 de provisionamento](../../adrs/adr-001-postgresql-terraform.md).
 
-## Decisão
+As seções abaixo descrevem o encaminhamento adotado para o banco e as migrations.
 
-1. **Amazon RDS PostgreSQL** (versão alinhada ao 15 usado no chart), instância pequena (`db.t3.micro` ou o mínimo que o lab liberar), storage gp3, em subnet privada.
-2. Provisionamento no repo `bunzina-db`, Terraform, state separado.
-3. **Migrations continuam em `bunzina`**. O repo de banco cria instância, SG, subnet group e secret — não o schema `bunzina`.
-4. Em produção: `DB_HOST` preenchido → `app-chart.database.enabled=false`.
-5. Lambda e API usam o mesmo endpoint.
+## Arquitetura adotada
 
-## Por que RDS e não o Supabase atual
+O `bunzina-db` é responsável pelo provisionamento do PostgreSQL 15 no EKS via
+Terraform. A decisão aceita define um Deployment de uma réplica, Service
+`postgres:5432`, PVC `gp3` e recursos de credenciais no namespace `bunzina`.
+O chart da aplicação consome o banco existente e não deve criar uma segunda
+instância. O `bunzina-infra` provisiona previamente a rede e o cluster.
 
-- O vídeo e o Terraform precisam mostrar provisionamento **na conta AWS**
-- Os repos de referência do professor são Academy/SOAT em AWS
-- Supabase pode continuar como atalho de desenvolvimento, não como entregável
+## Acesso e migrations
 
-## Rede e acesso
+- A API usa o endereço do Service Kubernetes para acessar o PostgreSQL.
+- A Lambda delega a autenticação à API; não possui acesso direto ao banco.
+- As migrations SQL continuam em `bunzina/migrations/`, executadas pelo pipeline da aplicação.
+- O workflow pode alcançar o banco pelo port-forward do Service `postgres` ou por um `DB_HOST` acessível ao runner.
+- `DB_HOST` configura o endereço usado para acessar o PostgreSQL.
 
-- Porta 5432 só a partir do SG dos nós EKS e do SG da Lambda
-- SSL obrigatório (`sslmode=require`), como o job de migrate já prevê
-- Sem acesso público na demo; migrate via CI com credencial no GitHub Environment `production`
+## Referência vigente
 
-## Tamanho (demo)
-
-| Parâmetro | Valor sugerido | Motivo |
-| --- | --- | --- |
-| Classe | `db.t3.micro` | Cota e custo do lab |
-| Storage | 20 GiB gp3 | Mínimo RDS, sobra para o schema |
-| Multi-AZ | não | Custo; destruímos depois do vídeo |
-| Backup | 1 dia ou desligado | Dado descartável |
-
-## Alternativas rejeitadas
-
-| Opção | Por que não |
-| --- | --- |
-| Só StatefulSet | Não é gerenciado |
-| Aurora Serverless | Melhor escala, cota/preço piores no lab |
-| Ficar no Supabase | Fora do Terraform AWS do grupo |
-
-## Impacto
-
-- Primeiro `apply` do repo de banco **antes** de desligar o Postgres do Helm em produção
-- Dump/restore só se houver dado de demo que importe — em geral o seed se recria
-- Documentar no README da aplicação que `bun dev` continua com Postgres do Compose
+Sizing, recursos, credenciais, limitações e critérios de validação estão na
+[ADR-001](../../adrs/adr-001-postgresql-terraform.md). A existência de suporte a
+host externo no deploy não muda a decisão de usar PostgreSQL no EKS.
