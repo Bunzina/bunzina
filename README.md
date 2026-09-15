@@ -58,6 +58,8 @@ src/
 migrations/         # Migrations SQL em ordem de execução
 ```
 
+Documentação detalhada sobre os tipos de teste do projeto e o objetivo de cada um: [docs/testing.md](docs/testing.md).
+
 ---
 
 ## Pré-requisitos

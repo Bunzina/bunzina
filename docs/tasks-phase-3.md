@@ -140,9 +140,10 @@
 
 # Ajustes pendentes da Fase 2 - Menos prioritário
 
-- [ ] Melhorar a documentação sobre os testes.
-  - A documentação atual sobre os testes não está tão clara quanto poderia.
-  - Devemos explicar melhor quais tipos de testes existem no projeto e o objetivo de cada um.
+- [x] Melhorar a documentação sobre os testes.
+  - A documentação atual sobre os testes não estava tão clara quanto poderia.
+  - Criado o arquivo [docs/testing.md](testing.md), explicando os tipos de teste existentes no projeto (unitários e de integração), o objetivo de cada um, as factories de teste, as configurações `bunfig` e os testes do engine de migrations.
+  - Adicionado link para essa documentação na seção "Estrutura de pastas" do README.
 - [ ] Detalhar a seção de testes no README.
   - Incluir os comandos necessários para executar os testes.
   - Incluir exemplos de execução dos testes de integração.
