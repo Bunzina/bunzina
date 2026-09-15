@@ -1,0 +1,28 @@
+meta {
+  name: Atualizar peca
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/auto-parts/{{autoPartId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Filtro de oleo",
+    "description": "Filtro para oleo do motor",
+    "price": 4500,
+    "stock": 10
+  }
+}

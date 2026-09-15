@@ -1,0 +1,36 @@
+meta {
+  name: Atualizar cliente
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/customers/{{customerDocument}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Cliente Exemplo",
+    "email": "cliente@example.com",
+    "phone": "+5511999999999",
+    "address": {
+      "street": "Rua das Flores",
+      "number": "42",
+      "neighborhood": "Centro",
+      "city": "Sao Paulo",
+      "state": "SP",
+      "zipCode": "01310-100",
+      "complement": "Apto 3"
+    }
+  }
+}

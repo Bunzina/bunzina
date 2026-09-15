@@ -1,0 +1,28 @@
+meta {
+  name: Atualizar servico
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/services/{{serviceId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Troca de oleo",
+    "description": "Troca de oleo do motor",
+    "price": 15000,
+    "durationInMinutes": 60
+  }
+}

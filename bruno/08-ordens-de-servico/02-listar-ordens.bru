@@ -1,0 +1,25 @@
+meta {
+  name: Listar ordens
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/service-orders?page={{page}}&limit={{limit}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: {{page}}
+  limit: {{limit}}
+  ~customerId: {{customerId}}
+  ~vehicleId: {{vehicleId}}
+  ~status: RECEIVED
+  ~startCreatedAt: 2026-01-01T00:00:00Z
+  ~endCreatedAt: 2026-12-31T23:59:59Z
+}

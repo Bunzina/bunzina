@@ -1,0 +1,39 @@
+meta {
+  name: Criar usuario interno
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/users
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Usuario Exemplo",
+    "document": "{{userDocument}}",
+    "email": "usuario@example.com",
+    "password": "{{userPassword}}",
+    "role": "MECHANIC"
+  }
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("userId", res.body.id);
+  }
+}
+
+docs {
+  Para ADMIN, altere role. Use documento e email diferentes dos cadastros existentes.
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Movimentacoes de estoque
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/auto-parts/{{autoPartId}}/stock-movements?page={{page}}&limit={{limit}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: {{page}}
+  limit: {{limit}}
+}

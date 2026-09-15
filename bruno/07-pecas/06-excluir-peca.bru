@@ -1,0 +1,15 @@
+meta {
+  name: Excluir peca
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/auto-parts/{{autoPartId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

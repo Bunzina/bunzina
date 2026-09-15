@@ -1,0 +1,21 @@
+meta {
+  name: Buscar veiculo
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/vehicles/{{vehicleId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("vehicleId", res.body.id);
+  }
+}

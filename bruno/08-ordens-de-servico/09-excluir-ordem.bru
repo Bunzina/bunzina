@@ -1,0 +1,15 @@
+meta {
+  name: Excluir ordem
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{baseUrl}}/service-orders/{{serviceOrderId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
