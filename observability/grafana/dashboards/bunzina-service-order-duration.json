@@ -5,7 +5,10 @@
   "panels": [
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "suffix: s", "decimals": 2 }, "overrides": [] },
+      "fieldConfig": {
+        "defaults": { "unit": "suffix: s", "decimals": 2 },
+        "overrides": []
+      },
       "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
       "id": 1,
       "title": "Tempo medio: Em execucao -> Concluido",
@@ -21,7 +24,10 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "fieldConfig": { "defaults": { "unit": "suffix: s", "decimals": 2 }, "overrides": [] },
+      "fieldConfig": {
+        "defaults": { "unit": "suffix: s", "decimals": 2 },
+        "overrides": []
+      },
       "gridPos": { "h": 6, "w": 16, "x": 8, "y": 0 },
       "id": 2,
       "title": "Tempo medio por transicao",
