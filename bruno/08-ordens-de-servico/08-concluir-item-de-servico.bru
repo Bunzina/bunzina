@@ -1,0 +1,19 @@
+meta {
+  name: Concluir item de servico
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{baseUrl}}/service-orders/services/{{serviceOrderItemId}}/complete
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+docs {
+  Use o id do item em serviceItems, nao o serviceId do catalogo. A ordem deve estar IN_EXECUTION.
+}

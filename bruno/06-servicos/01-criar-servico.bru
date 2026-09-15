@@ -1,0 +1,34 @@
+meta {
+  name: Criar servico
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/services
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Troca de oleo",
+    "description": "Troca de oleo do motor",
+    "price": 15000,
+    "durationInMinutes": 60
+  }
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("serviceId", res.body.id);
+  }
+}

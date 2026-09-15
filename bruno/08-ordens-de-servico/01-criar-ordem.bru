@@ -1,0 +1,50 @@
+meta {
+  name: Criar ordem
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/service-orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "customerId": "{{customerId}}",
+    "vehicleId": "{{vehicleId}}",
+    "serviceItems": [
+      {
+        "serviceId": "{{serviceId}}",
+        "price": 15000,
+        "description": "Troca de oleo"
+      }
+    ],
+    "autoPartItems": [
+      {
+        "autoPartId": "{{autoPartId}}",
+        "quantity": 1,
+        "unitPrice": 4500,
+        "description": "Filtro de oleo"
+      }
+    ]
+  }
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("serviceOrderId", res.body.id);
+    if (res.body.serviceItems?.[0]?.id) {
+      bru.setVar("serviceOrderItemId", res.body.serviceItems[0].id);
+    }
+  }
+}

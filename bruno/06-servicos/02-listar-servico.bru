@@ -1,0 +1,21 @@
+meta {
+  name: Listar servico
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/services?page={{page}}&limit={{limit}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+params:query {
+  page: {{page}}
+  limit: {{limit}}
+  ~name: Troca
+}

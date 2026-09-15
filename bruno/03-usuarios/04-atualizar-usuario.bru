@@ -1,0 +1,29 @@
+meta {
+  name: Atualizar usuario
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/users/{{userId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Usuario Exemplo",
+    "document": "{{userDocument}}",
+    "email": "usuario@example.com",
+    "role": "CUSTOMER",
+    "isActive": true
+  }
+}

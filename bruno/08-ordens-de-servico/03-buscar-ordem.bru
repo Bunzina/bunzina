@@ -1,0 +1,24 @@
+meta {
+  name: Buscar ordem
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/service-orders/{{serviceOrderId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+script:post-response {
+  if (res.status >= 200 && res.status < 300 && res.body?.id) {
+    bru.setVar("serviceOrderId", res.body.id);
+    if (res.body.serviceItems?.[0]?.id) {
+      bru.setVar("serviceOrderItemId", res.body.serviceItems[0].id);
+    }
+  }
+}
