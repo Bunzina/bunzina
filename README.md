@@ -3,6 +3,8 @@
 API REST para gerenciamento de uma oficina mecânica, desenvolvida com **Bun**, **Elysia** e **PostgreSQL**, seguindo os princípios de **Clean Architecture**.
 
 > Observação para a correção: se o professor quiser ir mais direto ao ponto na avaliação da Fase 2, vale consultar o arquivo [docs/READMEs/phase-2.md](docs/READMEs/phase-2.md), que concentra a documentação específica dessa etapa.
+>
+> A documentação de arquitetura (diagramas, ADRs, RFCs e banco) está em [docs/arch](docs/arch/README.md).
 
 ---
 
@@ -41,6 +43,8 @@ O **PostgreSQL** foi escolhido pelos seguintes motivos:
 - **Schemas** — permite isolar as tabelas do projeto no schema `bunzina`, facilitando a organização em ambiente compartilhado
 - **Maturidade e ecossistema** — solução amplamente adotada, com excelente suporte no Bun via `bun:sql`
 - **Escalabilidade** — suporta índices avançados, particionamento e extensões (como `uuid-ossp`) para crescimento futuro do sistema
+
+Documentação completa do schema, ajustes e diagrama ER: [docs/arch/database.md](docs/arch/database.md).
 
 ---
 
@@ -231,6 +235,15 @@ O workflow de deploy deste repositório exige que o EKS e o PostgreSQL já
 existam. Ele executa testes, valida novas migrations, executa migrations
 pendentes quando houver arquivos novos, constrói a imagem, publica no ECR e
 atualiza a aplicação e a observabilidade com Helm.
+
+### Arquitetura
+
+A documentação de arquitetura (Fases 2 e 3) está centralizada em [docs/arch](docs/arch/README.md):
+
+- [Visão geral](docs/arch/overview.md) — arquitetura da aplicação
+- [Diagramas](docs/arch/diagrams/README.md) — nuvem, EKS, API Gateway/Lambda, sequências e ER
+- [Banco de dados](docs/arch/database.md) — justificativa, tabelas e relacionamentos
+- [ADRs](docs/arch/adrs/README.md) e [RFCs](docs/arch/rfcs/README.md) — decisões de arquitetura
 
 ### Alterações posteriores
 

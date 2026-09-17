@@ -46,9 +46,9 @@ Resumo do que já está **pronto e validado** (deploy real em EKS confirmado):
   - Arquivos/áreas: infra / integração com provider (ex.: Mailgun, SendGrid) ou criar worker que conecta IMAP.
 - [x] ~~Criar manifestos Kubernetes mínimos em `/k8s`~~ → **substituído por Helm**: o app é empacotado num chart genérico (`app-chart`) + umbrella (`charts/bunzina-chart`), com Deployment, Service, Ingress (ALB), HPA, ConfigMap, Secret e Postgres (StatefulSet + PVC). Ver [docs/guia-eks-helm/03](guia-eks-helm/03-helm-chart.md).
 - [x] Adicionar scripts Terraform em `/infra` para provisionar cluster e banco de dados; documentar recursos criados. (VPC + EKS + node group + addons + ECR + StorageClass; documentado nas partes [00](guia-eks-helm/00-pre-requisitos.md)/[01](guia-eks-helm/01-infra-terraform.md).)
-- [x] Disponibilizar os diagramas de arquitetura no repositório, preferencialmente em `docs/arch/` como PNG.
-  - Pode ser um diagrama único ou vários diagramas por contexto.
-  - Parcial: há Domain Storytelling em `docs/domain-storytelling/*.egn` e um diagrama ASCII de arquitetura no README (seção "Deploy em Kubernetes"). Falta o PNG em `docs/arch/`.
+- [x] Disponibilizar os diagramas de arquitetura no repositório.
+  - Centralizados em `docs/arch/` (PNGs da Fase 2 + Mermaid da Fase 3).
+  - Domain Storytelling continua em `docs/domain-storytelling/*.egn`.
 
 ## Prioridade: Baixa / Finalização
 - [x] Validar e aumentar cobertura de testes nas áreas alteradas (listagem, webhook, email). Garantir cobertura ≥ 80% nos domínios críticos.
@@ -85,4 +85,4 @@ Português:
   - Componentes da aplicação (API, workers, DB, serviços externos).
   - Infraestrutura provisionada (K8s cluster, DB, storage, secrets management).
   - Fluxo de deploy (build → tests → image push → apply manifests / terraform apply).
-- [x] Seção indicando onde ficam os diagramas, por exemplo: `docs/arch`.
+- [x] Seção indicando onde ficam os diagramas: `docs/arch`.

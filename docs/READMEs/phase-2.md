@@ -157,11 +157,12 @@ Esse repositório contém os templates, values e configurações necessárias pa
 
 ### Arquitetura
 
-Os diagramas da Fase 2 estão em [docs/arch](docs/arch):
+A documentação de arquitetura está centralizada em [docs/arch](../arch/README.md):
 
-- [docs/arch/application-components.png](docs/arch/application-components.png) — componentes da aplicação (API, workers, DB e serviços externos)
-- [docs/arch/infrastructure-provisioning.png](docs/arch/infrastructure-provisioning.png) — infraestrutura provisionada (cluster, banco, storage e secrets)
-- [docs/arch/deploy.png](docs/arch/deploy.png) — fluxo de deploy (build, testes, push de imagem e deploy)
+- [Visão geral](../arch/overview.md) — estado atual e alvo da Fase 3
+- [Diagramas](../arch/diagrams/README.md) — PNGs da Fase 2, nuvem, EKS, API Gateway/Lambda, sequências e ER
+- [Banco de dados](../arch/database.md) — justificativa, tabelas e relacionamentos
+- [ADRs](../arch/adrs/README.md) e [RFCs](../arch/rfcs/README.md) — decisões e o motivo de cada uma
 
 
 
