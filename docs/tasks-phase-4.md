@@ -104,18 +104,20 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
 
 Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo PDF.
 
-- [ ] Ligar a cobertura no `bunfig.ci.toml`.
+- [x] Ligar a cobertura no `bunfig.ci.toml`.
   - Hoje o arquivo tem `coverage = false`, e o CI executa com `--config=./bunfig.ci.toml`.
   - Na prática, o CI atual não mede nem impõe cobertura, apesar do threshold configurado
     no `bunfig.toml` local.
   - A Fase 4 exige cobertura mínima de 80% por serviço com evidência, então o gate precisa
     estar ativo no CI de todos os repositórios.
+  - Ligado com threshold de 80% nas quatro dimensões. A suíte atual passa com 100% de
+    funções e 99.92% de linhas, então o gate não bloqueia nada hoje.
 
-- [ ] Limpar a pasta `coverage/`.
+- [x] Limpar a pasta `coverage/`.
   - Existem cerca de duzentos arquivos `.lcov.info.*.tmp` soltos no repositório.
   - O `lcov.info` consolidado está inconsistente, com contagem de branches zerada em
     algumas seções.
-  - Adicionar a pasta ao `.gitignore`.
+  - A pasta já estava no `.gitignore`; nada disso tinha vazado para o repositório.
 
 ---
 
@@ -139,7 +141,9 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - O CloudAMQP no plano gratuito continua registrado como alternativa na
     [ADR 0015](arch/adrs/0015-rabbitmq-broker.md), caso a cota aperte mais adiante.
 
-- [ ] Criar o template de serviço reaproveitável pelos três repositórios novos.
+- [x] Criar o template de serviço reaproveitável pelos três repositórios novos.
+  - Em [`templates/service/`](../templates/service/README.md), com
+    `scripts/init-service.sh` para gerar cada repositório.
   - Dockerfile.
   - `bunfig.ci.toml` com cobertura ligada e threshold de 80%.
   - Workflow de CI/CD derivado do `.github/workflows/deploy-k8s.yml`, que já está maduro e
@@ -153,6 +157,8 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
     consumer o extrai.
   - Sem isso, o requisito de rastreamento dos fluxos distribuídos exigido no vídeo não se
     sustenta, porque o trace quebra em cada salto assíncrono.
+  - Implementado no template, em `src/infrastructure/messaging/`. Falta validar ponta a
+    ponta com os serviços de verdade no ar.
 
 ---
 

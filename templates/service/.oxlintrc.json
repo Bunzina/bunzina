@@ -44,7 +44,7 @@
     "builtin": true
   },
   "globals": {},
-  "ignorePatterns": ["templates/**"],
+  "ignorePatterns": [],
   "overrides": [
     {
       "files": ["*.test.ts"],
