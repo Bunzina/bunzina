@@ -12,8 +12,10 @@ app-chart:
     service:
       type: ClusterIP
       port: 80
+    # Cada ALB consome cota do Learner Lab. Ligue apenas quando o serviço
+    # precisar mesmo de porta pública.
     ingress:
-      enabled: true
+      enabled: false
       className: alb
       annotations:
         alb.ingress.kubernetes.io/scheme: internet-facing
