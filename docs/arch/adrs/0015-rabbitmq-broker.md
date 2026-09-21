@@ -41,7 +41,8 @@ de-para.
 
 - Mais um workload para operar no cluster, ao lado do EKS e do PostgreSQL. O banco não
   relacional saiu da cota pela [ADR 0014](./0014-mongodb-workshop.md), que o colocou no
-  Atlas, justamente para abrir espaço para este broker.
+  Atlas, justamente para abrir espaço para este broker. O time confirmou que o ambiente
+  do AWS Academy comporta os três.
 - A propagação de contexto de trace passa a ser responsabilidade da aplicação: o
   publisher injeta o `traceparent` W3C nos headers AMQP e o consumer o extrai. Sem isso o
   trace distribuído quebra em cada salto assíncrono.

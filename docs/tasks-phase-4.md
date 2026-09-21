@@ -132,12 +132,12 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - Adicionar o IP de saída dos nós do EKS à allowlist do Atlas.
   - Adicionar um container `mongo` ao `docker-compose.yml` local, para manter a paridade.
 
-- [ ] Medir se o ambiente do AWS Academy comporta EKS, Postgres e RabbitMQ
+- [x] Medir se o ambiente do AWS Academy comporta EKS, Postgres e RabbitMQ
       simultaneamente.
-  - O banco não relacional saiu da cota com a decisão pelo Atlas, o que reduz a medição a
-    um workload novo em vez de dois.
-  - Se ainda assim o RabbitMQ não couber, a alternativa é o CloudAMQP no plano gratuito,
-    com atenção ao limite de conexões simultâneas.
+  - O time confirmou que cabe. O banco não relacional já havia saído da cota com a
+    decisão pelo Atlas, o que reduziu a medição a um workload novo em vez de dois.
+  - O CloudAMQP no plano gratuito continua registrado como alternativa na
+    [ADR 0015](arch/adrs/0015-rabbitmq-broker.md), caso a cota aperte mais adiante.
 
 - [ ] Criar o template de serviço reaproveitável pelos três repositórios novos.
   - Dockerfile.
