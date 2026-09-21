@@ -1,12 +1,4 @@
 #!/usr/bin/env bash
-#
-# Gera um microsserviço novo a partir deste template.
-#
-#   ./scripts/init-service.sh bunzina-os ../../bunzina-os
-#
-# Substitui os placeholders __SERVICE_NAME__ e __METRIC_PREFIX__ e renomeia o
-# chart. O __AWS_ACCOUNT_ID__ NÃO é substituído aqui: ele é injetado pelo
-# workflow de deploy a partir do secret, como já acontece no bunzina.
 
 set -euo pipefail
 
@@ -33,7 +25,6 @@ rm -rf "$TARGET/scripts"
 
 mv "$TARGET/charts/service-chart" "$TARGET/charts/${SERVICE_NAME}-chart"
 
-# Placeholders em conteúdo de arquivo.
 find "$TARGET" -type f \
   ! -path "*/node_modules/*" \
   ! -path "*/.git/*" \

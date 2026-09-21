@@ -68,8 +68,6 @@ app.get('/metrics', async () => {
   });
 });
 
-// Cada serviço troca esta checagem pela do seu próprio banco. O readiness é o
-// que o app-chart usa como readinessProbe.
 app.get('/ready', async ({ set }) => {
   try {
     await checkDependencies();
@@ -82,10 +80,7 @@ app.get('/ready', async ({ set }) => {
   }
 });
 
-async function checkDependencies(): Promise<void> {
-  // TODO: `await db\`SELECT 1\`` no serviço com Postgres,
-  // `await mongo.command({ ping: 1 })` no bunzina-workshop.
-}
+async function checkDependencies(): Promise<void> {}
 
 app.get('/', ({ redirect }) => redirect('/swagger'), {
   detail: { hide: true },
