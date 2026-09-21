@@ -14,7 +14,7 @@ Portal do Aluno.
 Estas decisões precisam ser fechadas antes de qualquer código, porque bloqueiam todas as
 etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
 
-- [ ] Decidir o recorte dos microsserviços.
+- [x] Decidir o recorte dos microsserviços. → [ADR 0012](arch/adrs/0012-microservices-split.md)
   - A proposta é manter o `bunzina` atual como serviço de Cadastros e Autenticação
     (`customer`, `vehicle`, `user`, `service`, `auto-part`, `notification`) com o Postgres
     que já existe.
@@ -28,7 +28,7 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
   - A alternativa de criar três serviços finos que continuam lendo o Postgres do monólito
     viola o requisito de banco próprio por serviço e esvazia a saga.
 
-- [ ] Decidir a estratégia do Saga Pattern.
+- [x] Decidir a estratégia do Saga Pattern. → [ADR 0013](arch/adrs/0013-orchestrated-saga.md)
   - A proposta é saga orquestrada, com o `bunzina-os` como orquestrador.
   - O estado da saga fica persistido em uma tabela `saga_instances`, com o id da ordem de
     serviço como correlation id.
@@ -42,7 +42,7 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
     tratamento de falhas, e apontar para uma tabela de estado e um log de compensação é
     mais demonstrável do que narrar um fluxo de eventos espalhado.
 
-- [ ] Decidir onde entra o banco não relacional.
+- [x] Decidir onde entra o banco não relacional. → [ADR 0014](arch/adrs/0014-mongodb-workshop.md)
   - A proposta é MongoDB no `bunzina-workshop`, guardando a fila de execução e o log de
     eventos de diagnóstico e reparo.
   - Esse é o único serviço cujo dado é genuinamente semiestruturado: checklists variáveis
@@ -51,7 +51,7 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
   - Caso a cota do AWS Academy não comporte mais um StatefulSet, a alternativa é DynamoDB
     gerenciado, que consome menos nós.
 
-- [ ] Decidir o broker de mensageria.
+- [x] Decidir o broker de mensageria. → [ADR 0015](arch/adrs/0015-rabbitmq-broker.md)
   - A proposta é RabbitMQ no cluster, via Helm, com exchange topic, filas por serviço e
     dead letter queue.
   - O fator decisivo é a paridade entre desenvolvimento e produção: o mesmo broker roda no
@@ -61,7 +61,7 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
     LocalStack ou ElasticMQ.
   - Kafka foi descartado por ser desproporcional ao tamanho do cluster e ao prazo.
 
-- [ ] Decidir a estratégia de reuso de código entre os serviços.
+- [x] Decidir a estratégia de reuso de código entre os serviços. → [ADR 0016](arch/adrs/0016-code-reuse-between-services.md)
   - A proposta é copiar as camadas transversais para cada repositório e deixá-las divergir
     livremente, já que repositórios separados são exigência do enunciado.
   - A exceção é o setup de OpenTelemetry com propagação de contexto pelo broker, que vale
@@ -69,19 +69,21 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
     para o trace distribuído aparecer no Tempo.
   - O grupo já publica pacotes próprios no npm, então a esteira de publicação existe.
 
-- [ ] Decidir a ferramenta de verificação de qualidade.
+- [x] Decidir a ferramenta de verificação de qualidade. → [ADR 0017](arch/adrs/0017-sonarcloud-quality-gate.md)
   - A proposta é SonarCloud, gratuito para repositórios públicos, e todos os repositórios
     da organização já são públicos.
   - Subir um SonarQube self-hosted apenas para esta entrega é desperdício de esforço.
 
-- [ ] Registrar todas as decisões acima como ADRs em `docs/adrs/`.
+- [x] Registrar todas as decisões acima como ADRs em `docs/arch/adrs/`.
   - Isso também quita parte da dívida de documentação que ficou aberta na Fase 3.
 
 ---
 
 # Contrato de eventos
 
-- [ ] Definir o contrato de eventos em um documento único do repositório principal.
+- [x] Definir o contrato de eventos em um documento único do repositório principal.
+  → [Contratos de eventos da saga](contracts/events-saga-contracts.md) e o resumo em
+    [events-overview.md](contracts/events-overview.md).
   - Cada evento precisa ter nome, payload, versão e correlation id.
   - O correlation id de todo o fluxo é o id da ordem de serviço.
   - Eventos do caminho feliz: `OrderCreated`, `QuoteRequested`, `QuoteGenerated`,
@@ -92,7 +94,7 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
   - O contrato precisa estar fechado antes das etapas de implementação, porque é o que
     permite que `bunzina-billing` e `bunzina-workshop` sejam desenvolvidos em paralelo.
 
-- [ ] Definir a estratégia de idempotência no consumo de eventos.
+- [x] Definir a estratégia de idempotência no consumo de eventos.
   - Cada serviço mantém uma tabela ou coleção `processed_events` para descartar
     reprocessamento.
 
@@ -102,18 +104,20 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
 
 Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo PDF.
 
-- [ ] Ligar a cobertura no `bunfig.ci.toml`.
+- [x] Ligar a cobertura no `bunfig.ci.toml`.
   - Hoje o arquivo tem `coverage = false`, e o CI executa com `--config=./bunfig.ci.toml`.
   - Na prática, o CI atual não mede nem impõe cobertura, apesar do threshold configurado
     no `bunfig.toml` local.
   - A Fase 4 exige cobertura mínima de 80% por serviço com evidência, então o gate precisa
     estar ativo no CI de todos os repositórios.
+  - Ligado com threshold de 80% nas quatro dimensões. A suíte atual passa com 100% de
+    funções e 99.92% de linhas, então o gate não bloqueia nada hoje.
 
-- [ ] Limpar a pasta `coverage/`.
+- [x] Limpar a pasta `coverage/`.
   - Existem cerca de duzentos arquivos `.lcov.info.*.tmp` soltos no repositório.
   - O `lcov.info` consolidado está inconsistente, com contagem de branches zerada em
     algumas seções.
-  - Adicionar a pasta ao `.gitignore`.
+  - A pasta já estava no `.gitignore`; nada disso tinha vazado para o repositório.
 
 ---
 
@@ -124,18 +128,22 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - Configurar exchange topic, filas por serviço e dead letter queue.
   - Adicionar o mesmo broker ao `docker-compose.yml` local, para manter a paridade.
 
-- [ ] Provisionar o MongoDB.
-  - Espelhar o que o repositório `bunzina-db` já faz para o Postgres: StatefulSet, PVC,
-    StorageClass e Secret.
-  - Adicionar ao `docker-compose.yml` local.
+- [ ] Criar o cluster MongoDB Atlas M0 do `bunzina-workshop`.
+  - Tier gratuito, conforme [ADR 0014](arch/adrs/0014-mongodb-workshop.md).
+  - Criar usuário e connection string, e guardá-la como Secret no cluster.
+  - Adicionar o IP de saída dos nós do EKS à allowlist do Atlas.
+  - Adicionar um container `mongo` ao `docker-compose.yml` local, para manter a paridade.
 
-- [ ] Medir se o ambiente do AWS Academy comporta EKS, Postgres, MongoDB e RabbitMQ
+- [x] Medir se o ambiente do AWS Academy comporta EKS, Postgres e RabbitMQ
       simultaneamente.
-  - Essa medição precisa acontecer antes de investir na infraestrutura, porque o resultado
-    negativo muda as decisões de broker e de banco não relacional para as alternativas
-    gerenciadas.
+  - O time confirmou que cabe. O banco não relacional já havia saído da cota com a
+    decisão pelo Atlas, o que reduziu a medição a um workload novo em vez de dois.
+  - O CloudAMQP no plano gratuito continua registrado como alternativa na
+    [ADR 0015](arch/adrs/0015-rabbitmq-broker.md), caso a cota aperte mais adiante.
 
-- [ ] Criar o template de serviço reaproveitável pelos três repositórios novos.
+- [x] Criar o template de serviço reaproveitável pelos três repositórios novos.
+  - Em [`templates/service/`](../templates/service/README.md), com
+    `scripts/init-service.sh` para gerar cada repositório.
   - Dockerfile.
   - `bunfig.ci.toml` com cobertura ligada e threshold de 80%.
   - Workflow de CI/CD derivado do `.github/workflows/deploy-k8s.yml`, que já está maduro e
@@ -149,6 +157,8 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
     consumer o extrai.
   - Sem isso, o requisito de rastreamento dos fluxos distribuídos exigido no vídeo não se
     sustenta, porque o trace quebra em cada salto assíncrono.
+  - Implementado no template, em `src/infrastructure/messaging/`. Falta validar ponta a
+    ponta com os serviços de verdade no ar.
 
 ---
 

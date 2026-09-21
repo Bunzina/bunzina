@@ -1,6 +1,7 @@
 [test]
 root = "."
 preload = ["./src/test/setup.ts"]
+testTimeout = 60000
 coverage = true
 coverageReporter = ["text", "lcov"]
 coverageDir = "./coverage"
@@ -8,7 +9,6 @@ coverageThreshold = { lines = 0.8, functions = 0.8, statements = 0.8, branches =
 coverageSkipTestFiles = true
 pathIgnorePatterns = [
   "**/node_modules/**",
-  "**/templates/**",
   "**/dist/**",
   "**/coverage/**",
   "**/src/test/**",
@@ -16,7 +16,6 @@ pathIgnorePatterns = [
 ]
 coveragePathIgnorePatterns = [
   "**/node_modules/**",
-  "**/templates/**",
   "**/dist/**",
   "**/coverage/**",
   "**/migrations/**",

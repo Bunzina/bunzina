@@ -17,3 +17,4 @@ Documentos complementares fora desta pasta:
 
 - [Provisionamento do PostgreSQL no EKS](../adrs/adr-001-postgresql-terraform.md) — decisão vigente do banco
 - [Observabilidade](../observability.md) — métricas, logs, traces e alertas
+- [Contratos de eventos da saga](../contracts/events-saga-contracts.md) — mensagens entre os microsserviços da Fase 4
