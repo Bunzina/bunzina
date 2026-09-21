@@ -17,7 +17,7 @@ Cada ADR registra uma decisão e o motivo. Status: **Aceita** (já vale no códi
 | [0011](./0011-managed-database.md) | Proposta de banco gerenciado → PostgreSQL no EKS | Proposta substituída |
 | [0012](./0012-microservices-split.md) | Recorte dos microsserviços da Fase 4 | Aceita |
 | [0013](./0013-orchestrated-saga.md) | Saga orquestrada com o `bunzina-os` no comando | Aceita |
-| [0014](./0014-mongodb-workshop.md) | MongoDB no `bunzina-workshop` | Aceita |
+| [0014](./0014-mongodb-workshop.md) | MongoDB Atlas no `bunzina-workshop` | Aceita |
 | [0015](./0015-rabbitmq-broker.md) | RabbitMQ como broker de mensageria | Aceita |
 | [0016](./0016-code-reuse-between-services.md) | Reuso de código entre os microsserviços | Aceita |
 | [0017](./0017-sonarcloud-quality-gate.md) | SonarCloud como quality gate | Aceita |

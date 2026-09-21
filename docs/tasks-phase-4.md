@@ -126,16 +126,18 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - Configurar exchange topic, filas por serviço e dead letter queue.
   - Adicionar o mesmo broker ao `docker-compose.yml` local, para manter a paridade.
 
-- [ ] Provisionar o MongoDB.
-  - Espelhar o que o repositório `bunzina-db` já faz para o Postgres: StatefulSet, PVC,
-    StorageClass e Secret.
-  - Adicionar ao `docker-compose.yml` local.
+- [ ] Criar o cluster MongoDB Atlas M0 do `bunzina-workshop`.
+  - Tier gratuito, conforme [ADR 0014](arch/adrs/0014-mongodb-workshop.md).
+  - Criar usuário e connection string, e guardá-la como Secret no cluster.
+  - Adicionar o IP de saída dos nós do EKS à allowlist do Atlas.
+  - Adicionar um container `mongo` ao `docker-compose.yml` local, para manter a paridade.
 
-- [ ] Medir se o ambiente do AWS Academy comporta EKS, Postgres, MongoDB e RabbitMQ
+- [ ] Medir se o ambiente do AWS Academy comporta EKS, Postgres e RabbitMQ
       simultaneamente.
-  - Essa medição precisa acontecer antes de investir na infraestrutura, porque o resultado
-    negativo muda as decisões de broker e de banco não relacional para as alternativas
-    gerenciadas.
+  - O banco não relacional saiu da cota com a decisão pelo Atlas, o que reduz a medição a
+    um workload novo em vez de dois.
+  - Se ainda assim o RabbitMQ não couber, a alternativa é o CloudAMQP no plano gratuito,
+    com atenção ao limite de conexões simultâneas.
 
 - [ ] Criar o template de serviço reaproveitável pelos três repositórios novos.
   - Dockerfile.

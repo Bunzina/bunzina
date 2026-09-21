@@ -39,8 +39,9 @@ de-para.
 
 ## Consequências
 
-- Mais um workload para operar no cluster, disputando cota com EKS, PostgreSQL e MongoDB.
-  A medição dessa cota precisa acontecer antes de investir na infraestrutura.
+- Mais um workload para operar no cluster, ao lado do EKS e do PostgreSQL. O banco não
+  relacional saiu da cota pela [ADR 0014](./0014-mongodb-workshop.md), que o colocou no
+  Atlas, justamente para abrir espaço para este broker.
 - A propagação de contexto de trace passa a ser responsabilidade da aplicação: o
   publisher injeta o `traceparent` W3C nos headers AMQP e o consumer o extrai. Sem isso o
   trace distribuído quebra em cada salto assíncrono.
@@ -50,7 +51,11 @@ de-para.
 ## Alternativas
 
 - **SQS + SNS** — elimina a operação do broker e a disputa por cota, mas não tem paridade
-  local sem LocalStack ou ElasticMQ. Fica como plano B se a cota do AWS Academy não
-  comportar o RabbitMQ.
+  local sem LocalStack ou ElasticMQ, e trocaria o modelo de roteamento por prefixo por
+  uma fila por assinatura.
+- **CloudAMQP, plano LittleLemur gratuito** — tiraria o broker da cota do cluster, como o
+  Atlas fez com o Mongo. Descartado pelo limite de 20 conexões simultâneas, que aperta
+  com quatro serviços escalados por HPA, e porque o broker é o componente cuja topologia
+  precisa estar sob controle do time para ensaiar DLQ e compensação.
 - **Kafka** — desproporcional ao tamanho do cluster e ao prazo. O projeto não tem volume
   nem necessidade de reprocessar log.
