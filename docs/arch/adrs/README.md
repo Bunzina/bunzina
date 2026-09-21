@@ -15,5 +15,13 @@ Cada ADR registra uma decisão e o motivo. Status: **Aceita** (já vale no códi
 | [0009](./0009-four-repositories.md) | Separação de repositórios | Aceita |
 | [0010](./0010-lambda-auth-api-gateway.md) | Lambda de login + API Gateway | Aceita |
 | [0011](./0011-managed-database.md) | Proposta de banco gerenciado → PostgreSQL no EKS | Proposta substituída |
+| [0012](./0012-microservices-split.md) | Recorte dos microsserviços da Fase 4 | Aceita |
+| [0013](./0013-orchestrated-saga.md) | Saga orquestrada com o `bunzina-os` no comando | Aceita |
+| [0014](./0014-mongodb-workshop.md) | MongoDB no `bunzina-workshop` | Aceita |
+| [0015](./0015-rabbitmq-broker.md) | RabbitMQ como broker de mensageria | Aceita |
+| [0016](./0016-code-reuse-between-services.md) | Reuso de código entre os microsserviços | Aceita |
+| [0017](./0017-sonarcloud-quality-gate.md) | SonarCloud como quality gate | Aceita |
 
 A decisão vigente de provisionamento do banco está na [ADR-001 — PostgreSQL no EKS com Terraform](../../adrs/adr-001-postgresql-terraform.md), aceita em 2026-09-13.
+
+As mensagens trocadas entre os serviços da Fase 4 estão em [Contratos de eventos da saga](../../contracts/events-saga-contracts.md).
