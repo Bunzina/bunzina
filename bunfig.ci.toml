@@ -1,12 +1,26 @@
 [test]
 root = "."
 preload = ["./src/test/setup.ts"]
-coverage = false
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "./coverage"
+coverageThreshold = { lines = 0.8, functions = 0.8, statements = 0.8, branches = 0.8 }
+coverageSkipTestFiles = true
 testTimeout = 60000
 pathIgnorePatterns = [
   "**/node_modules/**",
+  "**/templates/**",
   "**/dist/**",
   "**/coverage/**",
+  "**/src/test/**",
+  "**/infrastructure/configs/**",
+]
+coveragePathIgnorePatterns = [
+  "**/node_modules/**",
+  "**/templates/**",
+  "**/dist/**",
+  "**/coverage/**",
+  "**/migrations/**",
   "**/src/test/**",
   "**/infrastructure/configs/**",
 ]

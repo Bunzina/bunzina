@@ -1,7 +1,7 @@
 # Contratos de eventos — visão geral
 
-Resumo para apresentação ao time. O detalhamento com todos os payloads está na spec
-completa (`2026-09-17-contratos-eventos-saga-design.md`).
+Resumo para apresentação ao time. O detalhamento com todos os payloads está em
+[Contratos de eventos da saga](./events-saga-contracts.md).
 
 ## O que decidimos
 
