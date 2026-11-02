@@ -36,6 +36,28 @@ describe('find customer input', () => {
     });
   });
 
+  test('should return the complete validation error for an invalid document', async () => {
+    const request = {
+      params: { documentNumber: 'invalid-document' },
+    } as unknown as Context;
+
+    const result = await findCustomerInput.execute(request);
+
+    expect(result.status).toBe(400);
+    expect(result.headers.get('Content-Type')).toBe('application/json');
+    expect(await result.json()).toEqual({
+      reason: 'Invalid data in request',
+      invalidParams: [
+        {
+          name: 'documentNumber',
+          reason: 'Invalid document number (CPF or CNPJ)',
+          value: 'invalid-document',
+        },
+      ],
+    });
+    expect(findCustomerUseCase.execute).not.toHaveBeenCalled();
+  });
+
   test('should return 500 if use case throws', async () => {
     const request = {
       params: { documentNumber: '12345678909' },

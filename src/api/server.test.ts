@@ -89,6 +89,73 @@ describe('Server', () => {
     });
   });
 
+  test('GET /customers/id/:id returns the complete customer for a valid Api-Key', async () => {
+    const id = '550e8400-e29b-41d4-a716-446655440000';
+    mockDb.mockResolvedValueOnce([
+      {
+        id,
+        name: 'John Doe',
+        document: '12345678909',
+        document_kind: 'CPF',
+        email: 'john@example.com',
+        phone: '+1234567890',
+        address_street: '123 Main St',
+        address_number: '456',
+        address_neighborhood: 'Downtown',
+        address_city: 'Anytown',
+        address_state: 'CA',
+        address_zip_code: '12345',
+        address_complement: 'Suite 7',
+        created_at: new Date('2025-06-15T12:00:00.000Z'),
+        updated_at: new Date('2025-06-16T12:00:00.000Z'),
+      },
+    ]);
+
+    const response = await app.handle(
+      new Request(`http://localhost/customers/id/${id}`, {
+        method: 'GET',
+        headers: { 'Api-Key': 'test-only-api-key' },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Content-Type')).toContain('application/json');
+    expect(await response.json()).toEqual({
+      id,
+      name: 'John Doe',
+      document: '12345678909',
+      documentKind: 'CPF',
+      email: 'john@example.com',
+      phone: '+1234567890',
+      address: {
+        street: '123 Main St',
+        number: '456',
+        city: 'Anytown',
+        state: 'CA',
+        zipCode: '12345',
+        neighborhood: 'Downtown',
+        complement: 'Suite 7',
+      },
+      createdAt: '2025-06-15',
+      updatedAt: '2025-06-16',
+    });
+  });
+
+  test('GET /customers/id/:id still requires authentication', async () => {
+    const response = await app.handle(
+      new Request(
+        'http://localhost/customers/id/550e8400-e29b-41d4-a716-446655440000',
+        { method: 'GET' },
+      ),
+    );
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get('Content-Type')).toContain('application/json');
+    expect(await response.json()).toEqual({
+      reason: 'Missing or invalid authorization header',
+    });
+  });
+
   test('GET /service-orders/customer/:documentNumber is public', async () => {
     mockDb.mockResolvedValueOnce([]);
 
@@ -105,8 +172,14 @@ describe('Server', () => {
   });
 
   test('GET /metrics exposes HTTP metrics without sensitive route parameters', async () => {
+    const customerId = '550e8400-e29b-41d4-a716-446655440000';
     await app.handle(
       new Request('http://localhost/customers/12345678901', {
+        method: 'GET',
+      }),
+    );
+    await app.handle(
+      new Request(`http://localhost/customers/id/${customerId}`, {
         method: 'GET',
       }),
     );
@@ -122,6 +195,8 @@ describe('Server', () => {
     );
     expect(metrics).toContain('bunzina_http_requests_total');
     expect(metrics).toContain('route="/customers/:documentNumber"');
+    expect(metrics).toContain('route="/customers/id/:id"');
     expect(metrics).not.toContain('12345678901');
+    expect(metrics).not.toContain(customerId);
   });
 });

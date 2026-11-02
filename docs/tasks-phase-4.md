@@ -184,12 +184,12 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - Os testes BDD e de mensageria cobrem os cenários locais sem depender de Billing ou
     Workshop em execução.
 
-- [ ] Concluir a transição e validação da OS no `bunzina-os`.
-  - Pendente: definir se busca por cliente, alteração e remoção, hoje existentes no
-    monólito, também fazem parte do escopo do `bunzina-os`; validar a rota de entrega
-    prevista para o serviço, o fluxo real e o trace ponta a ponta quando Billing e
-    Workshop estiverem prontos; depois remover/ajustar o domínio, rotas e testes da OS
-    no monólito.
+- [ ] Concluir a transição da OS para o `bunzina-os`.
+  - Para depois: migrar as rotas restantes de OS do monólito, incluindo busca por cliente,
+    alteração/remoção e entrega, conforme o escopo definido para o serviço; depois remover
+    ou ajustar o domínio, as rotas e os testes correspondentes no monólito.
+  - Quando Billing e Workshop estiverem prontos: validar o fluxo real entre serviços e o
+    trace ponta a ponta.
 
 ---
 

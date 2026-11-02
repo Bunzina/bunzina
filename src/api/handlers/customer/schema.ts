@@ -128,6 +128,31 @@ export const findCustomerSchema = {
   },
 };
 
+export const findCustomerByIdSchema = {
+  detail: {
+    tags: ['Customers'],
+    summary: 'Buscar cliente por ID',
+    description: 'Busca um cliente pelo UUID.',
+    responses: {
+      '200': { description: 'Cliente encontrado' },
+      '400': { description: 'UUID invÃ¡lido' },
+      '401': { description: 'Token ou Api-Key ausente ou invÃ¡lido' },
+      '404': { description: 'Cliente nÃ£o encontrado' },
+      '500': { description: 'Erro interno do servidor' },
+    },
+  },
+  params: t.Object({
+    id: t.String({
+      description: 'UUID do cliente',
+      format: 'uuid',
+      examples: ['550e8400-e29b-41d4-a716-446655440000'],
+    }),
+  }),
+  response: {
+    200: customerResponseSchema,
+  },
+};
+
 export const updateCustomerSchema = {
   detail: {
     tags: ['Customers'],
