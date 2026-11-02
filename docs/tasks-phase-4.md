@@ -177,7 +177,7 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
 
 - [x] Guardar os dados de cliente e veículo como snapshot desnormalizado na criação da OS.
 
-- [x] Implementar o cliente REST para o serviço de Cadastros, com validação e timeout.
+- [x] Implementar o cliente REST para o serviço de Cadastros, com validação, timeout e retry limitado.
 
 - [x] Implementar o orquestrador da saga, com persistência, comandos/eventos,
   idempotência, outbox, compensações e timeout.
@@ -185,10 +185,11 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
     Workshop em execução.
 
 - [ ] Concluir a transição e validação da OS no `bunzina-os`.
-  - Pendente: adicionar retry limitado ao cliente de Cadastros; confirmar e portar as
-    operações OS-owned ainda ausentes (busca por cliente, alteração/remoção e entrega);
-    validar o fluxo real e o trace ponta a ponta quando Billing e Workshop estiverem
-    prontos; depois remover/ajustar o domínio, rotas e testes da OS no monólito.
+  - Pendente: definir se busca por cliente, alteração e remoção, hoje existentes no
+    monólito, também fazem parte do escopo do `bunzina-os`; validar a rota de entrega
+    prevista para o serviço, o fluxo real e o trace ponta a ponta quando Billing e
+    Workshop estiverem prontos; depois remover/ajustar o domínio, rotas e testes da OS
+    no monólito.
 
 ---
 
