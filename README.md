@@ -336,6 +336,7 @@ A documentação interativa completa (request/response schemas, exemplos e tags)
 | Método | Rota                         | Descrição          |
 | ------ | ---------------------------- | ------------------ |
 | POST   | `/customers`                 | Criar novo cliente |
+| GET    | `/customers/id/:id`          | Buscar cliente por UUID |
 | GET    | `/customers/:documentNumber` | Buscar cliente     |
 | PUT    | `/customers/:documentNumber` | Atualizar cliente  |
 | DELETE | `/customers/:documentNumber` | Excluir cliente    |

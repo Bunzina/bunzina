@@ -84,6 +84,7 @@ const dynamicRoutePatterns: Array<[RegExp, string]> = [
     '/service-orders/customer/:documentNumber',
   ],
   [/^\/service-orders\/[^/]+$/, '/service-orders/:id'],
+  [/^\/customers\/id\/[^/]+$/, '/customers/id/:id'],
   [/^\/customers\/[^/]+$/, '/customers/:documentNumber'],
   [/^\/auto-parts\/[^/]+\/stock-movements$/, '/auto-parts/:id/stock-movements'],
   [/^\/(?:auto-parts|services|users|vehicles)\/[^/]+$/, '/:resource/:id'],

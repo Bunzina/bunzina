@@ -16,10 +16,13 @@ describe('findCustomerHandler', () => {
   });
 
   test('should return 200 when finding a customer', async () => {
+    const id = '550e8400-e29b-41d4-a716-446655440000';
+    const createdAt = new Date('2025-06-15T12:00:00.000Z');
+    const updatedAt = new Date('2025-06-16T12:00:00.000Z');
     mockDb.mockImplementation(() =>
       Promise.resolve([
         {
-          id: 'customer-id',
+          id,
           name: 'John Doe',
           document: '12345678909',
           document_kind: 'CPF',
@@ -32,8 +35,8 @@ describe('findCustomerHandler', () => {
           address_state: 'CA',
           address_zip_code: '12345',
           address_complement: undefined,
-          created_at: new Date(),
-          updated_at: new Date(),
+          created_at: createdAt,
+          updated_at: updatedAt,
         },
       ] as unknown[]),
     );
@@ -47,6 +50,24 @@ describe('findCustomerHandler', () => {
 
     expect(result.status).toBe(200);
     expect(result.headers.get('Content-Type')).toBe('application/json');
+    expect(await result.json()).toEqual({
+      id,
+      name: 'John Doe',
+      document: '12345678909',
+      documentKind: 'CPF',
+      email: 'john@example.com',
+      phone: '+1234567890',
+      address: {
+        street: '123 Main St',
+        number: '456',
+        city: 'Anytown',
+        state: 'CA',
+        zipCode: '12345',
+        neighborhood: 'Downtown',
+      },
+      createdAt: '2025-06-15',
+      updatedAt: '2025-06-16',
+    });
   });
 
   test('should return 500 when an internal error occurs', async () => {

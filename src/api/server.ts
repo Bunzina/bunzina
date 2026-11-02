@@ -28,9 +28,11 @@ import { updateAutoPartHandler } from './handlers/auto-part/update';
 import { createCustomerHandler } from './handlers/customer/create';
 import { deleteCustomerHandler } from './handlers/customer/delete';
 import { findCustomerHandler } from './handlers/customer/find';
+import { findCustomerByIdHandler } from './handlers/customer/find-by-id';
 import {
   createCustomerSchema,
   deleteCustomerSchema,
+  findCustomerByIdSchema,
   findCustomerSchema,
   updateCustomerSchema,
 } from './handlers/customer/schema';
@@ -265,6 +267,11 @@ app.guard(
       '/customers',
       async (context) => createCustomerHandler(context),
       createCustomerSchema,
+    );
+    app.get(
+      '/customers/id/:id',
+      async (context) => findCustomerByIdHandler(context),
+      findCustomerByIdSchema,
     );
     app.get(
       '/customers/:documentNumber',
