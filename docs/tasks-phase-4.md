@@ -105,13 +105,12 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
 Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo PDF.
 
 - [x] Ligar a cobertura no `bunfig.ci.toml`.
-  - Hoje o arquivo tem `coverage = false`, e o CI executa com `--config=./bunfig.ci.toml`.
-  - Na prática, o CI atual não mede nem impõe cobertura, apesar do threshold configurado
-    no `bunfig.toml` local.
+  - O arquivo tinha `coverage = false`; agora a cobertura está habilitada e o workflow
+    executa esse config com `bun test --config=./bunfig.ci.toml`.
   - A Fase 4 exige cobertura mínima de 80% por serviço com evidência, então o gate precisa
     estar ativo no CI de todos os repositórios.
-  - Ligado com threshold de 80% nas quatro dimensões. A suíte atual passa com 100% de
-    funções e 99.92% de linhas, então o gate não bloqueia nada hoje.
+  - O config mantém threshold de 80%; os resultados devem ser conferidos por serviço e
+    não registrados aqui como percentuais fixos.
 
 - [x] Limpar a pasta `coverage/`.
   - Existem cerca de duzentos arquivos `.lcov.info.*.tmp` soltos no repositório.
@@ -123,12 +122,12 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
 
 # Infraestrutura compartilhada
 
-- [ ] Provisionar o RabbitMQ no cluster.
+- [x] Provisionar o RabbitMQ no cluster.
   - Adicionar o release Helm ao repositório de infraestrutura.
   - Configurar exchange topic, filas por serviço e dead letter queue.
   - Adicionar o mesmo broker ao `docker-compose.yml` local, para manter a paridade.
 
-- [ ] Criar o cluster MongoDB Atlas M0 do `bunzina-workshop`.
+- [x] Criar o cluster MongoDB Atlas M0 do `bunzina-workshop`.
   - Tier gratuito, conforme [ADR 0014](arch/adrs/0014-mongodb-workshop.md).
   - Criar usuário e connection string, e guardá-la como Secret no cluster.
   - Adicionar o IP de saída dos nós do EKS à allowlist do Atlas.
@@ -166,40 +165,30 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
 
 É o serviço central da entrega, porque hospeda o orquestrador da saga.
 
-- [ ] Criar o repositório com proteção de branch e pipeline.
-  - A branch `main` precisa exigir Pull Request e checagens automáticas, conforme o PDF.
+- [x] Criar o repositório, proteger a branch `main` e configurar o pipeline de CI/CD.
 
-- [ ] Migrar o domínio de ordem de serviço do monólito, junto com seus testes.
-  - Origem: `src/domain/service-order`, `src/application/use-cases/service-order`,
-    `src/adapters/input/service-order`, `src/adapters/output/service-order`,
-    `src/api/handlers/service-order` e `src/infrastructure/repositories/service-order`.
-  - Os casos de uso já existentes cobrem criação, atualização, remoção, busca por id, busca
-    por cliente, listagem, atualização de status, conclusão de item de serviço e validação
-    da confirmação do orçamento.
-  - Os testes acompanham o código migrado, o que já adianta boa parte da meta de cobertura.
+- [x] Migrar as entidades, value objects, estados e testes de domínio da OS para
+  `bunzina-os`.
+  - O serviço já implementa criação, consulta por ID e listagem de ordens.
 
-- [ ] Criar o banco Postgres próprio do serviço.
-  - Tabelas `service_orders`, `service_order_items`, `saga_instances` e `processed_events`.
-  - Reaproveitar o engine de migrations que já existe em `migrations/engine/`.
+- [x] Criar o banco Postgres próprio do serviço.
+  - Migrations incluem `service_orders`, `service_order_items`, `saga_instances`,
+    `processed_events` e `outbox_messages`.
 
-- [ ] Guardar os dados de cliente e veículo como snapshot desnormalizado.
-  - No momento da criação da ordem de serviço, copiar nome, documento e placa.
-  - Isso evita uma chamada síncrona ao serviço de Cadastros no caminho crítico e respeita a
-    regra de que nenhum serviço acessa o banco de outro.
+- [x] Guardar os dados de cliente e veículo como snapshot desnormalizado na criação da OS.
 
-- [ ] Implementar o cliente REST para o serviço de Cadastros.
-  - Usado para validar cliente, veículo e serviço na criação da ordem.
-  - É a comunicação síncrona prevista pelo PDF para quando ela for necessária.
-  - Precisa de timeout e política de retry.
+- [x] Implementar o cliente REST para o serviço de Cadastros, com validação e timeout.
 
-- [ ] Implementar o orquestrador da saga.
-  - Persistir o estado de cada instância da saga.
-  - Publicar os comandos para os demais serviços e consumir as respostas.
-  - Implementar as compensações e o retorno da ordem de serviço para o status cancelado.
-  - Tratar timeout por etapa.
+- [x] Implementar o orquestrador da saga, com persistência, comandos/eventos,
+  idempotência, outbox, compensações e timeout.
+  - Os testes BDD e de mensageria cobrem os cenários locais sem depender de Billing ou
+    Workshop em execução.
 
-- [ ] Remover o domínio de ordem de serviço do `bunzina` monolítico.
-  - Ajustar rotas e testes do que ficou.
+- [ ] Concluir a transição e validação da OS no `bunzina-os`.
+  - Pendente: adicionar retry limitado ao cliente de Cadastros; confirmar e portar as
+    operações OS-owned ainda ausentes (busca por cliente, alteração/remoção e entrega);
+    validar o fluxo real e o trace ponta a ponta quando Billing e Workshop estiverem
+    prontos; depois remover/ajustar o domínio, rotas e testes da OS no monólito.
 
 ---
 
@@ -239,20 +228,20 @@ em paralelo.
 
 Pode ser desenvolvido em paralelo ao `bunzina-billing`.
 
-- [ ] Criar o repositório com proteção de branch e pipeline.
+- [x] Criar o repositório com proteção de branch e pipeline.
 
-- [ ] Criar o banco MongoDB próprio do serviço.
+- [x] Criar o banco MongoDB próprio do serviço.
   - Coleções `execution_queue` e `execution_logs`.
   - A troca de Postgres por Mongo é local à camada de infraestrutura, porque as interfaces
     de repositório já vivem no domínio.
 
-- [ ] Implementar o consumo de `ExecutionRequested` e a gestão da fila de execução.
+- [x] Implementar o consumo de `ExecutionRequested` e a gestão da fila de execução.
 
-- [ ] Expor a API REST para o mecânico atualizar diagnóstico e reparo.
+- [x] Expor a API REST para o mecânico atualizar diagnóstico e reparo.
 
-- [ ] Publicar `ExecutionStarted`, `ExecutionCompleted` e `ExecutionFailed`.
+- [x] Publicar `ExecutionStarted`, `ExecutionCompleted` e `ExecutionFailed`.
 
-- [ ] Implementar a compensação `ExecutionAborted`.
+- [x] Implementar a compensação `ExecutionAborted`.
   - Remove o item da fila e registra o motivo.
 
 ---

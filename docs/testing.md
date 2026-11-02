@@ -68,8 +68,8 @@ O projeto tem três arquivos de configuração do test runner, um para cada cen�
 
 | Arquivo | Uso | Cobertura | Observações |
 | --- | --- | --- | --- |
-| [bunfig.toml](../bunfig.toml) | Padrão (`bun test`) | Habilitada, mínimo 80% (linhas/funções/statements/branches) | Ignora `src/test/**` na varredura e na cobertura |
-| [bunfig.ci.toml](../bunfig.ci.toml) | Pipeline de CI | Desabilitada | Mesmos `pathIgnorePatterns` do padrão; timeout de 60s para acomodar a máquina do runner |
+| [bunfig.toml](../bunfig.toml) | Padrão (`bun test`) | Habilitada, threshold de 80% configurado | Ignora `src/test/**` na varredura e na cobertura |
+| [bunfig.ci.toml](../bunfig.ci.toml) | Pipeline de CI | Habilitada, com threshold de 80% | Mesmos `pathIgnorePatterns` do padrão; timeout de 60s para acomodar a máquina do runner |
 | [bunfig.integration.toml](../bunfig.integration.toml) | `bun run test:integration` | Desabilitada | Sem `pathIgnorePatterns` — precisa alcançar `src/test/integration/`; timeout de 60s |
 
 Todos carregam [src/test/setup.ts](../src/test/setup.ts) como preload, que define variáveis de ambiente padrão (`JWT_SECRET`, `API_KEY`) e mocka o logger para não poluir a saída dos testes — exceto o `bunfig.integration.toml`, que não faz preload porque os testes de integração inicializam seu próprio ambiente via `setupIntegration()`.
@@ -182,4 +182,4 @@ Ran T tests across F files. [tempo]
 
 - **`X pass` / `Y fail`**: quantidade de testes que passaram e falharam. Qualquer `Y fail > 0` faz o processo terminar com código de saída diferente de zero — é esse código que o CI usa para marcar o workflow como falho.
 - Cada teste que falha aparece **antes** do resumo, marcado com `(fail)`, mostrando o `describe`/`test` correspondente, a asserção que falhou (valor esperado vs. recebido) e o arquivo:linha exato — é aí que se deve olhar primeiro.
-- **Cobertura** (`bun test`, via [bunfig.toml](../bunfig.toml)): uma tabela por arquivo com `% Funcs`, `% Lines` e as linhas não cobertas (`Uncovered Line #s`). O projeto exige um mínimo de 80% em linhas, funções, statements e branches (`coverageThreshold`); se algum arquivo ficar abaixo disso, o comando também termina com falha, mesmo que todos os testes tenham passado. Os testes de integração e o pipeline de CI (`bunfig.integration.toml` e `bunfig.ci.toml`) rodam com `coverage = false`, então essa tabela não aparece neles.
+- **Cobertura**: `bun test` usa [bunfig.toml](../bunfig.toml), e o workflow de CI usa [bunfig.ci.toml](../bunfig.ci.toml). Ambos habilitam cobertura e configuram threshold de 80%. O relatório mostra cobertura por arquivo; no Bun 1.4.4, o processo falha se qualquer arquivo ficar abaixo do threshold de linhas ou funções, mesmo que todos os testes passem. O teste de integração usa [bunfig.integration.toml](../bunfig.integration.toml), que mantém `coverage = false`, então não gera essa tabela.
