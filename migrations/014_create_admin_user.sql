@@ -14,4 +14,4 @@ VALUES (
   '$argon2id$v=19$m=65536,t=2,p=1$bjNbAXHqRMHtgUVJ9OlPT1kRqfe/nv3ptBYULU+6clE$oZnjxIOgOAjJtwvRwLzzZ96SimJTGeFAjov6HkbsjXY',
   'ADMIN'
 )
-ON CONFLICT (email) DO NOTHING;
+ON CONFLICT DO NOTHING;
