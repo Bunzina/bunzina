@@ -6,12 +6,32 @@ Este documento explica **quais tipos de teste existem no projeto**, **o objetivo
 
 ## Tipos de teste
 
-O projeto possui dois tipos de teste, com objetivos e infraestrutura diferentes: **testes unitários** e **testes de integração**. Ambos usam o test runner nativo do Bun (`bun:test`), mas rodam com configurações e finalidades distintas.
+O projeto possui três tipos de teste: **BDD**, **testes unitários** e **testes de integração**. O BDD usa Cucumber com Gherkin em português e exercita casos de uso reais com dependências controladas em memória. Os demais usam o test runner nativo do Bun (`bun:test`).
 
 | Tipo | Objetivo | Dependências externas | Roda no CI |
 | --- | --- | --- | --- |
+| BDD | Descrever e verificar exemplos de negócio nos limites dos casos de uso | Nenhuma — repositórios e serviços externos ficam em memória | Sim |
 | Unitário | Validar uma unidade isolada (input, use case, presenter, value object, etc.) | Nenhuma — dependências são mockadas | Sim |
 | Integração | Validar o fluxo HTTP completo, de ponta a ponta, contra um banco real | PostgreSQL (`db_test`) | Não (rodam apenas localmente) |
+
+---
+
+## Cenários BDD
+
+**Objetivo:** manter exemplos executáveis para cadastro de clientes e veículos,
+autenticação, abertura e ciclo da ordem de serviço e histórico de estoque.
+
+**Onde ficam:** arquivos `.feature` em [features/](../features/) e definições de
+passos em [features/support/steps.ts](../features/support/steps.ts).
+
+```bash
+bun run bdd
+```
+
+Os cenários usam os casos de uso da aplicação e adaptadores em memória. Eles não
+substituem os testes unitários nem a suíte HTTP com PostgreSQL. Regras registradas em
+[features/QUESTIONS.md](../features/QUESTIONS.md) ainda precisam de decisão ou
+implementação antes de poderem ser especificadas como comportamento confirmado.
 
 ---
 

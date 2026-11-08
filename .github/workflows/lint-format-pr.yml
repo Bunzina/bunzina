@@ -34,3 +34,4 @@ jobs:
         run: |
           bun lint
           bun fmt:check
+          bun run bdd
