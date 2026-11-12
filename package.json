@@ -10,6 +10,7 @@
     "start:dev": "bun --hot run src/api/server.ts",
     "start:with-migrations": "bun run migration && bun run start:dev",
     "test": "bun test",
+    "bdd": "bun --bun run cucumber-js --import features/support/steps.ts",
     "test:database": "docker compose up db_test -d",
     "test:integration": "bun run test:database && sleep 2 && bun test --config=./bunfig.integration.toml ./src/test/integration/",
     "posttest:integration": "docker compose stop db_test",
@@ -39,6 +40,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
     "@types/bun": "latest",
     "@types/node": "^25.5.2",
     "@types/nodemailer": "^8.0.0",

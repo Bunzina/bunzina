@@ -37,7 +37,9 @@ jobs:
         run: bun install
 
       - name: Run tests
-        run: bun test --config=./bunfig.ci.toml
+        run: |
+          bun test --config=./bunfig.ci.toml
+          bun run bdd
         env:
           APP_ENV: prod
           PROD_DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
