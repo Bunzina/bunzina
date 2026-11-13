@@ -56,5 +56,22 @@ services:
       - '1025:1025'
       - '1080:1080'
 
+  # Mesmo broker do cluster (ADR 0015, bunzina-infra/charts/rabbitmq): imagem e
+  # credenciais iguais às do docker-compose de bunzina-os, -billing e -workshop.
+  # Os serviços declaram exchange, filas e DLQ ao conectar. Management em :15672.
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    environment:
+      RABBITMQ_DEFAULT_USER: bunzina
+      RABBITMQ_DEFAULT_PASS: bunzina
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', '-q', 'check_port_connectivity']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   db-data:
