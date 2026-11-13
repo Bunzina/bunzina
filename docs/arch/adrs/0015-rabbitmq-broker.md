@@ -14,6 +14,11 @@ falha precisa ser ensaiado antes da gravação, não improvisado.
 
 RabbitMQ no cluster, instalado por Helm, e o mesmo broker no `docker-compose.yml` local.
 
+O broker é provisionado pelo repositório
+[`bunzina-broker`](https://github.com/Bunzina/bunzina-broker), que guarda o chart, a
+topologia abaixo e o Terraform do release. A topologia precisa permanecer idêntica ao
+`assertTopology` de cada serviço.
+
 Topologia:
 
 - Exchange `bunzina.events`, tipo `topic`, durável.
