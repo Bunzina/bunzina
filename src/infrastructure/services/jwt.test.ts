@@ -29,6 +29,22 @@ describe('jwt service', () => {
     await expect(verifyJwt('invalid')).rejects.toThrow('Invalid token format');
   });
 
+  test('should reject signing when the jwt secret is not configured', async () => {
+    const configuredSecret = process.env.JWT_SECRET;
+    delete process.env.JWT_SECRET;
+
+    await expect(
+      signJwt({
+        sub: '123',
+        document: '11144477735',
+        email: 'test@test.com',
+        role: 'ADMIN',
+      }),
+    ).rejects.toThrow('JWT_SECRET must be configured');
+
+    process.env.JWT_SECRET = configuredSecret;
+  });
+
   test('should reject a token with invalid signature', async () => {
     const token = await signJwt({
       sub: '123',

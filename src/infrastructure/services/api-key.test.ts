@@ -25,4 +25,15 @@ describe('api key service', () => {
       verifyApiKey('invalid-api-key');
     }).toThrow('Unauthorized');
   });
+
+  test('should reject requests when the api key is not configured', () => {
+    const configuredApiKey = process.env.API_KEY;
+    delete process.env.API_KEY;
+
+    expect(() => verifyApiKey('test-api-key')).toThrow(
+      'API_KEY must be configured',
+    );
+
+    process.env.API_KEY = configuredApiKey;
+  });
 });

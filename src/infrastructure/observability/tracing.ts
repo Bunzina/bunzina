@@ -19,7 +19,7 @@ function build(): Elysia {
   });
 }
 
-function shouldTrace(request: Request): boolean {
+export function shouldTrace(request: Request): boolean {
   try {
     return !NON_TRACED_PATHS.has(new URL(request.url).pathname);
   } catch {
