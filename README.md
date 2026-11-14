@@ -237,7 +237,7 @@ bunzina-infra → bunzina-db → bunzina-chart → workflow de deploy do bunzina
 O workflow de deploy deste repositório exige que o EKS e o PostgreSQL já
 existam. Ele executa testes, valida novas migrations, executa migrations
 pendentes quando houver arquivos novos, constrói a imagem, publica no ECR e
-atualiza a aplicação e a observabilidade com Helm.
+atualiza a aplicação com Helm. A observabilidade é instalada pelo `bunzina-infra`.
 
 ### Arquitetura
 
@@ -270,7 +270,6 @@ DB_PASSWORD
 JWT_SECRET
 API_KEY
 PROD_DATABASE_URL
-GRAFANA_ADMIN_PASSWORD
 ```
 
 **Variables opcionais**:

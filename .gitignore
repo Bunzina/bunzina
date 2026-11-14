@@ -59,8 +59,6 @@ values.secret.yaml
 charts/**/charts/
 charts/**/*.tgz
 charts/**/Chart.lock
-# cópia gerada pelo CI a partir de observability/grafana/dashboards/
-charts/bunzina-observability/dashboards/
 
 # Superpowers (scratch e specs/plans locais)
 .superpowers/
