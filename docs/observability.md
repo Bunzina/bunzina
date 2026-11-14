@@ -114,11 +114,11 @@ Em `observability/grafana/dashboards/`:
 - `bunzina-service-order-duration.json` — tempo médio de execução por status (`bunzina_service_order_status_duration_seconds`), incluindo o exemplo do task doc (`IN_EXECUTION -> COMPLETED`).
 - `bunzina-integration-errors.json` — misto Prometheus (falha de notificação por canal, taxa de 5xx por rota) + Loki (linhas de log de erro reais, com `trace_id` clicável para o Tempo).
 
-No Kubernetes esses mesmos arquivos viram `ConfigMap`s (ver `charts/bunzina-observability/templates/dashboards.yaml`) — não são duplicados, só copiados pelo CI antes do `helm upgrade`.
+No Kubernetes os dashboards vivem no chart `bunzina-observability` do repositório `bunzina-infra` (`charts/bunzina-observability/dashboards/`). Esta pasta serve só ao ambiente local com Docker Compose.
 
 ## Alertas
 
-Motor único: **Grafana unified alerting**. O Prometheus não tem mais `rule_files` nem roda seu próprio Alertmanager — ele só guarda séries para o Grafana consultar. As regras, o contact point (e-mail via mailcatcher) e a política de notificação são provisionados como código em `observability/grafana/provisioning/alerting/` (local) e em `kube-prometheus-stack.grafana.alerting` / `grafana.ini.smtp` (`charts/bunzina-observability/values.yaml`, Kubernetes) — mesmo conteúdo, só o host de SMTP muda entre os dois ambientes.
+Motor único: **Grafana unified alerting**. O Prometheus não tem mais `rule_files` nem roda seu próprio Alertmanager — ele só guarda séries para o Grafana consultar. As regras, o contact point (e-mail via mailcatcher) e a política de notificação são provisionados como código em `observability/grafana/provisioning/alerting/` (local) e em `kube-prometheus-stack.grafana.alerting` / `grafana.ini.smtp` (`charts/bunzina-observability/values.yaml` do `bunzina-infra`, Kubernetes) — mesmo conteúdo, só o host de SMTP muda entre os dois ambientes.
 
 As 4 regras, na pasta `Bunzina`:
 
@@ -149,9 +149,9 @@ app:
       scrapeTimeout: 10s
 ```
 
-O `ServiceMonitor` exige as CRDs do Prometheus Operator já instaladas no cluster — por isso o release do stack de observabilidade (`kube-prometheus-stack`) precisa subir antes do release da aplicação. Como os templates do subchart não estão neste repositório, qualquer ajuste no contrato (novas probes, labels, portas) é feito via PR em `Bunzina/bunzina-chart`, não com manifests locais.
+O `ServiceMonitor` exige as CRDs do Prometheus Operator já instaladas no cluster — elas vêm da stack de observabilidade, que o `bunzina-infra` instala junto com o cluster, antes de qualquer release de aplicação. Como os templates do subchart não estão neste repositório, qualquer ajuste no contrato (novas probes, labels, portas) é feito via PR em `Bunzina/bunzina-chart`, não com manifests locais.
 
-O stack de observabilidade em si (`kube-prometheus-stack` + Loki + Tempo + Alloy) vive em `charts/bunzina-observability/` — ver o README desse chart para detalhes de cada dependência, nomes de serviço e ordem de instalação. A app aponta `OTEL_EXPORTER_OTLP_ENDPOINT` para `http://alloy-gateway.observability.svc.cluster.local:4318` (já configurado em `charts/bunzina-chart/values.yaml`).
+O stack de observabilidade em si (`kube-prometheus-stack` + Loki + Tempo + Alloy) vive no repositório `bunzina-infra`, em `charts/bunzina-observability/`, e é instalado pelo Terraform de lá — ver o README desse chart para detalhes de cada dependência, nomes de serviço e ordem de instalação. A app aponta `OTEL_EXPORTER_OTLP_ENDPOINT` para `http://alloy-gateway.observability.svc.cluster.local:4318` (já configurado em `charts/bunzina-chart/values.yaml`).
 
 ## Validação
 
