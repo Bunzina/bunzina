@@ -11,7 +11,7 @@ const NON_TRACED_PATHS = new Set(['/metrics', '/health', '/ready']);
 
 export const tracing: Elysia | null = tracesEndpoint ? build() : null;
 
-function build(): Elysia {
+export function build(): Elysia {
   return opentelemetry({
     serviceName: process.env.OTEL_SERVICE_NAME || 'bunzina',
     spanProcessors: [new BatchSpanProcessor(new OTLPTraceExporter())],

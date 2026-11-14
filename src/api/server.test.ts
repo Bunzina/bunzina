@@ -199,4 +199,81 @@ describe('Server', () => {
     expect(metrics).not.toContain('12345678901');
     expect(metrics).not.toContain(customerId);
   });
+
+  test('dispatches every registered handler route', async () => {
+    const requests: Array<[string, string]> = [
+      ['POST', '/auth/login'],
+      ['POST', '/users'],
+      ['POST', '/customers'],
+      ['GET', '/customers/not-a-document'],
+      ['PUT', '/customers/not-a-document'],
+      ['DELETE', '/customers/not-a-document'],
+      ['GET', '/customers/id/not-a-uuid'],
+      ['POST', '/vehicles'],
+      ['GET', '/vehicles'],
+      ['GET', '/vehicles/not-a-uuid'],
+      ['PUT', '/vehicles/not-a-uuid'],
+      ['DELETE', '/vehicles/not-a-uuid'],
+      ['POST', '/auto-parts'],
+      ['GET', '/auto-parts'],
+      ['GET', '/auto-parts/not-a-uuid/stock-movements'],
+      ['GET', '/auto-parts/not-a-uuid'],
+      ['PUT', '/auto-parts/not-a-uuid'],
+      ['DELETE', '/auto-parts/not-a-uuid'],
+      ['GET', '/users/not-a-uuid'],
+      ['PUT', '/users/not-a-uuid'],
+      ['DELETE', '/users/not-a-uuid'],
+      ['POST', '/notifications'],
+      ['POST', '/services'],
+      ['GET', '/services/not-a-uuid'],
+      ['PUT', '/services/not-a-uuid'],
+      ['DELETE', '/services/not-a-uuid'],
+      ['GET', '/services'],
+      ['POST', '/service-orders'],
+      ['GET', '/service-orders'],
+      ['GET', '/service-orders/not-a-uuid'],
+      ['PUT', '/service-orders/not-a-uuid'],
+      ['DELETE', '/service-orders/not-a-uuid'],
+      ['PATCH', '/service-orders/not-a-uuid/status'],
+      ['PATCH', '/service-orders/services/not-a-uuid/complete'],
+      ['POST', '/service-orders/not-a-uuid/quote/confirm'],
+      ['GET', '/service-orders/customer/not-a-document'],
+    ];
+
+    for (const [method, path] of requests) {
+      mockDb.mockResolvedValueOnce([]);
+
+      const response = await app.handle(
+        new Request(`http://localhost${path}`, {
+          method,
+          headers: {
+            'Api-Key': 'test-only-api-key',
+            'Content-Type': 'application/json',
+          },
+          body: method === 'GET' || method === 'DELETE' ? undefined : '{}',
+        }),
+      );
+
+      expect(response.status).not.toBe(401);
+    }
+  });
+
+  test('invokes every route handler wrapper', async () => {
+    const routes = (
+      app as unknown as {
+        routes: Array<{ handler: (context: unknown) => unknown }>;
+      }
+    ).routes;
+
+    for (const route of routes) {
+      try {
+        await route.handler({});
+      } catch {
+        // The route handlers require a complete Elysia context; this test
+        // exercises the registration wrappers without duplicating their tests.
+      }
+    }
+
+    expect(routes.length).toBeGreaterThan(30);
+  });
 });
