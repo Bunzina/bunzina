@@ -5,8 +5,11 @@ Esta pasta centraliza a documentação de arquitetura do Bunzina. Os demais repo
 | Documento | Conteúdo |
 | --- | --- |
 | [Visão geral](./overview.md) | Componentes, fluxos, repositórios e infraestrutura |
-| [Banco de dados](./database.md) | PostgreSQL, schema, tabelas, migrations e relacionamentos |
+| [Microsserviços](./diagrams/microservices.md) | Diagrama geral da Fase 4: serviços, bancos e broker |
+| [Banco de dados](./database.md) | PostgreSQL × MongoDB, schemas e justificativa |
+| [ER do OS](./diagrams/er-os.md) | PostgreSQL do `bunzina-os` |
 | [ER do Billing](./diagrams/er-billing.md) | Modelo do banco do `bunzina-billing` |
+| [Mongo do Workshop](./diagrams/mongo-workshop.md) | Coleções do `bunzina-workshop` |
 | [Diagramas](./diagrams/README.md) | Nuvem, EKS, API Gateway/Lambda, sequências e modelo ER |
 | [ADRs](./adrs/README.md) | Decisões arquiteturais e o motivo de cada uma |
 | [RFCs](./rfcs/README.md) | Decisões técnicas do grupo para a Fase 3 |

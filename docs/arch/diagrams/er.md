@@ -1,6 +1,9 @@
 # Diagrama ER
 
-Modelo atual do schema `bunzina`, baseado nas migrations `001` a `013`.
+Modelo relacional dos **cadastros** no PostgreSQL do `bunzina`, baseado nas
+migrations `001` a `013`. A OS em runtime vive no `bunzina-os`
+([er-os.md](./er-os.md)); billing em [er-billing.md](./er-billing.md); workshop em
+[mongo-workshop.md](./mongo-workshop.md).
 Fonte visual versionável: [er.svg](../er.svg). O PNG e o SVG mostram as 9 tabelas, 86 colunas e 9 FKs do domínio, incluindo as alterações das migrations 010–013.
 
 ![Modelo ER atual](../er.png)

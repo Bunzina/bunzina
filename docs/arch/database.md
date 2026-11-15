@@ -1,9 +1,41 @@
 # Banco de dados
 
+Na Fase 4 cada microsserviço tem banco próprio. Nenhum serviço lê o banco de outro
+([ADR 0012](./adrs/0012-microservices-split.md)).
+
+| Serviço | Banco | Modelo | Onde |
+| --- | --- | --- | --- |
+| `bunzina` | PostgreSQL 15 no EKS | Relacional — cadastros | [er.md](./diagrams/er.md) |
+| `bunzina-os` | PostgreSQL no EKS | Relacional — OS + saga | [er-os.md](./diagrams/er-os.md) |
+| `bunzina-billing` | PostgreSQL no EKS | Relacional — orçamento e pagamento | [er-billing.md](./diagrams/er-billing.md) |
+| `bunzina-workshop` | MongoDB Atlas M0 | Documentos | [mongo-workshop.md](./diagrams/mongo-workshop.md) |
+
+## Relacional versus não relacional
+
+PostgreSQL nos três primeiros serviços porque o dado é tabular com FK, transação e
+histórico auditável: cliente → veículo, OS → itens, orçamento → pagamento. A
+[ADR 0001](./adrs/0001-postgresql.md) continua válida para esses bounded contexts.
+
+MongoDB só no workshop porque o agregado da oficina é semiestruturado: três listas de
+itens mudam de forma entre pedido, diagnóstico e execução, e o log do mecânico é
+append-only com `metadata` livre. Modelar isso em tabela seria `jsonb` com outro nome,
+o que não atende ao requisito de banco não relacional
+([ADR 0014](./adrs/0014-mongodb-workshop.md)).
+
+O Atlas M0 fica fora do cluster: libera PVC/cota do Learner Lab para o RabbitMQ.
+
+Diagrama de quem fala com qual banco: [microservices.md](./diagrams/microservices.md).
+
+---
+
+## Cadastros (`bunzina`)
+
 Diagrama ER: [diagrams/er.md](./diagrams/er.md). Decisão de produto: [ADR 0001](./adrs/0001-postgresql.md). Provisionamento no EKS: [ADR-001](../adrs/adr-001-postgresql-terraform.md).
 
-O modelo abaixo representa o schema atual, conforme as migrations `001` a `013`.
+O modelo abaixo é o schema de cadastros, migrations `001` a `013`.
 As tabelas `users` e `customers` não possuem FK entre si.
+As migrations `007`–`011` ainda descrevem OS neste repositório (legado do monólito);
+no recorte da Fase 4 a OS persistida em runtime está no `bunzina-os`.
 
 ---
 
