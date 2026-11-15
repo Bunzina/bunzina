@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { shouldTrace, tracing } from './tracing';
+import { build, shouldTrace, tracing } from './tracing';
 
 describe('tracing', () => {
   test('does not trace health and metrics endpoints', () => {
@@ -20,5 +20,9 @@ describe('tracing', () => {
 
   test('is disabled when no OTLP endpoint is configured', () => {
     expect(tracing).toBeNull();
+  });
+
+  test('builds the OpenTelemetry plugin', () => {
+    expect(build()).toBeDefined();
   });
 });
