@@ -86,11 +86,17 @@ etapas seguintes. Cada uma delas vira um ADR em `docs/adrs/`.
     [events-overview.md](contracts/events-overview.md).
   - Cada evento precisa ter nome, payload, versão e correlation id.
   - O correlation id de todo o fluxo é o id da ordem de serviço.
-  - Eventos do caminho feliz: `OrderCreated`, `QuoteRequested`, `QuoteGenerated`,
-    `QuoteApproved`, `QuoteRejected`, `PaymentRequested`, `PaymentConfirmed`,
-    `ExecutionRequested`, `ExecutionStarted`, `ExecutionCompleted`.
-  - Eventos de falha: `PaymentFailed`, `ExecutionFailed`.
-  - Eventos de compensação: `QuoteCanceled`, `PaymentRefunded`, `ExecutionAborted`.
+  - Comandos e eventos do caminho feliz: `evt.os.order-created`,
+    `cmd.workshop.start-diagnostic`, `evt.workshop.diagnostic-completed`,
+    `cmd.billing.issue-quote`, `evt.billing.quote-issued`, `evt.billing.quote-approved`,
+    `cmd.billing.charge`, `evt.billing.payment-confirmed`,
+    `cmd.workshop.start-execution`, `evt.workshop.execution-completed`.
+  - Eventos de falha e desfecho de negócio: `evt.billing.quote-rejected`,
+    `evt.billing.payment-failed`, `evt.workshop.diagnostic-failed`,
+    `evt.workshop.execution-failed`.
+  - Comandos e eventos de compensação: `cmd.billing.cancel-quote`,
+    `evt.billing.quote-canceled`, `cmd.billing.refund`, `evt.billing.payment-refunded`,
+    `cmd.workshop.abort`, `evt.workshop.execution-aborted`.
   - O contrato precisa estar fechado antes das etapas de implementação, porque é o que
     permite que `bunzina-billing` e `bunzina-workshop` sejam desenvolvidos em paralelo.
 
@@ -198,30 +204,40 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
 Depende do contrato de eventos, não do código do `bunzina-os`, então pode ser desenvolvido
 em paralelo.
 
-- [ ] Criar o repositório com proteção de branch e pipeline.
+- [x] Criar o repositório com proteção de branch e pipeline.
+  - A `main` exige PR e os checks `lint-format/check`, `test/coverage` e
+    `sonar/quality-gate`.
 
-- [ ] Criar o banco Postgres próprio do serviço.
-  - Tabelas `quotes`, `payments` e `payment_events`.
+- [x] Criar o banco Postgres próprio do serviço.
+  - Tabelas `quotes`, `payments` e `payment_events`, mais `processed_events` e
+    `outbox_messages` da mensageria transacional. Diagrama ER em
+    [er-billing.md](arch/diagrams/er-billing.md).
 
-- [ ] Implementar a geração do orçamento a partir do payload do evento.
-  - A lógica de `validate-quote-confirmation`, que já existe no monólito, é a semente
-    dessa implementação.
+- [x] Implementar a geração do orçamento a partir do payload do evento.
+  - O Billing consome `cmd.billing.issue-quote`, calcula o total em centavos a partir dos
+    itens, grava o orçamento e publica `evt.billing.quote-issued`. A lógica de
+    `validate-quote-confirmation` do monólito foi a semente.
 
-- [ ] Implementar o envio do orçamento para aprovação.
-  - Pode reaproveitar o serviço de notificação por e-mail que já existe, seja chamando o
-    serviço de Cadastros por REST, seja copiando a implementação com Nodemailer.
+- [x] Implementar o envio do orçamento para aprovação.
+  - E-mail por SMTP com Nodemailer, copiado do monólito, sem chamada ao `bunzina`.
+  - A aprovação e a recusa entram por `POST /quotes/:id/approval` e publicam
+    `evt.billing.quote-approved` ou `evt.billing.quote-rejected`.
 
-- [ ] Integrar com o Mercado Pago.
-  - O PDF é explícito ao dizer que a parte de pagamentos deve se integrar ao Mercado Pago.
-  - Criar a preferência ou o pagamento PIX no ambiente sandbox.
-  - Implementar o endpoint de webhook para confirmação.
-  - Publicar `PaymentConfirmed` ou `PaymentFailed` conforme o resultado.
-  - Implementar a compensação `PaymentRefunded`.
+- [x] Integrar com o Mercado Pago.
+  - O Checkout Pro usa a API de Orders, não a de preferências
+    ([ADR 0002 do Billing](https://github.com/Bunzina/bunzina-billing/blob/main/docs/adr/0002-checkout-pro-via-orders-api.md)),
+    no sandbox, com PIX e cartão.
+  - O webhook `POST /webhooks/mercadopago` valida o `x-signature`, consulta o estado na API
+    e confirma o pagamento uma única vez.
+  - Publica `evt.billing.payment-confirmed` ou `evt.billing.payment-failed` conforme o
+    resultado.
+  - Implementa a compensação `cmd.billing.refund` / `evt.billing.payment-refunded`, e
+    estorna sozinho o pagamento tardio.
 
-- [ ] Resolver a exposição pública do webhook.
-  - O Mercado Pago precisa alcançar um endpoint público.
-  - As opções são usar o Ingress do EKS ou, apenas para a gravação, um túnel.
-  - Essa decisão precisa ser tomada cedo, porque afeta a infraestrutura do serviço.
+- [x] Resolver a exposição pública do webhook.
+  - O webhook é exposto pelo ALB público do cluster (Ingress `alb`, `internet-facing`), com o
+    endereço em `PUBLIC_BASE_URL`. O túnel fica como plano B só para a gravação, sem mudança
+    de código.
 
 ---
 
@@ -236,13 +252,13 @@ Pode ser desenvolvido em paralelo ao `bunzina-billing`.
   - A troca de Postgres por Mongo é local à camada de infraestrutura, porque as interfaces
     de repositório já vivem no domínio.
 
-- [x] Implementar o consumo de `ExecutionRequested` e a gestão da fila de execução.
+- [x] Implementar o consumo de `cmd.workshop.start-execution` e a gestão da fila de execução.
 
 - [x] Expor a API REST para o mecânico atualizar diagnóstico e reparo.
 
-- [x] Publicar `ExecutionStarted`, `ExecutionCompleted` e `ExecutionFailed`.
+- [x] Publicar `evt.workshop.execution-completed` e `evt.workshop.execution-failed`.
 
-- [x] Implementar a compensação `ExecutionAborted`.
+- [x] Implementar a compensação `cmd.workshop.abort` / `evt.workshop.execution-aborted`.
   - Remove o item da fila e registra o motivo.
 
 ---
