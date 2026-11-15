@@ -26,3 +26,9 @@ A explicação de cada imagem fica no markdown correspondente desta pasta.
 O modelo relacional possui uma fonte textual em [er.md](./er.md). A imagem deve
 ser atualizada junto com as migrations para evitar divergência entre o diagrama
 e o schema implantado.
+
+## Fase 4
+
+| Diagrama | O que mostra |
+| --- | --- |
+| [er-billing.md](./er-billing.md) | Modelo relacional do banco do `bunzina-billing` (orçamento, pagamento, eventos de pagamento, outbox) |

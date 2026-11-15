@@ -511,5 +511,7 @@ completou é problema humano, e a DLQ com alerta é a resposta correta.
 
 - Nome e formato do tópico de notificação para o serviço de Cadastros.
 - Política de retry por tipo de falha do Mercado Pago, que depende de teste no sandbox.
-- Se o webhook do Mercado Pago será exposto por Ingress do EKS ou por túnel durante a
-  gravação.
+- Como o webhook do Mercado Pago é exposto: é o ALB público do `bunzina-billing` (Ingress
+  `alb`, `internet-facing`), com o endereço em `PUBLIC_BASE_URL`. O contrato só define a
+  rota `POST /webhooks/mercadopago` e o evento que ela gera; um túnel durante a gravação
+  seria só um plano B de infraestrutura.
