@@ -1,5 +1,8 @@
 # Arquitetura dos microsserviços (Fase 4)
 
+Cópia de índice no repositório de cadastros. A versão usada na banca vive no
+orquestrador: [`bunzina-os/docs/architecture.md`](https://github.com/Bunzina/bunzina-os/blob/main/docs/architecture.md).
+
 Visão final da solução: quatro serviços de aplicação, cada um com banco próprio, e
 RabbitMQ como único broker. Nenhum serviço acessa o banco de outro
 ([ADR 0012](../adrs/0012-microservices-split.md)).
