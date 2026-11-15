@@ -19,6 +19,11 @@ O Bunzina tem como objetivo digitalizar e centralizar os processos operacionais 
 - Geração de **orçamentos** automatizados a partir dos serviços e peças da OS
 - Gerenciamento de **usuários** internos com controle de acesso por papel (`ADMIN`, `MECHANIC`, `CUSTOMER`)
 
+Na arquitetura da Fase 4, as ordens de serviço e sua Saga são responsabilidade do
+[`bunzina-os`](https://github.com/Bunzina/bunzina-os). O Workshop é dono do diagnóstico
+e da execução dos serviços. A confirmação de orçamento ainda está temporariamente
+disponível neste monólito enquanto o Billing não expõe a rota substituta.
+
 ---
 
 ## Tecnologias
@@ -329,7 +334,6 @@ A documentação interativa completa (request/response schemas, exemplos e tags)
 | GET    | `/health`     | Healthcheck da API                         |
 | POST   | `/auth/login` | Autenticação JWT                           |
 | POST   | `/users`      | Cadastro público (apenas role `CUSTOMER`)  |
-| GET    | `/service-orders/customer/:documentNumber` | Consulta de OS de um cliente pelo documento |
 
 ### Rotas protegidas (requerem JWT)
 
@@ -383,15 +387,16 @@ A documentação interativa completa (request/response schemas, exemplos e tags)
 
 #### Service Orders
 
-| Método | Rota                                       | Descrição                          |
-| ------ | ------------------------------------------ | ---------------------------------- |
-| POST   | `/service-orders`                          | Criar ordem de serviço             |
-| GET    | `/service-orders`                          | Listar ordens de serviço           |
-| GET    | `/service-orders/:id`                      | Buscar ordem de serviço            |
-| PUT    | `/service-orders/:id`                      | Atualizar ordem de serviço         |
-| DELETE | `/service-orders/:id`                      | Excluir ordem de serviço           |
-| PATCH  | `/service-orders/:id/status`               | Atualizar status da ordem          |
-| PATCH  | `/service-orders/services/:id/complete`    | Marcar item de serviço como concluído |
+As rotas de criação, consulta, edição, exclusão e acompanhamento da OS foram migradas
+para o [`bunzina-os`](https://github.com/Bunzina/bunzina-os). A conclusão dos itens de
+execução é feita pelo Workshop em `PATCH /executions/:serviceOrderId/items`.
+
+Rota de transição mantida neste monólito enquanto o Billing não oferece uma
+substituta:
+
+| Método | Rota                                | Descrição                       |
+| ------ | ----------------------------------- | ------------------------------- |
+| POST   | `/service-orders/:id/quote/confirm` | Confirma ou rejeita o orçamento |
 
 #### Notifications
 
@@ -408,7 +413,7 @@ De forma geral, o fluxo de uso da API segue esta ordem:
 1. Fazer o login em `POST /auth/login` e obter o token JWT.
 2. Enviar o token no header `Authorization` para acessar as rotas protegidas.
 3. Criar e manter os cadastros base, como usuários, clientes, veículos, serviços e autopeças.
-4. Criar ordens de serviço e acompanhar seus itens, status e movimentações relacionadas. Para criar uma OS, é necessário ter um veículo, um cliente e ao menos um serviço já cadastrado.
+4. Criar e acompanhar ordens de serviço pela API do `bunzina-os`; é necessário ter um veículo, um cliente e ao menos um serviço já cadastrado no serviço de cadastros.
 5. Consultar os endpoints de apoio, como notificações e histórico de estoque, conforme a necessidade do fluxo.
 
 As informações completas de request, response, exemplos e regras de cada rota estão no [Swagger](http://localhost:3000/swagger).
