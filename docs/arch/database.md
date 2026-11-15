@@ -14,12 +14,11 @@ Na Fase 4 cada microsserviço tem banco próprio. Nenhum serviço lê o banco de
 
 PostgreSQL nos três primeiros serviços porque o dado é tabular com FK, transação e
 histórico auditável: cliente → veículo, OS → itens, orçamento → pagamento. A
-[ADR 0001](./adrs/0001-postgresql.md) continua válida para esses bounded contexts.
+[ADR 0001](./adrs/0001-postgresql.md) continua válida para esses serviços.
 
 MongoDB só no workshop porque o agregado da oficina é semiestruturado: três listas de
 itens mudam de forma entre pedido, diagnóstico e execução, e o log do mecânico é
-append-only com `metadata` livre. Modelar isso em tabela seria `jsonb` com outro nome,
-o que não atende ao requisito de banco não relacional
+append-only com `metadata` livre. Modelar isso em tabela seria `jsonb` com outro nome
 ([ADR 0014](./adrs/0014-mongodb-workshop.md)).
 
 O Atlas M0 fica fora do cluster: libera PVC/cota do Learner Lab para o RabbitMQ.

@@ -63,6 +63,5 @@ Nunca é atualizado. `metadata` varia por tipo de evento.
 
 O dado da oficina é um documento lido e gravado inteiro pela chave da OS. As listas
 mudam de formato a cada fase; em tabelas isso vira filhas com colunas nulas ou um
-`jsonb` — o documento com outro nome. Não há FK a manter: veículo e itens são
-snapshots. O PDF exige um banco não relacional; o Atlas M0 tira o estado do cluster
-e libera cota para o RabbitMQ.
+`jsonb`. Não há FK a manter: veículo e itens são snapshots. O Atlas M0 fica fora do
+cluster e libera cota para o RabbitMQ.

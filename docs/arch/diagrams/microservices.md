@@ -1,11 +1,9 @@
 # Arquitetura dos microsserviços (Fase 4)
 
-Cópia de índice no repositório de cadastros. A versão usada na banca vive no
-orquestrador: [`bunzina-os/docs/architecture.md`](https://github.com/Bunzina/bunzina-os/blob/main/docs/architecture.md).
+Quatro serviços, cada um com banco próprio, RabbitMQ como broker. Nenhum serviço
+acessa o banco de outro ([ADR 0012](../adrs/0012-microservices-split.md)).
 
-Visão final da solução: quatro serviços de aplicação, cada um com banco próprio, e
-RabbitMQ como único broker. Nenhum serviço acessa o banco de outro
-([ADR 0012](../adrs/0012-microservices-split.md)).
+O mesmo diagrama no orquestrador: [`bunzina-os/docs/architecture.md`](https://github.com/Bunzina/bunzina-os/blob/main/docs/architecture.md).
 
 ```mermaid
 flowchart LR
@@ -50,7 +48,7 @@ flowchart LR
   WS -.-> GRAF
 ```
 
-O workshop **não tem Ingress/ALB**. Na demonstração: `kubectl port-forward -n bunzina svc/bunzina-workshop 3002:80`.
+O workshop não tem Ingress. Acesso: `kubectl port-forward -n bunzina svc/bunzina-workshop 3002:80`.
 
 ## Comunicação
 
@@ -73,7 +71,7 @@ de todas as mensagens.
 | Serviço | Banco | Por quê |
 | --- | --- | --- |
 | `bunzina` | PostgreSQL no EKS | Cadastro relacional: cliente → veículo, catálogo, estoque |
-| `bunzina-os` | PostgreSQL no EKS | OS, itens, `saga_instances`, outbox — ACID + estado demonstrável |
+| `bunzina-os` | PostgreSQL no EKS | OS, itens, `saga_instances`, outbox |
 | `bunzina-billing` | PostgreSQL no EKS | Orçamento, pagamento, eventos de pagamento |
 | `bunzina-workshop` | MongoDB Atlas | Agregado semiestruturado da fila de execução ([ADR 0014](../adrs/0014-mongodb-workshop.md)) |
 
