@@ -4,19 +4,9 @@ import { createHttpMetrics, getMetrics, normalizeRoute } from './metrics';
 describe('observability metrics', () => {
   test.each([
     [
-      '/service-orders/services/service-id/complete',
-      '/service-orders/services/:id/complete',
-    ],
-    [
       '/service-orders/order-id/quote/confirm',
       '/service-orders/:id/quote/confirm',
     ],
-    ['/service-orders/order-id/status', '/service-orders/:id/status'],
-    [
-      '/service-orders/customer/12345678909',
-      '/service-orders/customer/:documentNumber',
-    ],
-    ['/service-orders/order-id', '/service-orders/:id'],
     ['/customers/id/customer-id', '/customers/id/:id'],
     ['/customers/12345678909', '/customers/:documentNumber'],
     ['/auto-parts/part-id/stock-movements', '/auto-parts/:id/stock-movements'],

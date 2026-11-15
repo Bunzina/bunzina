@@ -325,7 +325,7 @@ curl --request DELETE '{{baseUrl}}/auto-parts/{{autoPartId}}' \
 ## 08-ordens-de-servico / Criar ordem
 
 ```bash
-curl --request POST '{{baseUrl}}/service-orders' \
+curl --request POST '{{osBaseUrl}}/service-orders' \
   --header 'Authorization: Bearer {{token}}' \
   --header 'Content-Type: application/json' \
   --data-raw '{
@@ -352,27 +352,27 @@ curl --request POST '{{baseUrl}}/service-orders' \
 ## 08-ordens-de-servico / Listar ordens
 
 ```bash
-curl --request GET '{{baseUrl}}/service-orders?page={{page}}&limit={{limit}}' \
+curl --request GET '{{osBaseUrl}}/service-orders?page={{page}}&limit={{limit}}' \
   --header 'Authorization: Bearer {{token}}'
 ```
 
 ## 08-ordens-de-servico / Buscar ordem
 
 ```bash
-curl --request GET '{{baseUrl}}/service-orders/{{serviceOrderId}}' \
+curl --request GET '{{osBaseUrl}}/service-orders/{{serviceOrderId}}' \
   --header 'Authorization: Bearer {{token}}'
 ```
 
 ## 08-ordens-de-servico / Consultar por documento publico
 
 ```bash
-curl --request GET '{{baseUrl}}/service-orders/customer/{{customerDocument}}'
+curl --request GET '{{osBaseUrl}}/service-orders/customer/{{customerDocument}}'
 ```
 
 ## 08-ordens-de-servico / Atualizar itens
 
 ```bash
-curl --request PUT '{{baseUrl}}/service-orders/{{serviceOrderId}}' \
+curl --request PUT '{{osBaseUrl}}/service-orders/{{serviceOrderId}}' \
   --header 'Authorization: Bearer {{token}}' \
   --header 'Content-Type: application/json' \
   --data-raw '{
@@ -397,7 +397,7 @@ curl --request PUT '{{baseUrl}}/service-orders/{{serviceOrderId}}' \
 ## 08-ordens-de-servico / Avancar status
 
 ```bash
-curl --request PATCH '{{baseUrl}}/service-orders/{{serviceOrderId}}/status' \
+curl --request PATCH '{{osBaseUrl}}/service-orders/{{serviceOrderId}}/status' \
   --header 'Authorization: Bearer {{token}}' \
   --header 'Content-Type: application/json' \
   --data-raw '{
@@ -420,14 +420,15 @@ curl --request POST '{{baseUrl}}/service-orders/{{serviceOrderId}}/quote/confirm
 ## 08-ordens-de-servico / Concluir item de servico
 
 ```bash
-curl --request PATCH '{{baseUrl}}/service-orders/services/{{serviceOrderItemId}}/complete' \
-  --header 'Authorization: Bearer {{token}}'
+curl --request PATCH '{{workshopBaseUrl}}/executions/{{serviceOrderId}}/items' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{"services":[{"serviceId":"{{serviceId}}"}]}'
 ```
 
 ## 08-ordens-de-servico / Excluir ordem
 
 ```bash
-curl --request DELETE '{{baseUrl}}/service-orders/{{serviceOrderId}}' \
+curl --request DELETE '{{osBaseUrl}}/service-orders/{{serviceOrderId}}' \
   --header 'Authorization: Bearer {{token}}'
 ```
 

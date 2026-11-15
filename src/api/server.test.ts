@@ -156,19 +156,12 @@ describe('Server', () => {
     });
   });
 
-  test('GET /service-orders/customer/:documentNumber is public', async () => {
-    mockDb.mockResolvedValueOnce([]);
-
+  test('service order routes are served by bunzina-os', async () => {
     const response = await app.handle(
-      new Request('http://localhost/service-orders/customer/12345678909', {
-        method: 'GET',
-      }),
+      new Request('http://localhost/service-orders', { method: 'GET' }),
     );
 
-    expect(response).toBeDefined();
-    expect(response.status).not.toBe(401);
-    expect(response.headers.get('Content-Type')).toContain('application/json');
-    expect(await response.json()).toEqual([]);
+    expect(response.status).toBe(404);
   });
 
   test('GET /metrics exposes HTTP metrics without sensitive route parameters', async () => {

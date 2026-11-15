@@ -71,19 +71,9 @@ export const serviceOrderStatusDurationSeconds = new Histogram({
 
 const dynamicRoutePatterns: Array<[RegExp, string]> = [
   [
-    /^\/service-orders\/services\/[^/]+\/complete$/,
-    '/service-orders/services/:id/complete',
-  ],
-  [
     /^\/service-orders\/[^/]+\/quote\/confirm$/,
     '/service-orders/:id/quote/confirm',
   ],
-  [/^\/service-orders\/[^/]+\/status$/, '/service-orders/:id/status'],
-  [
-    /^\/service-orders\/customer\/[^/]+$/,
-    '/service-orders/customer/:documentNumber',
-  ],
-  [/^\/service-orders\/[^/]+$/, '/service-orders/:id'],
   [/^\/customers\/id\/[^/]+$/, '/customers/id/:id'],
   [/^\/customers\/[^/]+$/, '/customers/:documentNumber'],
   [/^\/auto-parts\/[^/]+\/stock-movements$/, '/auto-parts/:id/stock-movements'],
