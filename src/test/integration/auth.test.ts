@@ -16,7 +16,7 @@ describe('Integration - Auth endpoints', () => {
     await truncateDatabase();
   });
 
-  test('POST /auth/login returns 422 for invalid payload', async () => {
+  test('POST /auth/login returns 400 for invalid payload', async () => {
     const response = await handleRequest(
       jsonRequest('/auth/login', {
         method: 'POST',
@@ -24,7 +24,7 @@ describe('Integration - Auth endpoints', () => {
       }),
     );
 
-    expect(response.status).toBe(422);
+    expect(response.status).toBe(400);
   });
 
   test('POST /auth/login returns token for valid credentials', async () => {

@@ -129,9 +129,9 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
 # Infraestrutura compartilhada
 
 - [x] Provisionar o RabbitMQ no cluster.
-  - Adicionar o release Helm ao repositório de infraestrutura.
-  - Configurar exchange topic, filas por serviço e dead letter queue.
-  - Adicionar o mesmo broker ao `docker-compose.yml` local, para manter a paridade.
+  - A infraestrutura como código está em [`bunzina-broker`](https://github.com/Bunzina/bunzina-broker): Terraform instala o chart Helm próprio, com exchange topic, filas e DLQs. O apply é manual; confirmar que foi executado no cluster ao preparar o ambiente AWS.
+  - Exchange topic, filas por serviço e dead letter queues estão definidos em `bunzina-broker/charts/rabbitmq/values.yaml`.
+  - O `docker-compose.yml` local usa a mesma imagem RabbitMQ; validar deploy e conectividade ao preparar o ambiente AWS.
 
 - [x] Criar o cluster MongoDB Atlas M0 do `bunzina-workshop`.
   - Tier gratuito, conforme [ADR 0014](arch/adrs/0014-mongodb-workshop.md).
@@ -157,13 +157,12 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - Chart Helm parametrizado, a partir de `bunzina-chart/charts/app-chart`.
   - Bootstrap de OpenTelemetry, logger e métricas.
 
-- [ ] Implementar a propagação de contexto de trace pelo broker.
+- [x] Implementar a propagação de contexto de trace pelo broker.
   - O publisher injeta o `traceparent` do padrão W3C nos headers da mensagem AMQP e o
     consumer o extrai.
   - Sem isso, o requisito de rastreamento dos fluxos distribuídos exigido no vídeo não se
     sustenta, porque o trace quebra em cada salto assíncrono.
-  - Implementado no template, em `src/infrastructure/messaging/`. Falta validar ponta a
-    ponta com os serviços de verdade no ar.
+  - Implementado em `bunzina-os`, `bunzina-billing` e `bunzina-workshop`, em `src/infrastructure/messaging/`. Falta validar ponta a ponta com os serviços de verdade no ar; essa validação continua pendente em Observabilidade distribuída.
 
 ---
 
@@ -194,8 +193,7 @@ Estes itens são pequenos, mas bloqueiam a evidência de cobertura exigida pelo 
   - Para depois: migrar as rotas restantes de OS do monólito, incluindo busca por cliente,
     alteração/remoção e entrega, conforme o escopo definido para o serviço; depois remover
     ou ajustar o domínio, as rotas e os testes correspondentes no monólito.
-  - Quando Billing e Workshop estiverem prontos: validar o fluxo real entre serviços e o
-    trace ponta a ponta.
+  - Depois de completar o fluxo de pagamento do Billing: validar a integração real entre serviços e o trace ponta a ponta.
 
 ---
 
@@ -267,17 +265,18 @@ Pode ser desenvolvido em paralelo ao `bunzina-billing`.
 
 Esta seção corre sobreposta ao desenvolvimento dos serviços, não depois dele.
 
-- [ ] Garantir testes unitários em todos os microsserviços.
+- [x] Garantir testes unitários em todos os microsserviços.
   - O padrão atual do repositório, com factories e `bun-mock-extended`, deve ser replicado
     nos serviços novos.
 
-- [ ] Implementar ao menos um fluxo completo testado com BDD.
+- [x] Implementar ao menos um fluxo completo testado com BDD.
   - Uma feature em Gherkin descrevendo o ciclo de vida de uma ordem de serviço.
   - Precisa cobrir o caminho feliz e também o caminho de falha com compensação.
   - A opção preferida é executar com `@cucumber/cucumber` contra os serviços subidos em
     `docker-compose`, porque é mais fiel ao fluxo completo e melhor de demonstrar no vídeo.
   - A opção alternativa, mais barata, é executar o Gherkin dentro do `bun test` com stubs.
   - O melhor lugar para hospedar é o repositório do `bunzina-os`.
+  - A feature Gherkin em `bunzina-os/features/` cobre caminho feliz, falha e compensação; os testes executam a saga com dependências em memória. A integração real entre os serviços segue pendente.
 
 - [ ] Garantir cobertura mínima de 80% por serviço, com gate no CI.
 
@@ -307,12 +306,13 @@ que hoje são OpenTelemetry, Prometheus, Loki, Tempo e Grafana no cluster.
   - Taxa de compensação.
   - Latência por etapa.
   - Mensagens acumuladas na dead letter queue.
-  - Versionar o dashboard em `observability/grafana/dashboards/`.
+  - Versionar o dashboard no chart de observabilidade, em `bunzina-infra/charts/bunzina-observability/dashboards/`.
 
 - [ ] Configurar alerta para falha no processamento de ordens de serviço.
-  - O alerta já era pedido na Fase 3; agora ele passa a observar a saga.
+  - O alerta de Fase 3 já existe para falhas HTTP do monólito. Há também um ConfigMap de alerta para DLQ no Billing, mas o sidecar de alertas está desabilitado no `bunzina-infra`; habilitar/importar a regra e cobrir falhas da saga.
 
 - [ ] Garantir que os quatro serviços exportam métricas e são coletados pelo ServiceMonitor.
+  - Os quatro expõem `/metrics` e os charts habilitam ServiceMonitor; falta confirmar os alvos ativos no Prometheus do cluster.
 
 ---
 
@@ -326,9 +326,10 @@ Vários itens desta seção também estavam pendentes na Fase 3. A ideia é faze
     eles.
   - É entregável obrigatório do documento do portal.
 
-- [ ] Criar os diagramas de sequência da saga.
+- [x] Criar os diagramas de sequência da saga.
   - Um para o caminho feliz.
   - Um para o caminho de falha com compensação.
+  - Ambos estão em `bunzina-os/docs/saga-orchestration.md`.
 
 - [ ] Documentar os bancos de dados.
   - Justificar a escolha do relacional e do não relacional.
@@ -340,7 +341,7 @@ Vários itens desta seção também estavam pendentes na Fase 3. A ideia é faze
   - No `bunzina-os`, incluir obrigatoriamente a justificativa da estratégia de saga
     escolhida, porque o PDF exige essa justificativa no README.
 
-- [ ] Publicar o Swagger de cada serviço.
+- [x] Publicar o Swagger de cada serviço.
   - A aplicação já usa `@elysiajs/openapi`, então o padrão se replica.
 
 - [ ] Atualizar a collection de API.
@@ -352,8 +353,8 @@ Vários itens desta seção também estavam pendentes na Fase 3. A ideia é faze
 
 # Entregável ou Entrega
 
-- [ ] Renovar as credenciais do AWS Academy nos secrets dos quatro repositórios.
-  - As credenciais expiram e agora são quatro repositórios de aplicação, não mais um.
+- [ ] Renovar as credenciais do AWS Academy nos secrets dos quatro repositórios de aplicação e do `bunzina-broker`.
+  - As credenciais expiram. Se os workflows de infraestrutura forem executados de novo para preparar o ambiente, atualizar também `bunzina-infra` e `bunzina-db`.
 
 - [ ] Preparar e ensaiar o ambiente na AWS para a gravação.
   - Como nas fases anteriores, os recursos precisam estar ativos apenas durante a gravação.

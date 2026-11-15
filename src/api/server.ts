@@ -40,25 +40,7 @@ import { updateCustomerHandler } from './handlers/customer/update';
 import { healthSchema } from './handlers/health/schema';
 import { notificationSchema } from './handlers/notification/schema';
 import { sendNotificationHandler } from './handlers/notification/send';
-import { completeServiceItemHandler } from './handlers/service-order/complete-service-item';
-import { createServiceOrderHandler } from './handlers/service-order/create';
-import { deleteServiceOrderHandler } from './handlers/service-order/delete';
-import { findServiceOrderHandler } from './handlers/service-order/find';
-import { findServiceOrdersByCustomerHandler } from './handlers/service-order/find-by-customer';
-import { listServiceOrdersHandler } from './handlers/service-order/list';
-import {
-  completeServiceOrderItemRouteSchema,
-  createServiceOrderRouteSchema,
-  deleteServiceOrderRouteSchema,
-  findServiceOrderRouteSchema,
-  findServiceOrdersByCustomerRouteSchema,
-  listServiceOrdersRouteSchema,
-  updateServiceOrderRouteSchema,
-  updateServiceOrderStatusRouteSchema,
-  validateQuoteConfirmationRouteSchema,
-} from './handlers/service-order/schema';
-import { updateServiceOrderHandler } from './handlers/service-order/update';
-import { updateServiceOrderStatusHandler } from './handlers/service-order/update-status';
+import { validateQuoteConfirmationRouteSchema } from './handlers/service-order/schema';
 import { validateQuoteConfirmationHandler } from './handlers/service-order/validate-confirmation-quote';
 import { createServiceHandler } from './handlers/service/create';
 import { deleteServiceHandler } from './handlers/service/delete';
@@ -403,53 +385,11 @@ app.guard(
   },
 );
 
-app.get(
-  '/service-orders/customer/:documentNumber',
-  async (context) => findServiceOrdersByCustomerHandler(context),
-  findServiceOrdersByCustomerRouteSchema,
-);
-
 app.guard(
   {
     beforeHandle: async (context) => authMiddleware(context),
   },
   (app) => {
-    // Service order routes
-    app.post(
-      '/service-orders',
-      async (context) => createServiceOrderHandler(context),
-      createServiceOrderRouteSchema,
-    );
-    app.get(
-      '/service-orders',
-      async (context) => listServiceOrdersHandler(context),
-      listServiceOrdersRouteSchema,
-    );
-    app.get(
-      '/service-orders/:id',
-      async (context) => findServiceOrderHandler(context),
-      findServiceOrderRouteSchema,
-    );
-    app.put(
-      '/service-orders/:id',
-      async (context) => updateServiceOrderHandler(context),
-      updateServiceOrderRouteSchema,
-    );
-    app.delete(
-      '/service-orders/:id',
-      async (context) => deleteServiceOrderHandler(context),
-      deleteServiceOrderRouteSchema,
-    );
-    app.patch(
-      '/service-orders/:id/status',
-      async (context) => updateServiceOrderStatusHandler(context),
-      updateServiceOrderStatusRouteSchema,
-    );
-    app.patch(
-      '/service-orders/services/:id/complete',
-      async (context) => completeServiceItemHandler(context),
-      completeServiceOrderItemRouteSchema,
-    );
     app.post(
       '/service-orders/:id/quote/confirm',
       async (context) => validateQuoteConfirmationHandler(context),
