@@ -1,20 +1,28 @@
 # Visão geral da arquitetura
 
-O Bunzina é uma API de gestão de oficina mecânica em Bun e Elysia, organizada
-em Clean Architecture. A aplicação roda no EKS e persiste dados no PostgreSQL
-no mesmo cluster. O login possui uma entrada serverless com API Gateway e Lambda.
+O Bunzina é uma oficina mecânica em Bun e Elysia, recortada em quatro
+microsserviços no EKS ([ADR 0012](./adrs/0012-microservices-split.md)). O login
+continua com API Gateway e Lambda. A saga da OS é orquestrada pelo `bunzina-os`
+([ADR 0013](./adrs/0013-orchestrated-saga.md)).
+
+Diagrama geral: [diagrams/microservices.md](./diagrams/microservices.md).
 
 ## Componentes e responsabilidades
 
 | Componente | Responsabilidade |
 | --- | --- |
 | API Gateway HTTP API | Expõe `POST /auth/login` e encaminha para a Lambda |
-| Lambda Auth | Valida payload e CPF, chama a API e repassa status e body |
-| ALB | Encaminha as requisições HTTP aos pods da API |
-| API no EKS | Autenticação, JWT, cadastro, ordens de serviço e notificações |
-| PostgreSQL no EKS | Persistência do schema `bunzina`, acessível pelo Service `postgres:5432` |
-| ECR | Imagens da aplicação e da Lambda; chart OCI |
-| Observabilidade | Métricas, logs e traces; dashboards e alertas no Grafana |
+| Lambda Auth | Valida payload e CPF, chama o `bunzina` e repassa status e body |
+| ALB | HTTP público de cadastros, OS e billing |
+| `bunzina` | Cadastros, autenticação JWT/`Api-Key` e notificações |
+| `bunzina-os` | Ciclo de vida da OS e orquestração da saga |
+| `bunzina-billing` | Orçamento, aprovação e pagamento (Mercado Pago) |
+| `bunzina-workshop` | Diagnóstico, fila e execução (ClusterIP, sem ALB) |
+| PostgreSQL × 3 | Cadastros, OS/saga e billing — um banco por serviço |
+| MongoDB Atlas | Fila e logs do workshop |
+| RabbitMQ | Comandos `cmd.*` e eventos `evt.*` da saga |
+| ECR | Imagens e chart OCI |
+| Observabilidade | Prometheus, Loki, Tempo e Grafana |
 
 ## Fluxos
 
@@ -27,18 +35,22 @@ Nas rotas protegidas, o cliente chama o ALB com `Authorization: Bearer <token>`.
 O middleware da API valida o JWT; também há autenticação por `Api-Key` para
 integrações. O Gateway não participa das rotas de negócio.
 
-A criação de OS verifica referências de cliente, veículo e itens, calcula o
-orçamento e persiste cabeçalho e itens em uma transação, com status `RECEIVED`.
-O e-mail de orçamento é enviado ao avançar para `AWAITING_APPROVAL`.
+A criação de OS no `bunzina-os` valida cliente, veículo e itens via REST no
+`bunzina`, persiste a ordem com snapshot e publica `cmd.workshop.start-diagnostic`.
+O restante do ciclo (orçamento, pagamento, execução) segue a saga no RabbitMQ.
 
 ## Repositórios e deploy
 
 | Repositório | Escopo |
 | --- | --- |
-| `bunzina` | API, migrations, umbrella Helm e CI/CD da aplicação |
+| `bunzina` | Cadastros, auth, notifications, docs de arquitetura |
+| `bunzina-os` | Ordem de serviço e orquestrador da saga |
+| `bunzina-billing` | Orçamento e pagamento |
+| `bunzina-workshop` | Diagnóstico e execução |
+| `bunzina-broker` | RabbitMQ no EKS |
 | `bunzina-lambda` | Lambda de login e API Gateway |
 | `bunzina-infra` | Rede, cluster EKS, nós, addons e ECR |
-| `bunzina-db` | PostgreSQL no EKS e recursos de armazenamento e credenciais |
+| `bunzina-db` | PostgreSQL de cadastros no EKS |
 | `bunzina-chart` | Chart genérico `app-chart`, publicado via OCI |
 
 O banco é provisionado separadamente do chart da API, conforme a
@@ -63,9 +75,9 @@ as implementações de persistência e serviços externos.
 
 ## Documentação relacionada
 
+- [Diagrama dos microsserviços](./diagrams/microservices.md)
 - [Diagramas](./diagrams/README.md)
 - [Banco, migrations e relacionamentos](./database.md)
+- [Saga orquestrada (ADR 0013)](./adrs/0013-orchestrated-saga.md)
 - [Autenticação](./rfcs/0001-auth-cpf-lambda-gateway.md)
-- [Escalabilidade](./adrs/0008-scalability.md)
 - [Observabilidade](../observability.md)
-- [Histórico da decisão sobre o banco](./adrs/0011-managed-database.md)

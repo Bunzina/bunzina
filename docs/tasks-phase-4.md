@@ -321,33 +321,37 @@ que hoje são OpenTelemetry, Prometheus, Loki, Tempo e Grafana no cluster.
 Vários itens desta seção também estavam pendentes na Fase 3. A ideia é fazer o trabalho uma
 única vez, já no formato final da Fase 4.
 
-- [ ] Criar o diagrama geral da arquitetura final.
+- [x] Criar o diagrama geral da arquitetura final.
   - Deve mostrar os microsserviços, os bancos de cada um, o broker e a comunicação entre
     eles.
   - É entregável obrigatório do documento do portal.
+  - `bunzina/docs/arch/diagrams/microservices.md`.
 
 - [x] Criar os diagramas de sequência da saga.
   - Um para o caminho feliz.
   - Um para o caminho de falha com compensação.
   - Ambos estão em `bunzina-os/docs/saga-orchestration.md`.
 
-- [ ] Documentar os bancos de dados.
+- [x] Documentar os bancos de dados.
   - Justificar a escolha do relacional e do não relacional.
   - Atualizar o diagrama ER do Postgres e documentar o modelo de documentos do Mongo.
+  - `docs/arch/database.md`, `diagrams/er.md`, `diagrams/er-os.md`, `diagrams/er-billing.md`, `diagrams/mongo-workshop.md`.
 
 - [ ] Escrever o README de cada repositório.
   - Arquitetura do serviço, instruções de execução, link do Swagger e evidência de
     cobertura.
-  - No `bunzina-os`, incluir obrigatoriamente a justificativa da estratégia de saga
+  - [x] No `bunzina-os`, incluir obrigatoriamente a justificativa da estratégia de saga
     escolhida, porque o PDF exige essa justificativa no README.
+  - Falta evidência de cobertura (Sonar/lcov) nos quatro READMEs.
 
 - [x] Publicar o Swagger de cada serviço.
   - A aplicação já usa `@elysiajs/openapi`, então o padrão se replica.
 
-- [ ] Atualizar a collection de API.
+- [x] Atualizar a collection de API.
   - O projeto usa Bruno, o que atende ao pedido de Swagger ou collection.
   - A collection precisa cobrir o fluxo distribuído completo, não apenas as rotas de um
     serviço.
+  - `bunzina-os/docs/bruno` + `FLUXOS.md` (feliz e falhas da saga).
 
 ---
 

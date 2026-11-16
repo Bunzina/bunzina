@@ -31,4 +31,7 @@ e o schema implantado.
 
 | Diagrama | O que mostra |
 | --- | --- |
-| [er-billing.md](./er-billing.md) | Modelo relacional do banco do `bunzina-billing` (orçamento, pagamento, eventos de pagamento, outbox) |
+| [microservices.md](./microservices.md) | Arquitetura final: quatro serviços, bancos, RabbitMQ e o HTTP do catálogo |
+| [er-os.md](./er-os.md) | PostgreSQL do `bunzina-os` (OS, saga, outbox) |
+| [er-billing.md](./er-billing.md) | PostgreSQL do `bunzina-billing` (orçamento, pagamento, outbox) |
+| [mongo-workshop.md](./mongo-workshop.md) | Coleções MongoDB do `bunzina-workshop` |
